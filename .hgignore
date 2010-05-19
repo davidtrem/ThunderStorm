@@ -1,0 +1,7 @@
+syntax: glob
+*.py[co]
+*~
+dist/
+MANIFEST
+doc/api_doc
+doc/doc-sphinx/_build/*
