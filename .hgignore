@@ -1,6 +1,7 @@
 syntax: glob
 *.py[co]
 *~
+.DS_Store
 dist/
 MANIFEST
 doc/api_doc
