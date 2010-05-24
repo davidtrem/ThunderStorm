@@ -30,6 +30,11 @@ def main():
     thunderstorm_dir  = os.path.join(istrom_dir, 'thunderstorm')
     sys.path.insert(0, thunderstorm_dir)
 
+    # Change the current directory to the one specified as argument
+    # This allow drag and drop start on windows
+    if len(sys.argv) == 2:
+        os.chdir(sys.argv[1])
+
     from istormlib.thunder_interface import Load
     from istormlib.istorm_view import View
 
