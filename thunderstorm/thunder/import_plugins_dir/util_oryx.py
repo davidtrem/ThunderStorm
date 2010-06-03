@@ -99,24 +99,26 @@ def read_leak_curves(filename):
     """Read a *.ctr file and
     Return the leakage IV curves
     """
-    with open(filename, 'U') as data_file:
-        whole_data = data_file.read()
-
-    block_re_str = r"^(\[DATA\])(.*?)(?=\[DATA\]|\Z)"
-    block_re = re.compile(block_re_str, re.S | re.M)
-    blocks = block_re.findall(whole_data)
-
-    data_txt = ['\n'.join(block[1].split('\n')[3:-1]) for block in blocks]
     curves = []
-    for data in data_txt:
-        string_file = StringIO()
-        string_file.write(data)
-        string_file.reset()
-        try:
+    try:
+        with open(filename, 'U') as data_file:
+            whole_data = data_file.read()
+
+        block_re_str = r"^(\[DATA\])(.*?)(?=\[DATA\]|\Z)"
+        block_re = re.compile(block_re_str, re.S | re.M)
+        blocks = block_re.findall(whole_data)
+
+        data_txt = ['\n'.join(block[1].split('\n')[3:-1]) for block in blocks]
+        for data in data_txt:
+            string_file = StringIO()
+            string_file.write(data)
+            string_file.reset()
             curves.append(np.loadtxt(string_file, delimiter=',').T[1:])
-        except IOError:
-            pass
-    return curves
+    except IOError:
+        warnings.warn("No leakage curves available",
+                      RuntimeWarning)
+    finally:
+        return curves
 
 
 class OryxTransientZip(object):
@@ -164,8 +166,9 @@ class OryxTransientZip(object):
         # for TLP current: 04-29-09_05'40'45_PM_TlpCurr_90V.wfm
         voltages_dict = {'TlpCurr' : [], 'TlpVolt' : []}
         for filename in zfile.namelist():
-            elems = filename[:-5].split('_')
-            voltages_dict[elems[3]].append(elems[4])
+            if filename[-4:] == ".wfm":
+                elems = filename[:-5].split('_')
+                voltages_dict[elems[3]].append(elems[4])
         voltages_dict['TlpCurr'].sort(key=float)
         voltages_dict['TlpVolt'].sort(key=float)
         if voltages_dict['TlpCurr'] != voltages_dict['TlpVolt']:
