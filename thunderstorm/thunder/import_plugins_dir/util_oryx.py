@@ -68,7 +68,7 @@ class ReadOryx(object):
     @property
     def data_to_num_array(self):
         num_data = {}
-        for data_name in ('tlp','valim_tlp', 'tlp_pulses',
+        for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['leak_data'] = self.data['leak_data']

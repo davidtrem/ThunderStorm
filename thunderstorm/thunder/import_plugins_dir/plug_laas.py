@@ -47,8 +47,8 @@ class ImportLAAS(ImportPlugin):
         pulses = IVTime(data['tlp_pulses'].shape[2],
                         data['tlp_pulses'].shape[0],
                         delta_t=1)
-        pulses.voltage = data['tlp_pulses'][:,1,:]
-        pulses.current = data['tlp_pulses'][:,2,:]
+        pulses.voltage = data['tlp_pulses'][:, 1, :]
+        pulses.current = data['tlp_pulses'][:, 2, :]
         pulses.valim = data['valim_tlp']
         delta_t = (data['tlp_pulses'][0, 0, 1] - data['tlp_pulses'][0, 0, 0])
         pulses.delta_t = delta_t
