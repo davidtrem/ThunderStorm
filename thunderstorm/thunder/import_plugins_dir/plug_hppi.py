@@ -22,7 +22,7 @@ Import module for HPPI TLP setup data
 """
 
 from thunder.import_plugins import ImportPlugin
-from util_HPPI import ReadHPPI
+from util_hppi import ReadHPPI
 from thunder.tlp import RawTLPdata
 from thunder.pulses import IVTime
 import os
