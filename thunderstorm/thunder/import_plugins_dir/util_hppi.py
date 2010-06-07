@@ -98,15 +98,16 @@ class HPPITransientRead(object):
     """
     def __init__(self, base_dir):
         self.base_dir = os.path.dirname(base_dir)
+        self.wfm_location = None #determined in filecontents function
 
     def data_from_transient_file(self, filename):
-        if self.wfmLoc.find('.zip') == -1:
-            filepath = os.path.join(self.wfmLoc, filename)
+        if self.wfm_location.find('.zip') == -1:
+            filepath = os.path.join(self.wfm_location, filename)
             with open(filepath, 'U') as wfm_file:
                 full_file = wfm_file.read()
             wfm_file.close()
         else:
-            zfile = ZipFile(self.wfmLoc)
+            zfile = ZipFile(self.wfm_location)
             full_file = zfile.read(filename)
             zfile.close()
         data_string = '\n'.join(full_file.split('\r\n'))
@@ -121,23 +122,23 @@ class HPPITransientRead(object):
         #check location of waveforms
         base_dir = self.base_dir
         if os.path.exists(os.path.join(base_dir,'wfm')):
-            self.wfmLoc = os.path.join(base_dir,'wfm')
+            self.wfm_location = os.path.join(base_dir,'wfm')
             print('waveforms in dir: wfm')
         elif os.path.exists(os.path.join(base_dir,'HV-Pulse')):
-            self.wfmLoc = os.path.join(base_dir,'HV-Pulse')
+            self.wfm_location = os.path.join(base_dir,'HV-Pulse')
             print('waveforms in dir: HV-Pulse')
         elif os.path.isfile(os.path.join(base_dir,'transients.zip')):
-            self.wfmLoc = os.path.join(base_dir,'transients.zip')
+            self.wfm_location = os.path.join(base_dir,'transients.zip')
             is_zip = True
             print('waveforms in zip file')
         else:
             print('No waveforms found')
 
         if is_zip:
-            zfile = ZipFile(self.wfmLoc)
+            zfile = ZipFile(self.wfm_location)
             wfm_list = zfile.namelist()
         else:
-            wfm_list = os.listdir(self.wfmLoc)
+            wfm_list = os.listdir(self.wfm_location)
 
         voltages_list = []
         for filename in wfm_list:
