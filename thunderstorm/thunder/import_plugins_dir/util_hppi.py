@@ -52,13 +52,14 @@ class ReadHPPI(object):
         tlp_v = []
         tlp_i = []
         for filename in wfm_list:
-            tlp_v.append(hppi_wfm.data_from_transient_file(filename)[3])
-            tlp_i.append(hppi_wfm.data_from_transient_file(filename)[1])
+            hppi_wfm_data = hppi_wfm.data_from_transient_file(filename)
+            tlp_v.append(hppi_wfm_data[3])
+            tlp_i.append(hppi_wfm_data[1])
+        time_array = hppi_wfm_data[0]
+        delta_t = time_array[1]-time_array[0]
         tlp_v = np.asarray(tlp_v)
         tlp_i = np.asarray(tlp_i)
 
-        time_array = hppi_wfm.data_from_transient_file(filename)[0]
-        delta_t = time_array[1]-time_array[0]
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
         data['delta_t'] = delta_t * 1e-9
