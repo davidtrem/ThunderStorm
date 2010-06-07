@@ -46,7 +46,7 @@ class ReadHPPI(object):
         data['valim_leak'] = csv_data[0]
         data['tlp'] = csv_data[1:3]
         data['leak_evol'] = csv_data[3]
-        data['leak_data'] = read_leak_curves(base_name + '.ctr')
+        data['leak_data'] = [] # not implemented
         hppi_wfm = HPPITransientRead(base_name)
         (wfm_list, volt_list) = hppi_wfm.filecontents
         tlp_v = []
@@ -90,28 +90,6 @@ def extract_data_from_csv(tsr_file_name):
     data_str_file.reset()
     data = np.loadtxt(data_str_file, delimiter=',', usecols=(1, 2, 3, 8))
     return data.T
-
-
-def read_leak_curves(filename):
-    """Currently not implemented
-    an empty list is returned
-    """
-#    with open(filename, 'U') as data_file:
-#        whole_data = data_file.read()
-#
-#    block_re_str = r"^(\[DATA\])(.*?)(?=\[DATA\]|\Z)"
-#    block_re = re.compile(block_re_str, re.S | re.M)
-#    blocks = block_re.findall(whole_data)
-#
-#    data_txt = ['\n'.join(block[1].split('\n')[3:-1]) for block in blocks]
-    curves = []
-#    for data in data_txt:
-#        string_file = StringIO()
-#        string_file.write(data)
-#        string_file.reset()
-#        curves.append(np.loadtxt(string_file, delimiter=',').T[1:])
-    return curves
-
 
 
 class HPPITransientRead(object):
