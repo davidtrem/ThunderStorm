@@ -35,7 +35,7 @@ class ReadHPPI(object):
     """
     def __init__(self, file_name):
         self.base_file_name = file_name[:-4]
-        self.base_dir_name = os.path.dirname(file_name)
+        #self.base_dir_name = os.path.dirname(file_name)
         self.data = {}
         self._read_data_from_files()
 
@@ -47,11 +47,11 @@ class ReadHPPI(object):
         data['tlp'] = csv_data[1:3]
         data['leak_evol'] = csv_data[3]
         data['leak_data'] = read_leak_curves(base_name + '.ctr')
-        hppi_wfm = hppiTransientRead(base_name)
-        (wfmList, volt_list) = hppi_wfm.filecontents
+        hppi_wfm = HPPITransientRead(base_name)
+        (wfm_list, volt_list) = hppi_wfm.filecontents
         tlp_v = []
         tlp_i = []
-        for filename in wfmList:
+        for filename in wfm_list:
             tlp_v.append(hppi_wfm.data_from_transient_file(filename)[3])
             tlp_i.append(hppi_wfm.data_from_transient_file(filename)[1])
         tlp_v = np.asarray(tlp_v)
@@ -67,9 +67,9 @@ class ReadHPPI(object):
     @property
     def data_to_num_array(self):
         num_data = {}
-        for data_name in ('tlp','valim_tlp', 'tlp_pulses',
+        for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol'):
-            num_data[data_name] = np.array(self.data[data_name]) 
+            num_data[data_name] = np.array(self.data[data_name])
         num_data['leak_data'] = self.data['leak_data']
         num_data['delta_t'] = self.data['delta_t']
         return num_data
@@ -114,15 +114,15 @@ def read_leak_curves(filename):
 
 
 
-class hppiTransientRead(object):
-    """Utils to extract data from oryx zip files
+class HPPITransientRead(object):
+    """Utils to extract data from HPPI tester files
     """
-    def __init__(self, baseDir):
-        self.baseDir = os.path.dirname(baseDir)
+    def __init__(self, base_dir):
+        self.base_dir = os.path.dirname(base_dir)
 
     def data_from_transient_file(self, filename):
         if self.wfmLoc.find('.zip') == -1:
-            filepath = os.path.join(self.wfmLoc,filename)
+            filepath = os.path.join(self.wfmLoc, filename)
             with open(filepath, 'U') as wfm_file:
                 full_file = wfm_file.read()
             wfm_file.close()
@@ -130,46 +130,40 @@ class hppiTransientRead(object):
             zfile = ZipFile(self.wfmLoc)
             full_file = zfile.read(filename)
             zfile.close()
-        
         data_string = '\n'.join(full_file.split('\r\n'))
         data_string_file = StringIO()
         data_string_file.write(data_string)
         data_string_file.reset()
         return np.loadtxt(data_string_file, delimiter=',', skiprows=1).T
 
-
-
     @property
     def filecontents(self):
-
-        zip = 0
-        
+        is_zip = False
         #check location of waveforms
-        baseDir = self.baseDir
-        
-        if os.path.exists(os.path.join(baseDir,'wfm')):
-            self.wfmLoc = os.path.join(baseDir,'wfm')
+        base_dir = self.base_dir
+        if os.path.exists(os.path.join(base_dir,'wfm')):
+            self.wfmLoc = os.path.join(base_dir,'wfm')
             print('waveforms in dir: wfm')
-        elif os.path.exists(os.path.join(baseDir,'HV-Pulse')):
-            self.wfmLoc = os.path.join(baseDir,'HV-Pulse')
+        elif os.path.exists(os.path.join(base_dir,'HV-Pulse')):
+            self.wfmLoc = os.path.join(base_dir,'HV-Pulse')
             print('waveforms in dir: HV-Pulse')
-        elif os.path.isfile(os.path.join(baseDir,'transients.zip')):
-            self.wfmLoc = os.path.join(baseDir,'transients.zip')
-            zip = 1
+        elif os.path.isfile(os.path.join(base_dir,'transients.zip')):
+            self.wfmLoc = os.path.join(base_dir,'transients.zip')
+            is_zip = True
             print('waveforms in zip file')
         else:
             print('No waveforms found')
-            
-        if zip:
+
+        if is_zip:
             zfile = ZipFile(self.wfmLoc)
-            wfmList = zfile.namelist()
+            wfm_list = zfile.namelist()
         else:
-            wfmList = os.listdir(self.wfmLoc)
+            wfm_list = os.listdir(self.wfmLoc)
 
         voltages_list = []
-        for filename in wfmList:
+        for filename in wfm_list:
             elems = filename[:-5].split('_')
             voltages_list.append(elems[1])
         voltages_list.sort(key=float)
-        return (wfmList, voltages_list)
+        return (wfm_list, voltages_list)
 
