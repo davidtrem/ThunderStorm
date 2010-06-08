@@ -22,6 +22,7 @@ Simple TLP curve plot
 """
 
 import numpy as np
+import warnings
 
 class TLPFigureWithLeakage(object):
     """A simple TLP figure
@@ -34,17 +35,20 @@ class TLPFigureWithLeakage(object):
         tlp_plot.set_title(title + "TLP curve")
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
-        fig_leak_evol = figure.add_axes(tlp_plot.get_position(),
-                                        sharey=tlp_plot,
-                                        frameon=False)
-        fig_leak_evol.set_navigate(True)
-        fig_leak_evol.xaxis.tick_top()
-        fig_leak_evol.xaxis.set_label_position('top')
-        fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
-                           'g-o',
-                           markersize=2)
-
-
+        if len(tlp_curve_data) == 0 or np.alltrue(leakage_evol == 0):
+            warnings.warn("No proper leakage evolution available\n" +
+                          "Leakage evolution will not be plotted",
+                      RuntimeWarning)
+        else:
+            fig_leak_evol = figure.add_axes(tlp_plot.get_position(),
+                                            sharey=tlp_plot,
+                                            frameon=False)
+            fig_leak_evol.set_navigate(True)
+            fig_leak_evol.xaxis.tick_top()
+            fig_leak_evol.xaxis.set_label_position('top')
+            fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
+                               'g-o',
+                               markersize=2)
         self.plot = tlp_plot
         self.draw = tlp_plot.get_figure().canvas.draw
 
