@@ -38,14 +38,10 @@ class TLPFigureWithLeakage(object):
         if len(tlp_curve_data) == 0 or np.alltrue(leakage_evol == 0):
             warnings.warn("No proper leakage evolution available\n" +
                           "Leakage evolution will not be plotted",
-                      RuntimeWarning)
+                          RuntimeWarning)
         else:
-            fig_leak_evol = figure.add_axes(tlp_plot.get_position(),
-                                            sharey=tlp_plot,
-                                            frameon=False)
-            fig_leak_evol.set_navigate(True)
-            fig_leak_evol.xaxis.tick_top()
-            fig_leak_evol.xaxis.set_label_position('top')
+            fig_leak_evol = tlp_plot.twiny()
+            fig_leak_evol.set_navigate(False)
             fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
                                'g-o',
                                markersize=2)
