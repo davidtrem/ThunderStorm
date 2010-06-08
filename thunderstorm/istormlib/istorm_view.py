@@ -39,7 +39,7 @@ class View(object):
 
     def __repr__(self):
         message = "View of "
-        message += str(self._experiment)
+        message += str(self.experiment)
         return message
 
     def raw_tlp(self):
