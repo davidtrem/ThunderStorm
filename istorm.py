@@ -37,6 +37,10 @@ def main():
 
     from istormlib.thunder_interface import Load
     from istormlib.istorm_view import View
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.interactive(True)
 
     init_message = "Welcome in Istorm\n"
     init_message += "Copyright (C) 2010  David Trémouilles\n"
