@@ -84,7 +84,7 @@ def extract_data_from_csv(tsr_file_name):
     """
     with open(tsr_file_name, 'U') as tsr_file:
         tsr_file_str = tsr_file.read()
-    test_result_re = re.compile(r'^Index,HV.*\]\n(.*)', re.S | re.M)
+    test_result_re = re.compile(r'^Index,.*\]\n(.*)', re.S | re.M)
     data_str = test_result_re.findall(tsr_file_str)
     data_str_file = StringIO()
     data_str_file.write(data_str[0])
