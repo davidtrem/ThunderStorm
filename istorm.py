@@ -26,8 +26,7 @@ import IPython
 
 def main():
     # hook thunderstorm tree in path
-    istrom_dir = os.path.dirname(os.path.realpath(__file__))
-    thunderstorm_dir  = os.path.join(istrom_dir, 'thunderstorm')
+    thunderstorm_dir = os.path.dirname(os.path.realpath(__file__))
     sys.path.insert(0, thunderstorm_dir)
 
     # Change the current directory to the one specified as argument
@@ -35,8 +34,8 @@ def main():
     if len(sys.argv) == 2:
         os.chdir(sys.argv[1])
 
-    from istormlib.thunder_interface import Load
-    from istormlib.istorm_view import View
+    from thunderstorm.istormlib.thunder_interface import Load
+    from thunderstorm.istormlib.istorm_view import View
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib

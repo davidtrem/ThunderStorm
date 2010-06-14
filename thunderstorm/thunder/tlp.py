@@ -21,7 +21,7 @@
 """
 
 import numpy as np
-from thunder.pulses import IVTime
+from thunderstorm.thunder.pulses import IVTime
 
 class TLPcurve(object):
     """The data for a TLP curve

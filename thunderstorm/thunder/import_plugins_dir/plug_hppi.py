@@ -21,10 +21,10 @@
 Import module for HPPI TLP setup data
 """
 
-from thunder.import_plugins import ImportPlugin
+from thunderstorm.thunder.import_plugins import ImportPlugin
 from util_hppi import ReadHPPI
-from thunder.tlp import RawTLPdata
-from thunder.pulses import IVTime
+from thunderstorm.thunder.tlp import RawTLPdata
+from thunderstorm.thunder.pulses import IVTime
 import os
 
 

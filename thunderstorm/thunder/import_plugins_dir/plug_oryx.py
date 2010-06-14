@@ -21,10 +21,10 @@
 Import module for Oryx TLP setup data
 """
 
-from thunder.import_plugins import ImportPlugin
+from thunderstorm.thunder.import_plugins import ImportPlugin
 from util_oryx import ReadOryx
-from thunder.tlp import RawTLPdata
-from thunder.pulses import IVTime
+from thunderstorm.thunder.tlp import RawTLPdata
+from thunderstorm.thunder.pulses import IVTime
 import os
 
 

@@ -16,8 +16,8 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
-from thunder.import_plugins import plug_dict
-from istormlib.istorm_view import View
+from thunderstorm.thunder.import_plugins import plug_dict
+from thunderstorm.istormlib.istorm_view import View
 
 
 class Load(object):

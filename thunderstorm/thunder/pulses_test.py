@@ -22,7 +22,7 @@ Testing pulses_dev.py
 """
 
 from __future__ import division
-from pulses_dev import *
+from thunderstorm.thunder.pulses import *
 import numpy as np
 
 

@@ -25,7 +25,7 @@ import numpy as np
 from numpy import ma
 
 from utils import autoscale_visible_lines
-import thunder.leak_evol_calculation as leak_evol_calculation
+import thunderstorm.thunder.leak_evol_calculation as leak_evol_calculation
 
 class LeakFigure(object):
     """A standard leakage figure

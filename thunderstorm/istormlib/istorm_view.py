@@ -21,9 +21,9 @@
 """
 
 from matplotlib.pyplot import figure
-from lightning.leakage_std import LeakFigure
-from lightning.simple_tlp import TLPFigure
-from lightning.tlp_with_leakage import TLPFigureWithLeakage
+from thunderstorm.lightning.leakage_std import LeakFigure
+from thunderstorm.lightning.simple_tlp import TLPFigure
+from thunderstorm.lightning.tlp_with_leakage import TLPFigureWithLeakage
 import matplotlib
 matplotlib.interactive(True)
 import warnings

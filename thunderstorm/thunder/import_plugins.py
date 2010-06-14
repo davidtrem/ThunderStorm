@@ -27,7 +27,7 @@ Only plugin files starting with "plug" followed by underscore and ending with
 import_plugs variable contains all the import plugins
 
 """
-from tlp import Experiment
+from thunderstorm.thunder.tlp import Experiment
 
 class ImportPlugin(object):
     """Generic import plugin class"""
