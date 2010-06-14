@@ -39,29 +39,37 @@ class ReadHanwa(object):
 
     def _read_data_from_files(self):
         base_name = self.base_file_name
+        
         data = self.data
-        tsr_data = extract_data_from_tsr(base_name + '.tsr')
-        data['valim_leak'] = tsr_data[0]
-        data['tlp'] = tsr_data[1:3]
-        data['leak_evol'] = tsr_data[3]
+        tcf_data = extract_data_from_tcf(base_name + '.tcf')
+        # Extract user name + 
+        
+        sdb_data = extract_data_from_sdb(base_name + '.sdb')
+        # File creasted base on user name
+#        data['valim_leak'] = tsr_data[0]
+#        data['tlp'] = tsr_data[1:3]
+#        data['leak_evol'] = tsr_data[3]
+        
         data['leak_data'] = read_leak_curves(base_name + '.ctr')
-        Hanwa_zip = HanwaTransientZip(base_name + '.zip')
-        (base_name, volt_list) = Hanwa_zip.filecontents
-        tlp_v = []
-        for pulse_voltage in volt_list:
-            filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
-            tlp_v.append(Hanwa_zip.data_from_transient_file(filename)[1])
-        tlp_v = np.asarray(tlp_v)
-        tlp_i = []
-        for pulse_voltage in volt_list:
-            filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
-            tlp_i.append(Hanwa_zip.data_from_transient_file(filename)[1])
-        tlp_i = np.asarray(tlp_i)
-        time_array = Hanwa_zip.data_from_transient_file(filename)[0]
-        delta_t = time_array[1]-time_array[0]
-        data['tlp_pulses'] = np.array((tlp_v, tlp_i))
-        data['valim_tlp'] = volt_list
-        data['delta_t'] = delta_t * 1e-6
+        
+        # Read in pulses
+#        Hanwa_zip = HanwaTransientZip(base_name + '.zip')
+#        (base_name, volt_list) = Hanwa_zip.filecontents
+#        tlp_v = []
+#        for pulse_voltage in volt_list:
+#            filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
+#            tlp_v.append(Hanwa_zip.data_from_transient_file(filename)[1])
+#        tlp_v = np.asarray(tlp_v)
+#        tlp_i = []
+#        for pulse_voltage in volt_list:
+#            filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
+#            tlp_i.append(Hanwa_zip.data_from_transient_file(filename)[1])
+#        tlp_i = np.asarray(tlp_i)
+#        time_array = Hanwa_zip.data_from_transient_file(filename)[0]
+#        delta_t = time_array[1]-time_array[0]
+#        data['tlp_pulses'] = np.array((tlp_v, tlp_i))
+#        data['valim_tlp'] = volt_list
+#        data['delta_t'] = delta_t * 1e-6
         return None
 
     @property
@@ -75,9 +83,9 @@ class ReadHanwa(object):
         return num_data
 
 
-def extract_data_from_tsr(tsr_file_name):
-    """Extract data from *.tsr file
-    *.tsr files contain tlp curve and leakage evolution
+def extract_data_from_sdb(sdb_file_name):
+    """Extract data from *.sdb file
+    *.sdb files contain tlp curve and leakage evolution
     Return an array with
     Vsupply, tlp voltage, tlp current, leakage
     """
@@ -93,7 +101,10 @@ def extract_data_from_tsr(tsr_file_name):
     data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 3, 4, 5))
     return data.T
 
-
+def extract_data_from_tcf(tcf_file_name):
+    data=[]
+    return data.T
+    
 def read_leak_curves(filename):
     """Read a *.ctr file and
     Return the leakage IV curves
@@ -181,4 +192,7 @@ class HanwaTransientZip(object):
         return (basename, volt_list)
 
 if __name__ == '__main__':
-    "" testing the module before posting """
+    """ testing the module before posting """
+    
+    filename="D:\linten\Python\TestData\IMEC\TLP\GDIODE_nw_L70\GDIODE_nw_L70.tcf"
+    data=ReadHanwa(filename)
