@@ -16,7 +16,7 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
-from thunderstorm.thunder.import_plugins import plug_dict
+from thunderstorm.thunder.importers.tools import plug_dict
 from thunderstorm.istormlib.istorm_view import View
 
 

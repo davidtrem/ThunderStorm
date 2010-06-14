@@ -18,20 +18,20 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Import module for HPPI TLP setup data
+Import module for Oryx TLP setup data
 """
 
-from thunderstorm.thunder.import_plugins import ImportPlugin
-from util_hppi import ReadHPPI
+from thunderstorm.thunder.importers.tools import ImportPlugin
+from thunderstorm.thunder.importers.util_oryx import ReadOryx
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import os
 
 
-class ImportHPPI(ImportPlugin):
-    """Import data from HPPI TLP setup
+class ImportOryx(ImportPlugin):
+    """Import data from Oryx TLP setup
     """
-    label = "HPPI"
+    label = "Oryx"
 
     def __init__(self):
         ImportPlugin.__init__(self)
@@ -39,9 +39,9 @@ class ImportHPPI(ImportPlugin):
     def import_data(self, file_name):
         """Import data
         return a RawTLPdata instance"""
-        print "Importing HPPI data..."
+        print "Importing Oryx data..."
         file_path = os.path.realpath(file_name)
-        alldata = ReadHPPI(file_name)
+        alldata = ReadOryx(file_name)
         data = alldata.data_to_num_array
         pulses = IVTime(data['tlp_pulses'].shape[2],
                         data['tlp_pulses'].shape[1],
@@ -51,7 +51,6 @@ class ImportHPPI(ImportPlugin):
         pulses.valim = data['valim_tlp']
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
-        iv_leak = []
         leak_evol = data['leak_evol']
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,

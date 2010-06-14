@@ -18,50 +18,44 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Import module for LAAS TLP setup data
+Import module for HPPI TLP setup data
 """
 
-import os
-from thunderstorm.thunder.import_plugins import ImportPlugin
-from util_laas import ReadLAAS
+from thunderstorm.thunder.importers.tools import ImportPlugin
+from thunderstorm.thunder.importers.util_hppi import ReadHPPI
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
+import os
 
 
-class ImportLAAS(ImportPlugin):
-    """Import data from LAAS TLP setup
+class ImportHPPI(ImportPlugin):
+    """Import data from HPPI TLP setup
     """
-    label = "LAAS"
+    label = "HPPI"
 
     def __init__(self):
         ImportPlugin.__init__(self)
 
     def import_data(self, file_name):
-        """Import LAAS data"""
+        """Import data
+        return a RawTLPdata instance"""
+        print "Importing HPPI data..."
         file_path = os.path.realpath(file_name)
-        datafile = open(file_name, 'r')
-        alldata = ReadLAAS(datafile)
-        datafile.close()
-        print "Importing LAAS data..."
+        alldata = ReadHPPI(file_name)
         data = alldata.data_to_num_array
         pulses = IVTime(data['tlp_pulses'].shape[2],
-                        data['tlp_pulses'].shape[0],
-                        delta_t=1)
-        pulses.voltage = data['tlp_pulses'][:, 1, :]
-        pulses.current = data['tlp_pulses'][:, 2, :]
+                        data['tlp_pulses'].shape[1],
+                        delta_t=data['delta_t'])
+        pulses.voltage = data['tlp_pulses'][0]
+        pulses.current = data['tlp_pulses'][1]
         pulses.valim = data['valim_tlp']
-        delta_t = (data['tlp_pulses'][0, 0, 1] - data['tlp_pulses'][0, 0, 0])
-        pulses.delta_t = delta_t
-        # peupler l'objet avec les bonnes données
-        # implemter : recupération du delta_t dans l'util_laas
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
-        leak_evol = None # To be implemented
-        raw_data = RawTLPdata(alldata.identification, pulses, iv_leak,
+        iv_leak = []
+        leak_evol = data['leak_evol']
+        raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
                               tester_name = self.label)
         return raw_data
-
-
 
 

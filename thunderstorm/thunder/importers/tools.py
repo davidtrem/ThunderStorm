@@ -57,11 +57,10 @@ class ImportPlugin(object):
 
 def _init():
     """Find an activate available measurement import plugins
-    available in import_plugins_dir
+    available in importers directory
     """
     import os
-    this_dir = os.path.split(__file__)[0]
-    plug_dir = os.path.join(this_dir, 'import_plugins_dir')
+    plug_dir =  os.path.split(__file__)[0]
     py_suffix = os.path.extsep + "py"
 
     for filename in os.listdir(plug_dir):
@@ -69,7 +68,7 @@ def _init():
                filename[0:5]== "plug_":
             module, suffix = os.path.splitext(filename)
             if suffix == py_suffix:
-                exec('import import_plugins_dir.%s'%(module))
+                exec('import %s'%(module))
     plugs = ImportPlugin.__subclasses__()
     plug_dict = {}
     for plug in plugs:
