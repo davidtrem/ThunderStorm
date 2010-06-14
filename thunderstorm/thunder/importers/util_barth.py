@@ -21,7 +21,7 @@
 Utils to read data from Barth TLP setup file
 """
 
-from thunder.utils import string2file
+from thunderstorm.thunder.utils import string2file
 import numpy as np
 
 
@@ -36,11 +36,11 @@ class ReadBarth(object):
     def _read_data_from_files(self):
         base_name = self.base_file_name
         data = self.data
-        twf_data = extract_data_from_twf(base_name + 'twf')
-        data['vsupply_tlp'] = twf_data[3]
+        twf_data = extract_data_from_twf(base_name + '.twf')
+        data['tlp_v_waveforms'] = twf_data[0]
+        data['tlp_v_waveforms'] = twf_data[1]
         data['delta_t'] = twf_data[2]
-        data['tlp_v_waveforms'] = data[0]
-        data['tlp_v_waveforms'] = data[1]
+        data['vsupply_tlp'] = twf_data[3]
 
     @property
     def data_to_num_array(self):
