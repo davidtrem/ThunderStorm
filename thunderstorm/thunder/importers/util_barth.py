@@ -21,7 +21,7 @@
 Utils to read data from Barth TLP setup file
 """
 
-from thunder.utils import string2file
+from thunderstorm.thunder.utils import string2file
 import numpy as np
 
 
