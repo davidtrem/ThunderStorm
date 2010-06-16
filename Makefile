@@ -11,6 +11,7 @@ clean :
 	find ./ -name "*.bak" -exec rm -f {} \;
 	rm -f MANIFEST
 	rm -rf dist
+	rm -rf build
 
 archive : clean
 	cd ../ && tar -cjf $(Name).tar.bz2 $(Name)
