@@ -32,7 +32,7 @@ import os
 class ImportHanwa(ImportPlugin):
     """Import data from Hanwa TLP setup
     """
-    label = "Hanwa"
+    label = "HANWA"
 
     def __init__(self):
         ImportPlugin.__init__(self)
