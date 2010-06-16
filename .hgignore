@@ -3,6 +3,7 @@ syntax: glob
 *~
 .DS_Store
 dist/
+build/
 MANIFEST
 doc/api_doc
 doc/doc-sphinx/_build/*
