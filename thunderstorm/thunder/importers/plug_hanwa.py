@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2010 Trémouilles David
+# Copyright (C) 2010 Dimitri Linten
 
-# Edited by Dimitri Linten To read in Hanwa TLP data
+# Edited by  To read in Hanwa TLP data
 
-#This file is part of Thunderstorm.
 #
 #ThunderStrom is free software: you can redistribute it and/or modify
 #it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +32,7 @@ import os
 class ImportHanwa(ImportPlugin):
     """Import data from Hanwa TLP setup
     """
-    label = "Hanwa"
+    label = "HANWA"
 
     def __init__(self):
         ImportPlugin.__init__(self)

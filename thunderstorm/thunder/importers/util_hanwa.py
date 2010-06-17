@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from h5py.tests.test_h5d import SHAPE
+
 
 # Copyright (C) 2010 Linten Dimitri
 
@@ -23,6 +25,8 @@ Utils to read data from Hanwa TLP setup file
 
 import numpy as np
 from cStringIO import StringIO
+import os.path as osp
+from os import walk
 import re
 import warnings
 
@@ -39,29 +43,40 @@ class ReadHanwa(object):
 
     def _read_data_from_files(self):
         base_name = self.base_file_name
+        [head, tail] = osp.split(base_name)
         data = self.data
-        tsr_data = extract_data_from_tsr(base_name + '.tsr')
-        data['valim_leak'] = tsr_data[0]
-        data['tlp'] = tsr_data[1:3]
-        data['leak_evol'] = tsr_data[3]
-        data['leak_data'] = read_leak_curves(base_name + '.ctr')
-        Hanwa_zip = HanwaTransientZip(base_name + '.zip')
-        (base_name, volt_list) = Hanwa_zip.filecontents
-        tlp_v = []
-        for pulse_voltage in volt_list:
-            filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
-            tlp_v.append(Hanwa_zip.data_from_transient_file(filename)[1])
-        tlp_v = np.asarray(tlp_v)
-        tlp_i = []
-        for pulse_voltage in volt_list:
-            filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
-            tlp_i.append(Hanwa_zip.data_from_transient_file(filename)[1])
-        tlp_i = np.asarray(tlp_i)
-        time_array = Hanwa_zip.data_from_transient_file(filename)[0]
-        delta_t = time_array[1]-time_array[0]
-        data['tlp_pulses'] = np.array((tlp_v, tlp_i))
-        data['valim_tlp'] = volt_list
-        data['delta_t'] = delta_t * 1e-6
+        tcf_data = extract_data_from_tcf(base_name + '.tcf')
+        user_name=tcf_data[0]
+        
+        result_base_name=head + osp.sep + 'Result' + osp.sep + tail + '_' + user_name +'_' + tail
+        sdb_data = extract_data_from_sbd(result_base_name + '.sbd')
+
+        data['valim_leak'] = tcf_data[1]*np.ones(len(sdb_data[0]))
+        data['tlp'] = sdb_data[0:3]
+        data['leak_evol'] = sdb_data[3]
+        
+        leak_base_dir_name= head + osp.sep + 'Leak'
+        print leak_base_dir_name
+        data['leak_data'] = read_leak_curves(leak_base_dir_name)
+        print data['leak_data'][0]
+        # Read in pulses
+#        Hanwa_zip = HanwaTransientZip(base_name + '.zip')
+#        (base_name, volt_list) = Hanwa_zip.filecontents
+#        tlp_v = []
+#        for pulse_voltage in volt_list:
+#            filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
+#            tlp_v.append(Hanwa_zip.data_from_transient_file(filename)[1])
+#        tlp_v = np.asarray(tlp_v)
+#        tlp_i = []
+#        for pulse_voltage in volt_list:
+#            filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
+#            tlp_i.append(Hanwa_zip.data_from_transient_file(filename)[1])
+#        tlp_i = np.asarray(tlp_i)
+#        time_array = Hanwa_zip.data_from_transient_file(filename)[0]
+#        delta_t = time_array[1]-time_array[0]
+#        data['tlp_pulses'] = np.array((tlp_v, tlp_i))
+#        data['valim_tlp'] = volt_list
+#        data['delta_t'] = delta_t * 1e-6
         return None
 
     @property
@@ -75,46 +90,69 @@ class ReadHanwa(object):
         return num_data
 
 
-def extract_data_from_tsr(tsr_file_name):
-    """Extract data from *.tsr file
-    *.tsr files contain tlp curve and leakage evolution
+def extract_data_from_sbd(sbd_file_name):
+    """Extract data from *.sbd file
+    *.sbd files contain tlp curve and leakage evolution
     Return an array with
     Vsupply, tlp voltage, tlp current, leakage
     """
-    with open(tsr_file_name, 'U') as tsr_file:
-        tsr_file_str = tsr_file.read()
-    re_str = r'^"\[=====Test\ Result\ Table.*\]"\n(.*)\n"\[EOF\]"'
+    with open(sbd_file_name, 'U') as sbd_file:
+        sbd_file_str = sbd_file.read()
+    re_str = r'^Point,.*\current\n(.*)'
     test_result_re = re.compile(re_str, re.S | re.M)
-    data_str = test_result_re.findall(tsr_file_str)
-
+    data_str = test_result_re.findall(sbd_file_str)
+#    print data_str#, sbd_file_str 
+#
     data_str_file = StringIO()
     data_str_file.write(data_str[0])
     data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 3, 4, 5))
+    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 2, 3, 4))
+#    print data
     return data.T
 
+def extract_data_from_tcf(tcf_file_name):
+    # from the .tcf file, username, leak voltage evuation point needs to beextracted.
+    
+    with open(tcf_file_name, 'r') as tcf_file:
+            tcf_file_str=tcf_file.read()
+    data=[]
+    re_str = re.compile('UserName=(.*?)\x0A')
+    user_name = re_str.findall(tcf_file_str)[0]
+    data.append(user_name)
+    re_str = re.compile('LeakSelectPoint=(.*?)\x0A')
+    LeakSelectPoint = re_str.findall(tcf_file_str)[0]
+    re_str = re.compile( 'Voltage' + LeakSelectPoint + '=(.*?)\x0A')
+    LeakSelectVoltage = re_str.findall(tcf_file_str)[0]
+    # if leakvoltage is e.g. 800m replace by 0.8
+    if 'm' in LeakSelectVoltage:
+        LeakSelectVoltage=float(LeakSelectVoltage.replace('m',''))*1e-3  
+    data.append(LeakSelectVoltage)
+    return data
 
-def read_leak_curves(filename):
-    """Read a *.ctr file and
+def get_number_of_files_In_dir(dir):
+   dir_count, file_count=0, 0
+   for root, dirs, files in walk(dir):
+        dir_count += len(dirs)
+        file_count += len(files)        
+   return file_count
+
+   
+def read_leak_curves(leak_path):
+    """Read *.tld files and
     Return the leakage IV curves
     """
-    with open(filename, 'U') as data_file:
-        whole_data = data_file.read()
-
-    block_re_str = r"^(\[DATA\])(.*?)(?=\[DATA\]|\Z)"
-    block_re = re.compile(block_re_str, re.S | re.M)
-    blocks = block_re.findall(whole_data)
-
-    data_txt = ['\n'.join(block[1].split('\n')[3:-1]) for block in blocks]
-    curves = []
-    for data in data_txt:
-        string_file = StringIO()
-        string_file.write(data)
-        string_file.reset()
-        try:
-            curves.append(np.loadtxt(string_file, delimiter=',').T[1:])
-        except IOError:
-            pass
+    curves=[]
+    if osp.isdir(leak_path):
+        n_files=get_number_of_files_In_dir(leak_path)
+        print n_files
+        for index in np.arange(n_files):
+            with open(osp.join(leak_path, 'Leak_'+str(index)+'.tld'), 'r') as file:
+                    file_str=file.read()
+                    data_str_file = StringIO()
+                    data_str_file.write(file_str)
+                    data_str_file.reset()
+                    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 1))
+            curves.append(data.T)
     return curves
 
 
@@ -181,4 +219,7 @@ class HanwaTransientZip(object):
         return (basename, volt_list)
 
 if __name__ == '__main__':
-    "" testing the module before posting """
+    """ testing the module before posting """
+    
+    filename="D:\linten\Python\TestData\IMEC\TLP\GDIODE_nw_L70\GDIODE_nw_L70.tcf"
+    data=ReadHanwa(filename)
