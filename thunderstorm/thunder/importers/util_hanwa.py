@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from h5py.tests.test_h5d import SHAPE
-
 
 # Copyright (C) 2010 Linten Dimitri
 
@@ -47,14 +45,14 @@ class ReadHanwa(object):
         data = self.data
         tcf_data = extract_data_from_tcf(base_name + '.tcf')
         user_name=tcf_data[0]
-        
+
         result_base_name=head + osp.sep + 'Result' + osp.sep + tail + '_' + user_name +'_' + tail
         sdb_data = extract_data_from_sbd(result_base_name + '.sbd')
 
         data['valim_leak'] = tcf_data[1]*np.ones(len(sdb_data[0]))
         data['tlp'] = sdb_data[0:3]
         data['leak_evol'] = sdb_data[3]
-        
+
         leak_base_dir_name= head + osp.sep + 'Leak'
         print leak_base_dir_name
         data['leak_data'] = read_leak_curves(leak_base_dir_name)
@@ -101,7 +99,7 @@ def extract_data_from_sbd(sbd_file_name):
     re_str = r'^Point,.*\current\n(.*)'
     test_result_re = re.compile(re_str, re.S | re.M)
     data_str = test_result_re.findall(sbd_file_str)
-#    print data_str#, sbd_file_str 
+#    print data_str#, sbd_file_str
 #
     data_str_file = StringIO()
     data_str_file.write(data_str[0])
@@ -112,7 +110,7 @@ def extract_data_from_sbd(sbd_file_name):
 
 def extract_data_from_tcf(tcf_file_name):
     # from the .tcf file, username, leak voltage evuation point needs to beextracted.
-    
+
     with open(tcf_file_name, 'r') as tcf_file:
             tcf_file_str=tcf_file.read()
     data=[]
@@ -125,7 +123,7 @@ def extract_data_from_tcf(tcf_file_name):
     LeakSelectVoltage = re_str.findall(tcf_file_str)[0]
     # if leakvoltage is e.g. 800m replace by 0.8
     if 'm' in LeakSelectVoltage:
-        LeakSelectVoltage=float(LeakSelectVoltage.replace('m',''))*1e-3  
+        LeakSelectVoltage=float(LeakSelectVoltage.replace('m',''))*1e-3
     data.append(LeakSelectVoltage)
     return data
 
@@ -133,10 +131,10 @@ def get_number_of_files_In_dir(dir):
    dir_count, file_count=0, 0
    for root, dirs, files in walk(dir):
         dir_count += len(dirs)
-        file_count += len(files)        
+        file_count += len(files)
    return file_count
 
-   
+
 def read_leak_curves(leak_path):
     """Read *.tld files and
     Return the leakage IV curves
@@ -220,6 +218,6 @@ class HanwaTransientZip(object):
 
 if __name__ == '__main__':
     """ testing the module before posting """
-    
+
     filename="D:\linten\Python\TestData\IMEC\TLP\GDIODE_nw_L70\GDIODE_nw_L70.tcf"
     data=ReadHanwa(filename)

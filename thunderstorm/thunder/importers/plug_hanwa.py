@@ -22,10 +22,10 @@
 Import module for Hanwa TLP setup data
 """
 
-from thunder.import_plugins import ImportPlugin
-from util_hanwa import ReadHanwa
-from thunder.tlp import RawTLPdata
-from thunder.pulses import IVTime
+from thunderstorm.thunder.importers.tools import ImportPlugin
+from thunderstorm.thunder.importers.util_hanwa import ReadHanwa
+from thunderstorm.thunder.tlp import RawTLPdata
+from thunderstorm.thunder.pulses import IVTime
 import os
 
 
