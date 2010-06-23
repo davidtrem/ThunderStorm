@@ -24,11 +24,9 @@ Utils to read data from Hanwa TLP setup file
 import numpy as np
 from cStringIO import StringIO
 import os.path as osp
-from os import walk
+from os import walk, listdir
 import re
 import warnings
-
-DEBUG = False
 
 class ReadHanwa(object):
     """
@@ -37,50 +35,61 @@ class ReadHanwa(object):
     def __init__(self, file_name):
         self.base_file_name = file_name[:-4]
         self.data = {}
-        self._read_data_from_files()
+        self.read_data_from_files()
 
-    def _read_data_from_files(self):
-        base_name = self.base_file_name
-        [head, tail] = osp.split(base_name)
-        data = self.data
-        tcf_data = extract_data_from_tcf(base_name + '.tcf')
-        user_name=tcf_data[0]
-
-        result_base_name=head + osp.sep + 'Result' + osp.sep + tail + '_' + user_name +'_' + tail
+    def read_data_from_files(self):
+        """ Read the data form the .tcf, .sbd, and csv files
+        """
+        [head, tail] = osp.split(self.base_file_name)
+        tcf_data = extract_data_from_tcf(self.base_file_name + '.tcf')
+        user_name = tcf_data[0]
+        result_base_name = \
+            osp.join(head,'Result', tail + '_' + user_name +'_' + tail)
         sdb_data = extract_data_from_sbd(result_base_name + '.sbd')
 
-        data['valim_leak'] = tcf_data[1]*np.ones(len(sdb_data[0]))
-        data['tlp'] = sdb_data[0:3]
-        data['leak_evol'] = sdb_data[3]
+        self.data['valim_leak'] = tcf_data[1]*np.ones(len(sdb_data[0]))
+        self.data['tlp'] = sdb_data[2:4]
+        self.data['leak_evol'] = sdb_data[4]
+        self.data['valim_tlp'] = sdb_data[0]
 
-        leak_base_dir_name= head + osp.sep + 'Leak'
-        print leak_base_dir_name
-        data['leak_data'] = read_leak_curves(leak_base_dir_name)
-        print data['leak_data'][0]
-        # Read in pulses
-#        Hanwa_zip = HanwaTransientZip(base_name + '.zip')
-#        (base_name, volt_list) = Hanwa_zip.filecontents
-#        tlp_v = []
-#        for pulse_voltage in volt_list:
-#            filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
-#            tlp_v.append(Hanwa_zip.data_from_transient_file(filename)[1])
-#        tlp_v = np.asarray(tlp_v)
-#        tlp_i = []
-#        for pulse_voltage in volt_list:
-#            filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
-#            tlp_i.append(Hanwa_zip.data_from_transient_file(filename)[1])
-#        tlp_i = np.asarray(tlp_i)
-#        time_array = Hanwa_zip.data_from_transient_file(filename)[0]
-#        delta_t = time_array[1]-time_array[0]
-#        data['tlp_pulses'] = np.array((tlp_v, tlp_i))
-#        data['valim_tlp'] = volt_list
-#        data['delta_t'] = delta_t * 1e-6
+        leak_base_dir_name = head + osp.sep + 'Leak'
+        self.data['leak_data'] = read_leak_curves(leak_base_dir_name)
+        
+        len_file_list = filecontents(head)
+        pulse_id_array = np.arange(len_file_list) + 1
+        
+        def read_pulse_file(pulse_type, pulse_id, idx):
+            """ Reads in the data , either the V -waveform or the I-waveform 
+                from the csv file
+                pulse_type : 'V' or 'I'
+                pulse_id : pulse identity number e.g. pulse 20
+                index: which coloun of the csv you wantto return
+                    0 : time line
+                    1 : the v or I data ( corresponding to the selected type
+            """
+            pulse_id_filename = pulse_type+'_'+ str(pulse_id) + '.csv'
+            pulse_w_filename = osp.join(head, 'Osillo'+pulse_type, \
+                pulse_id_filename)
+            return data_from_transient_file(pulse_w_filename)[idx] 
+        
+        tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)), \
+            pulse_id_array))     
+        tlp_i = np.asarray( map(lambda x: (read_pulse_file('I', x, 1)), \
+            pulse_id_array) )
+        time_array = read_pulse_file('I', 1, 0)
+        delta_t = time_array[1] - time_array[0]
+        
+        self.data['tlp_pulses'] = np.array((tlp_v, tlp_i))   
+        self.data['delta_t'] = delta_t * 1e-6
+        
         return None
 
     @property
     def data_to_num_array(self):
+        """ converts the data into a numpy array
+        """
         num_data = {}
-        for data_name in ('tlp','valim_tlp', 'tlp_pulses',
+        for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['leak_data'] = self.data['leak_data']
@@ -99,125 +108,75 @@ def extract_data_from_sbd(sbd_file_name):
     re_str = r'^Point,.*\current\n(.*)'
     test_result_re = re.compile(re_str, re.S | re.M)
     data_str = test_result_re.findall(sbd_file_str)
-#    print data_str#, sbd_file_str
-#
+
     data_str_file = StringIO()
     data_str_file.write(data_str[0])
     data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 2, 3, 4))
-#    print data
+    data = np.loadtxt(data_str_file, delimiter = ',', usecols = (0, 1, 2, 3, 4))
     return data.T
 
 def extract_data_from_tcf(tcf_file_name):
-    # from the .tcf file, username, leak voltage evuation point needs to beextracted.
-
+    """ from the .tcf file, username, leak voltage evuation 
+        point needs to beextracted.
+    """
     with open(tcf_file_name, 'r') as tcf_file:
-            tcf_file_str=tcf_file.read()
-    data=[]
+        tcf_file_str = tcf_file.read()
+    data = []
     re_str = re.compile('UserName=(.*?)\x0A')
     user_name = re_str.findall(tcf_file_str)[0]
     data.append(user_name)
     re_str = re.compile('LeakSelectPoint=(.*?)\x0A')
-    LeakSelectPoint = re_str.findall(tcf_file_str)[0]
-    re_str = re.compile( 'Voltage' + LeakSelectPoint + '=(.*?)\x0A')
-    LeakSelectVoltage = re_str.findall(tcf_file_str)[0]
+    leak_select_point = re_str.findall(tcf_file_str)[0]
+    re_str = re.compile( 'Voltage' + leak_select_point + '=(.*?)\x0A')
+    leak_select_voltage = re_str.findall(tcf_file_str)[0]
     # if leakvoltage is e.g. 800m replace by 0.8
-    if 'm' in LeakSelectVoltage:
-        LeakSelectVoltage=float(LeakSelectVoltage.replace('m',''))*1e-3
-    data.append(LeakSelectVoltage)
+    if 'm' in leak_select_voltage:
+        leak_select_voltage = float(leak_select_voltage.replace('m', ''))*1e-3
+    data.append(leak_select_voltage)
     return data
 
-def get_number_of_files_In_dir(dir):
-   dir_count, file_count=0, 0
-   for root, dirs, files in walk(dir):
-        dir_count += len(dirs)
+def get_number_of_files_in_dir(pathname):
+    """ returns the number of files in a directory """
+    file_count = 0
+    for files in walk(pathname):
         file_count += len(files)
-   return file_count
-
+    return file_count
 
 def read_leak_curves(leak_path):
     """Read *.tld files and
     Return the leakage IV curves
     """
-    curves=[]
+    curves = []
     if osp.isdir(leak_path):
-        n_files=get_number_of_files_In_dir(leak_path)
-        print n_files
+        n_files = get_number_of_files_in_dir(leak_path)
         for index in np.arange(n_files):
-            with open(osp.join(leak_path, 'Leak_'+str(index)+'.tld'), 'r') as file:
-                    file_str=file.read()
-                    data_str_file = StringIO()
-                    data_str_file.write(file_str)
-                    data_str_file.reset()
-                    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 1))
+            leak_index_filename = 'Leak_'+ str(index)+'.tld'
+            leak_file_path = osp.join(leak_path, leak_index_filename)
+            with open(leak_file_path, 'r') as leak_file:
+                file_str = leak_file.read()
+                data_str_file = StringIO()
+                data_str_file.write(file_str)
+                data_str_file.reset()
+                data = np.loadtxt(data_str_file, delimiter = ',', \
+                    usecols = (0, 1))
             curves.append(data.T)
     return curves
 
+def data_from_transient_file(filename):
+    """ Extracts the data form transient csv files """
+    data = np.loadtxt(filename, delimiter = ',', skiprows = 1)
+    return data.T
+        
 
-class HanwaTransientZip(object):
-    """Utils to extract data from Hanwa zip files
+def filecontents(path):
+    """ returns the number of common indexes in the transient
+        V and I csv files 
     """
-    def __init__(self, zfilename):
-        self.zfilename = zfilename
-
-    def data_from_transient_file(self, filename):
-        zfile = ZipFile(self.zfilename)
-        full_file = zfile.read(filename)
-        zfile.close()
-        data_string = '\n'.join(full_file.split('\r\n')[13:-2])
-        data_string_file = StringIO()
-        data_string_file.write(data_string)
-        data_string_file.reset()
-        return np.loadtxt(data_string_file, delimiter=',').T
-
-    @property
-    def list_transient_file(self):
-        zfile = ZipFile(self.zfilename)
-        file_list = zfile.namelist()
-        zfile.close()
-        return file_list
-
-    @property
-    def supply_voltage_list(self):
-        """The TLP supply voltages list
-
-        Return the TLP supply voltage list
-        from the filenames in the zip file.
-
-        Returns
-        -------
-        Return a list of voltages (list of string)
-
-        Raises
-        ------
-        Throw a warning if voltage and current waveform voltages do
-        not match.
-        """
-        zfile = ZipFile(self.zfilename)
-        # filename format
-        # for TLP voltage: 04-29-09_05'40'45_PM_TlpVolt_90V.wfm
-        # for TLP current: 04-29-09_05'40'45_PM_TlpCurr_90V.wfm
-        voltages_dict = {'TlpCurr' : [], 'TlpVolt' : []}
-        for filename in zfile.namelist():
-            elems = filename[:-5].split('_')
-            voltages_dict[elems[3]].append(elems[4])
-        voltages_dict['TlpCurr'].sort(key=float)
-        voltages_dict['TlpVolt'].sort(key=float)
-        if voltages_dict['TlpCurr'] != voltages_dict['TlpVolt']:
-            warnings.warn("Current and Voltage waveform mismatch",
-                          RuntimeWarning)
-        return voltages_dict['TlpCurr']
-
-    @property
-    def filecontents(self):
-        zfile = ZipFile(self.zfilename)
-        volt_list = self.supply_voltage_list
-        basename = '_'.join(zfile.namelist()[0].split('_')[0:3])
-        zfile.close()
-        return (basename, volt_list)
-
-if __name__ == '__main__':
-    """ testing the module before posting """
-
-    filename="D:\linten\Python\TestData\IMEC\TLP\GDIODE_nw_L70\GDIODE_nw_L70.tcf"
-    data=ReadHanwa(filename)
+    v_path = osp.join(path, 'OsilloV')
+    v_file_list = listdir(v_path)
+    i_path = osp.join(path, 'OsilloI')
+    i_file_list = listdir(i_path)
+    if len(v_file_list) != len(i_file_list):
+        warnings.warn("Current and Voltage waveform mismatch",
+                      RuntimeWarning)
+    return len(i_file_list)
