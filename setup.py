@@ -4,9 +4,9 @@
 from distutils.core import setup
 
 setup(name = 'ThunderStorm',
-      version = '0.4',
-      author = 'David Trémouilles',
-      author_email = 'david.trem at gmail.com',
+      version = '0.4.1',
+      author = 'David Trémouilles Dimitri Linten ',
+      author_email = 'david.trem at gmail.com Dimitri Linten at gmail.com',
       url = 'http://code.google.com/p/esdanalysistools/',
       license = 'LGPL',
       platforms = ['any'],
