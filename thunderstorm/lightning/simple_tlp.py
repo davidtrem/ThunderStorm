@@ -34,5 +34,5 @@ class TLPFigure(object):
         tlp_plot.set_title(title + "TLP curve")
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
         self.plot = tlp_plot
-        self.draw = tlp_plot.get_figure().canvas.draw
+        self.draw = figure.canvas.draw
 
