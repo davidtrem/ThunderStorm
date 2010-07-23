@@ -22,7 +22,7 @@
 
 from matplotlib.pyplot import figure
 from thunderstorm.lightning.leakage_std import LeakFigure
-from thunderstorm.lightning.simple_tlp import TLPFigure
+from thunderstorm.lightning.simple_plots import TLPFigure
 from thunderstorm.lightning.tlp_with_leakage import TLPFigureWithLeakage
 import matplotlib
 matplotlib.interactive(True)
