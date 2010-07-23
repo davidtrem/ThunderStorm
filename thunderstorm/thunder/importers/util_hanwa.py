@@ -54,12 +54,12 @@ class ReadHanwa(object):
 
         leak_base_dir_name = head + osp.sep + 'Leak'
         self.data['leak_data'] = read_leak_curves(leak_base_dir_name)
-        
+
         len_file_list = filecontents(head)
         pulse_id_array = np.arange(len_file_list) + 1
-        
+
         def read_pulse_file(pulse_type, pulse_id, idx):
-            """ Reads in the data , either the V -waveform or the I-waveform 
+            """ Reads in the data , either the V -waveform or the I-waveform
                 from the csv file
                 pulse_type : 'V' or 'I'
                 pulse_id : pulse identity number e.g. pulse 20
@@ -70,18 +70,18 @@ class ReadHanwa(object):
             pulse_id_filename = pulse_type+'_'+ str(pulse_id) + '.csv'
             pulse_w_filename = osp.join(head, 'Osillo'+pulse_type, \
                 pulse_id_filename)
-            return data_from_transient_file(pulse_w_filename)[idx] 
-        
+            return data_from_transient_file(pulse_w_filename)[idx]
+
         tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)), \
-            pulse_id_array))     
+            pulse_id_array))
         tlp_i = np.asarray( map(lambda x: (read_pulse_file('I', x, 1)), \
             pulse_id_array) )
         time_array = read_pulse_file('I', 1, 0)
         delta_t = time_array[1] - time_array[0]
-        
-        self.data['tlp_pulses'] = np.array((tlp_v, tlp_i))   
+
+        self.data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         self.data['delta_t'] = delta_t * 1e-6
-        
+
         return None
 
     @property
@@ -116,18 +116,18 @@ def extract_data_from_sbd(sbd_file_name):
     return data.T
 
 def extract_data_from_tcf(tcf_file_name):
-    """ from the .tcf file, username, leak voltage evuation 
+    """ from the .tcf file, username, leak voltage evuation
         point needs to beextracted.
     """
-    with open(tcf_file_name, 'r') as tcf_file:
+    with open(tcf_file_name, 'U') as tcf_file:
         tcf_file_str = tcf_file.read()
     data = []
-    re_str = re.compile('UserName=(.*?)\x0A')
+    re_str = re.compile('UserName=(.*?)\n')
     user_name = re_str.findall(tcf_file_str)[0]
     data.append(user_name)
-    re_str = re.compile('LeakSelectPoint=(.*?)\x0A')
+    re_str = re.compile('LeakSelectPoint=(.*?)\n')
     leak_select_point = re_str.findall(tcf_file_str)[0]
-    re_str = re.compile( 'Voltage' + leak_select_point + '=(.*?)\x0A')
+    re_str = re.compile( 'Voltage' + leak_select_point + '=(.*?)\n')
     leak_select_voltage = re_str.findall(tcf_file_str)[0]
     # if leakvoltage is e.g. 800m replace by 0.8
     if 'm' in leak_select_voltage:
@@ -166,11 +166,11 @@ def data_from_transient_file(filename):
     """ Extracts the data form transient csv files """
     data = np.loadtxt(filename, delimiter = ',', skiprows = 1)
     return data.T
-        
+
 
 def filecontents(path):
     """ returns the number of common indexes in the transient
-        V and I csv files 
+        V and I csv files
     """
     v_path = osp.join(path, 'OsilloV')
     v_file_list = listdir(v_path)

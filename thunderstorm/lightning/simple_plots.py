@@ -36,15 +36,23 @@ class TLPFigure(object):
         self.plot = tlp_plot
         self.draw = figure.canvas.draw
 
-class PulsesFigCanvas(object):
+class PulsesFigure(object):
     def __init__(self, figure, pulses, title=""):
-        pulse_plot = figure.add_subplot(111)
-        pulse_plot.grid(True)
-        pulse_plot.set_xlabel("index")
-        pulse_plot.set_ylabel("Voltage")
-        #also need to add currents
-        pulse_plot.set_title(title)
-        pulse_plot.plot(pulses.voltage)
-        self.plot = pulse_plot
+        # V curves
+        v_pulse_plot = figure.add_subplot(211)
+        v_pulse_plot.grid(True)
+        v_pulse_plot.set_ylabel("Voltage")
+        v_pulse_plot.set_title(title)
+        v_pulse_plot.plot(pulses.voltage.T)
+        # I curves
+        i_pulse_plot = figure.add_subplot(212)
+        i_pulse_plot.grid(True)
+        i_pulse_plot.set_xlabel("index")
+        i_pulse_plot.set_ylabel("Current")
+        i_pulse_plot.set_title(title)
+        i_pulse_plot.plot(pulses.current.T)
+
+        self.v_plot = v_pulse_plot
+        self.i_plot = i_pulse_plot
         self.draw = figure.canvas.draw
 
