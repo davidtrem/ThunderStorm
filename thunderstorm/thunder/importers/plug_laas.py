@@ -39,7 +39,7 @@ class ImportLAAS(ImportPlugin):
     def import_data(self, file_name):
         """Import LAAS data"""
         file_path = os.path.realpath(file_name)
-        datafile = open(file_name, 'r')
+        datafile = open(file_name, 'U')
         alldata = ReadLAAS(datafile)
         datafile.close()
         print "Importing LAAS data..."

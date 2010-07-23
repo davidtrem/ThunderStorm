@@ -43,14 +43,14 @@ class ReadLAAS(object):
         """
         datafile = self.datafile
         dat_line = datafile.readline()
-        if dat_line[:-2] == "":
+        if dat_line[:-1] == "":
             return [[0.0, 0.0]]
         data = []
         while dat_line:
             dat = dat_line.split()[0:nb_col+1]
             dat = [float(x) for x in dat]
             data.append(dat)
-            dat_line = datafile.readline()[:-2]
+            dat_line = datafile.readline()[:-1]
         return data
 
     def read_data_from_file(self):
@@ -69,7 +69,7 @@ class ReadLAAS(object):
         if line[0:16] != "Identification :":
             print "Wrong file format"
             return
-        identification = line[17:-2]
+        identification = line[17:-1]
         if DEBUG:
             print "Identification:" + identification
         datafile.readline()
@@ -98,7 +98,7 @@ class ReadLAAS(object):
             print "Reading static measurements"
         while 1:
             line = datafile.readline()
-            if line[:-2] == "Premiere mesure statique":
+            if line[:-1] == "Premiere mesure statique":
                 break
         datafile.readline()
         data['valim_leak'].append(0)
