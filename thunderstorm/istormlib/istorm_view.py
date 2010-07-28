@@ -26,7 +26,6 @@ from thunderstorm.lightning.simple_plots import TLPFigure
 from thunderstorm.lightning.tlp_with_leakage import TLPFigureWithLeakage
 import matplotlib
 matplotlib.interactive(True)
-import warnings
 
 
 class View(object):
@@ -47,9 +46,7 @@ class View(object):
             self.raw_tlp_fig = None
         if self.raw_tlp_fig == None:
             fig = figure()
-            if matplotlib.__version__ == '1.0.svn':
-                fig.canvas.mpl_connect('close_event', handle_close)
-                warnings.warn("need to be cleared when mplt 1.0 is out")
+            fig.canvas.mpl_connect('close_event', handle_close)
             self.raw_tlp_fig = TLPFigure(fig,
                                          self.experiment.raw_data.tlp_curve,
                                          self.experiment.exp_name)
@@ -60,9 +57,7 @@ class View(object):
             self.raw_tlp_with_leak_fig = None
         if self.raw_tlp_with_leak_fig == None:
             fig = figure()
-            if matplotlib.__version__ == '1.0.svn':
-                fig.canvas.mpl_connect('close_event', handle_close)
-                warnings.warn("need to be cleared when mplt 1.0 is out")
+            fig.canvas.mpl_connect('close_event', handle_close)
             self.raw_tlp_with_leak_fig = TLPFigureWithLeakage(fig,
                                          self.experiment.raw_data.tlp_curve,
                                          self.experiment.raw_data.leak_evol,
@@ -79,9 +74,7 @@ class View(object):
             self.leak_fig = None
         if self.leak_fig == None:
             fig = figure()
-            if matplotlib.__version__ == '1.0.svn':
-                fig.canvas.mpl_connect('close_event', handle_close)
-                warnings.warn("need to be cleared when mplt 1.0 is out")
+            fig.canvas.mpl_connect('close_event', handle_close)
             self.leak_fig = LeakFigure(fig, "test",
                                        self.experiment.raw_data.iv_leak)
         else: print "Raw TLP figure already on screen"
