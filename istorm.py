@@ -18,13 +18,18 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
-"""istorm is an ipython shell for thunderstorm tools
+"""istorm is a shell for thunderstorm tools
 """
 
-import os, sys
-import IPython
+from thunderstorm.istormlib.thunder_interface import Load
+from thunderstorm.istormlib.istorm_view import View
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.interactive(True)
 
-def main():
+def console(variables):
+    import os, sys
     # hook thunderstorm tree in path
     thunderstorm_dir = os.path.dirname(os.path.realpath(__file__))
     sys.path.insert(0, thunderstorm_dir)
@@ -34,30 +39,36 @@ def main():
     if len(sys.argv) == 2:
         os.chdir(sys.argv[1])
 
-    from thunderstorm.istormlib.thunder_interface import Load
-    from thunderstorm.istormlib.istorm_view import View
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import matplotlib
-    matplotlib.interactive(True)
-
-    init_message = "Welcome in Istorm\n"
-    init_message += "Copyright (C) 2010  David Trémouilles\n"
-    init_message +="This program comes with ABSOLUTELY NO WARRANTY\n"
-    init_message +="This is free software, and you are welcome to redistribute"
-    init_message +="it under certain\n"
-    init_message +="conditions; read the COPYING* files for details.\n"
-
-    init_message += "Available tester import plugins are:\n"
+    init_message = """Welcome in Istorm
+Copyright (C) 2010  David Trémouilles
+This program comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute
+it under certain
+conditions; read the COPYING* files for details.
+Available tester import plugins are:"""
     for plug_name in Load.plug_list:
         init_message += "\t- " + plug_name + "\n"
-    init_message += "Use Load.'tester_plugin_name'(\"datafile\")"
-    init_message += "to load a measurement\n"
-    init_message += "Enjoy!"
-    ipshell = IPython.Shell.IPShellEmbed(banner = init_message,
-                                         exit_msg = 'Thanks for using istrom')
-    ipshell()
+    init_message += """Use Load.'tester_plugin_name'("datafile")
+to load a measurement
+Enjoy!
+"""
+    plt_info = "Using -%s- matplotlib backend" % matplotlib.get_backend()
+    try:
+        from IPython.Shell import IPShellEmbed
+        ipshell = IPShellEmbed(exit_msg='Thanks for using istrom')
+        return  (ipshell,
+                 init_message + plt_info + " and -IPython shell-")
+    except ImportError:
+        import code
+        import rlcompleter
+        import readline
+        readline.parse_and_bind("tab: complete")
+        print init_message
+        shell = code.InteractiveConsole(variables)
+        return (shell.interact,
+                init_message + plt_info +" and -Interactive Console-")
 
 
 if __name__ == "__main__":
-    main()
+    prompt, message = console(locals())
+    prompt(message)
