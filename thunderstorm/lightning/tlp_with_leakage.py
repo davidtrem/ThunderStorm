@@ -35,7 +35,9 @@ class TLPFigureWithLeakage(object):
         tlp_plot.set_title(title + "TLP curve")
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
-        if len(tlp_curve_data) == 0 or np.alltrue(leakage_evol == 0):
+        if (leakage_evol == None
+            or len(leakage_evol) == 0
+            or np.alltrue(leakage_evol == 0)):
             warnings.warn("No proper leakage evolution available\n" +
                           "Leakage evolution will not be plotted",
                           RuntimeWarning)
@@ -46,5 +48,5 @@ class TLPFigureWithLeakage(object):
                                'g-o',
                                markersize=2)
         self.plot = tlp_plot
-        self.draw = tlp_plot.get_figure().canvas.draw
+        self.draw = figure.canvas.draw
 
