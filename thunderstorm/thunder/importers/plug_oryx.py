@@ -32,6 +32,7 @@ class ImportOryx(ImportPlugin):
     """Import data from Oryx TLP setup
     """
     label = "Oryx"
+    file_ext = "*.tsr"
 
     def __init__(self):
         ImportPlugin.__init__(self)

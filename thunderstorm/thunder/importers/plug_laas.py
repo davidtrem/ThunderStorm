@@ -32,6 +32,7 @@ class ImportLAAS(ImportPlugin):
     """Import data from LAAS TLP setup
     """
     label = "LAAS"
+    file_ext = "*.mes"
 
     def __init__(self):
         ImportPlugin.__init__(self)

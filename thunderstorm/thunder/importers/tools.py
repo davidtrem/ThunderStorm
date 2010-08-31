@@ -32,6 +32,8 @@ from thunderstorm.thunder.tlp import Experiment
 class ImportPlugin(object):
     """Generic import plugin class"""
     label = "Unknown"
+    file_ext = "*.*"
+
     def __init__(self):
         pass
 

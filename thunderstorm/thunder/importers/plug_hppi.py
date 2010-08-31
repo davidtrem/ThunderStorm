@@ -32,6 +32,7 @@ class ImportHPPI(ImportPlugin):
     """Import data from HPPI TLP setup
     """
     label = "HPPI"
+    file_ext = "*.csv"
 
     def __init__(self):
         ImportPlugin.__init__(self)

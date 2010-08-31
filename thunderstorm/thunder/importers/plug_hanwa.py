@@ -32,7 +32,7 @@ class ImportHanwa(ImportPlugin):
     """Import data from Hanwa TLP setup
     """
     label = "HANWA"
-
+    file_ext = "*.tcf"
     def __init__(self):
         ImportPlugin.__init__(self)
 
