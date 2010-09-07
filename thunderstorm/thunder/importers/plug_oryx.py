@@ -46,7 +46,8 @@ class ImportOryx(ImportPlugin):
         data = alldata.data_to_num_array
         pulses = IVTime(data['tlp_pulses'].shape[2],
                         data['tlp_pulses'].shape[1],
-                        delta_t=data['delta_t'])
+                        delta_t=data['delta_t'],
+                        offsets_t=data['offsets_t'])
         pulses.voltage = data['tlp_pulses'][0]
         pulses.current = data['tlp_pulses'][1]
         pulses.valim = data['valim_tlp']

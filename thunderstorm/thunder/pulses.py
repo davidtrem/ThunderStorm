@@ -27,12 +27,15 @@ import numpy as np
 from numpy.fft import rfft, irfft
 
 
-class PulseSet(object):
+class _PulseSet(object):
     """
     Generic class for a set of pulses
     """
-    def __init__(self):
-        pass
+    def __init__(self, pulses_length, pulses_nb, elem_type):
+        format = np.dtype([('Valim', np.float32),
+                           (self._data1, (elem_type, pulses_length)),
+                           (self._data2, (elem_type, pulses_length))])
+        self._data = np.empty(pulses_nb, format)
 
     @property
     def pulses_length(self):
@@ -51,17 +54,14 @@ class PulseSet(object):
         self._data['Valim'] = value
 
 
-class TimePulseSet(PulseSet):
+class _TimePulseSet(_PulseSet):
     """
     """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_t=1,
-                 data1='data1', data2='data2'):
-        PulseSet.__init__(self)
-        format = np.dtype([('Valim', np.float32),
-                           (data1, (np.float64, pulses_length)),
-                           (data2, (np.float64, pulses_length))])
-        self._data = np.empty(pulses_nb, format)
+    def __init__(self, pulses_length, pulses_nb, delta_t,
+                 offsets_t):
+        _PulseSet.__init__(self, pulses_length, pulses_nb, np.float64)
         self._delta_t = delta_t
+        self._offsets_t = offsets_t
 
     def to_freq(self, data_type):
         #self._data1 and self._data2 need to be defined by the object
@@ -84,17 +84,22 @@ class TimePulseSet(PulseSet):
     def delta_t(self, val):
         self._delta_t = val
 
+    @property
+    def offsets_t(self):
+        return self._offsets_t
 
-class FreqPulseSet(PulseSet):
+    @delta_t.setter
+    def offsets_t(self, values):
+        self._offsets_t = values
+
+
+class _FreqPulseSet(_PulseSet):
     """
     """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1,
-                 data1='data1', data2='data2'):
-        PulseSet.__init__(self)
-        format = np.dtype([('Valim', np.float32),
-                           (data1, (np.complex128, pulses_length)),
-                           (data2, (np.complex128, pulses_length))])
-        self._data = np.empty(pulses_nb, format)
+    def __init__(self, pulses_length, pulses_nb, delta_f,
+                 data1, data2):
+        _PulseSet.__init__(self, pulses_length, pulses_nb,
+                           data1, data2, np.complex128)
         self._delta_f = delta_f
 
     def to_time(self, data_type):
@@ -120,9 +125,9 @@ class FreqPulseSet(PulseSet):
 # Current Voltage representation
 
 class _IV(object):
-    def __init__(self, data_type, pulses_length, pulses_nb, delta_t,):
-        data_type.__init__(self, pulses_length, pulses_nb, delta_t,
-                           'Voltage', 'Current')
+    def __init__(self):
+        self._data1 = 'Voltage'
+        self._data2 = 'Current'
 
     @property
     def voltage(self):
@@ -130,6 +135,8 @@ class _IV(object):
 
     @voltage.setter
     def voltage(self, value):
+        print value.shape
+        print self._data['Voltage'].shape
         self._data['Voltage'] = value
 
     @property
@@ -141,16 +148,18 @@ class _IV(object):
         self._data['Current'] = value
 
 
-class IVTime(TimePulseSet, _IV):
+class IVTime(_TimePulseSet, _IV):
     """
     """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_t=1):
-        _IV.__init__(self, TimePulseSet, pulses_length,
-                    pulses_nb, delta_t)
+    def __init__(self, pulses_length=2**2, pulses_nb=2,
+                 delta_t=1, offsets_t=0):
+        _IV.__init__(self)
+        _TimePulseSet.__init__(self, pulses_length, pulses_nb, delta_t,
+                               offsets_t)
 
     @property
     def to_freq(self):
-        return TimePulseSet.to_freq(self, IVFreq)
+        return _TimePulseSet.to_freq(self, IVFreq)
 
     @property
     def to_vinc_ref(self):
@@ -162,16 +171,16 @@ class IVTime(TimePulseSet, _IV):
         return vinc_ref
 
 
-class IVFreq(FreqPulseSet, _IV):
+class IVFreq(_FreqPulseSet, _IV):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
-        _IV.__init__(self, FreqPulseSet, pulses_length,
+        _IV.__init__(self, _FreqPulseSet, pulses_length,
                      pulses_nb, delta_f)
 
     @property
     def to_time(self):
-        return FreqPulseSet.to_time(self, IVTime)
+        return _FreqPulseSet.to_time(self, IVTime)
 
 
 #----------------------------------
@@ -192,16 +201,16 @@ class _IncRef(object):
         return self._data['Reflected']
 
 
-class VIncRefTime(TimePulseSet, _IncRef):
+class VIncRefTime(_TimePulseSet, _IncRef):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2, delta_t=1):
-        _IncRef.__init__(self, TimePulseSet, pulses_length,
+        _IncRef.__init__(self, _TimePulseSet, pulses_length,
                     pulses_nb, delta_t)
 
     @property
     def to_freq(self):
-        return TimePulseSet.to_freq(self, VIncRefFreq)
+        return _TimePulseSet.to_freq(self, VIncRefFreq)
 
     @property
     def to_iv(self):
@@ -212,39 +221,39 @@ class VIncRefTime(TimePulseSet, _IncRef):
         return iv
 
 
-class VIncRefFreq(FreqPulseSet, _IncRef):
+class VIncRefFreq(_FreqPulseSet, _IncRef):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
-        _IncRef.__init__(self, FreqPulseSet, pulses_length,
+        _IncRef.__init__(self, _FreqPulseSet, pulses_length,
                          pulses_nb, delta_f)
 
     @property
     def to_time(self):
-        return FreqPulseSet.to_time(self, VIncRefTime)
+        return _FreqPulseSet.to_time(self, VIncRefTime)
 
 
 #----------------------------------
 # Incident Reflected Wave representation
 
-class ABTime(TimePulseSet, _IncRef):
+class ABTime(_TimePulseSet, _IncRef):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2, delta_t=1):
-        _IncRef.__init__(self, TimePulseSet, pulses_length,
+        _IncRef.__init__(self, _TimePulseSet, pulses_length,
                     pulses_nb, delta_t)
 
     @property
     def to_freq(self):
-        return TimePulseSet.to_freq(self, ABFreq)
+        return _TimePulseSet.to_freq(self, ABFreq)
 
-class ABFreq(FreqPulseSet, _IncRef):
+class ABFreq(_FreqPulseSet, _IncRef):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
-        _IncRef.__init__(self, FreqPulseSet, pulses_length,
+        _IncRef.__init__(self, _FreqPulseSet, pulses_length,
                          pulses_nb, delta_f)
 
     @property
     def to_time(self):
-        return FreqPulseSet.to_time(self, ABTime)
+        return _FreqPulseSet.to_time(self, ABTime)

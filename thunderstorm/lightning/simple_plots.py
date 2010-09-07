@@ -26,20 +26,23 @@ import warnings
 
 class PulsesFigure(object):
     def __init__(self, figure, pulses, title=""):
-        time = np.arange(pulses.pulses_length) * pulses.delta_t * 1e9 # in nanosecond
+        time = np.arange(pulses.pulses_length) * pulses.delta_t
+        offseted_time = pulses.offsets_t + time[:,np.newaxis]
+        offseted_time = offseted_time * 1e9
+        # time in nanosecond
         # V curves
         v_pulse_plot = figure.add_subplot(211)
         v_pulse_plot.grid(True)
         v_pulse_plot.set_ylabel("Voltage")
         v_pulse_plot.set_title(title)
-        v_pulse_plot.plot(time, pulses.voltage.T)
+        v_pulse_plot.plot(offseted_time, pulses.voltage.T)
         # I curves
         i_pulse_plot = figure.add_subplot(212)
         i_pulse_plot.grid(True)
         i_pulse_plot.set_xlabel("time (ns)")
         i_pulse_plot.set_ylabel("Current")
         i_pulse_plot.set_title(title)
-        i_pulse_plot.plot(time, pulses.current.T)
+        i_pulse_plot.plot(offseted_time, pulses.current.T)
 
         self.v_plot = v_pulse_plot
         self.i_plot = i_pulse_plot

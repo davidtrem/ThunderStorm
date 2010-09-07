@@ -49,27 +49,32 @@ class ReadOryx(object):
         oryx_zip = OryxTransientZip(base_name + '.zip')
         (base_name, volt_list) = oryx_zip.filecontents
         tlp_v = []
+        offsets_t = []
         for pulse_voltage in volt_list:
             filename = base_name + '_TlpVolt_' + pulse_voltage + 'V.wfm'
-            tlp_v.append(oryx_zip.data_from_transient_file(filename)[1])
+            transdata = oryx_zip.data_from_transient_file(filename)
+            tlp_v.append(transdata[1])
+            offsets_t.append(transdata[0][0])
         tlp_v = np.asarray(tlp_v)
+        offsets_t = np.asarray(offsets_t)
         tlp_i = []
         for pulse_voltage in volt_list:
             filename = base_name + '_TlpCurr_' + pulse_voltage + 'V.wfm'
             tlp_i.append(oryx_zip.data_from_transient_file(filename)[1])
         tlp_i = np.asarray(tlp_i)
-        time_array = oryx_zip.data_from_transient_file(filename)[0]
-        delta_t = time_array[1]-time_array[0]
+        time_data = oryx_zip.data_from_transient_file(filename)[0]
+        delta_t = time_data[1] - time_data[0]
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
-        data['delta_t'] = delta_t * 1e-6
+        data['delta_t'] = delta_t * 1e-9
+        data['offsets_t'] = offsets_t * 1e-9
         return None
 
     @property
     def data_to_num_array(self):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
-                          'valim_leak', 'leak_evol'):
+                          'valim_leak', 'leak_evol', 'offsets_t'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['leak_data'] = self.data['leak_data']
         num_data['delta_t'] = self.data['delta_t']
