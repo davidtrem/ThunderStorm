@@ -59,7 +59,7 @@ class _TimePulseSet(_PulseSet):
     """
     def __init__(self, pulses_length, pulses_nb, delta_t,
                  offsets_t):
-        self.elemtype = np.float64
+        self.elem_type = np.float64
         _PulseSet.__init__(self, pulses_length, pulses_nb)
         self._delta_t = delta_t
         self._offsets_t = offsets_t
@@ -97,7 +97,7 @@ class _FreqPulseSet(_PulseSet):
     """
     """
     def __init__(self, pulses_length, pulses_nb, delta_f):
-        self.elemtype = np.complex128
+        self.elem_type = np.complex128
         _PulseSet.__init__(self, pulses_length, pulses_nb)
         self._delta_f = delta_f       
 
@@ -133,8 +133,6 @@ class _IV(object):
 
     @voltage.setter
     def voltage(self, value):
-        print value.shape
-        print self._data['Voltage'].shape
         self._data['Voltage'] = value
 
     @property
