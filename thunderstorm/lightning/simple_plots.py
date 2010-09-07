@@ -51,7 +51,9 @@ class PulsesFigure(object):
 class TLPFigure(object):
     """A simple TLP figure
     """
-    def __init__(self, figure, tlp_curve_data, title="", leakage_evol=None):
+    def __init__(self, figure, tlp_curve_data, title="",
+                 leakage_evol=None, leak_on_y_axis=False):
+        figure.clear()
         tlp_plot = figure.add_subplot(111)
         tlp_plot.grid(True)
         tlp_plot.set_xlabel("Voltage (V)")
@@ -66,11 +68,17 @@ class TLPFigure(object):
                           "Leakage evolution will not be plotted",
                           RuntimeWarning)
         else:
-            fig_leak_evol = tlp_plot.twiny()
+            if leak_on_y_axis == True:
+                fig_leak_evol = tlp_plot.twinx()
+                fig_leak_evol.semilogx(tlp_curve_data[0], leakage_evol,
+                                      'g-o',
+                                      markersize=2)
+            else:
+                fig_leak_evol = tlp_plot.twiny()
+                fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
+                                       'g-o',
+                                       markersize=2)
             fig_leak_evol.set_navigate(False)
-            fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
-                               'g-o',
-                               markersize=2)
         self.plot = tlp_plot
         self.draw = figure.canvas.draw
 
