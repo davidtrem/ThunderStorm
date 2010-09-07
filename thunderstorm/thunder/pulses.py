@@ -184,6 +184,8 @@ class IVFreq(_FreqPulseSet, _IV):
 
 #----------------------------------
 # Incident Reflected representation
+# TODO : should only provide AB transform with inc ref current and voltage
+# representation... 
 
 class _IncRef(object):
 
