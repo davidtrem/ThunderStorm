@@ -38,25 +38,25 @@ class TLPcurve(object):
         length = current.shape[0]
         format = np.dtype([('Voltage', (np.float64, length)),
                             ('Current', (np.float64, length))])
-        self._data = np.zeros(1, format)
-        self._data['Voltage'] = voltage
-        self._data['Current'] = current
-        self.data = _data
+        data = np.zeros(1, format)
+        data['Voltage'] = voltage
+        data['Current'] = current
+        self._data = data
 
     @property
-    def current():
+    def current(self):
         """Return the current array of the TLP curve
         """
         return self._data['Current']
 
     @property
-    def voltage():
+    def voltage(self):
         """Return the voltage array of the TLP curve
         """
         return self._data['Voltage']
 
     @property
-    def data():
+    def data(self):
         """Return a copy of the raw tlp curve data
         """
         return self._data.copy()

@@ -21,8 +21,6 @@
 Simple TLP curve plot
 """
 
-import numpy as np
-
 class TLPFigure(object):
     """A simple TLP figure
     """

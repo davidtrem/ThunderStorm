@@ -21,7 +21,7 @@
 Various way to calculate leakage evolution
 """
 
-from numpy import transpose, log, absolute
+from numpy import log, absolute
 import numpy as npy
 
 def point_evol(iv_leak, evol_point):

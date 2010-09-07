@@ -63,8 +63,8 @@ def test():
     print "ABTime() Ok"
 
     test_pulse_set_freq_ab = ABFreq()
-    print test_pulse_set_time_ab.pulses_nb
-    print test_pulse_set_time_ab.pulses_length
+    print test_pulse_set_freq_ab.pulses_nb
+    print test_pulse_set_freq_ab.pulses_length
     print "ABFreq() Ok"
 
 def testpulse(pulse_time):
@@ -87,7 +87,6 @@ def testpulse(pulse_time):
 def testIV():
     size = 2**5 +1
     pulse_time = IVTime(size)
-    a = np.sin(np.arange(size)/2.0)
     pulse_time.current[0][:] = np.sin(np.arange(size)/2.0)
     pulse_time.voltage[0][:] = np.arange(size)*(-0.1)
     pulse_time.delta_t = 0.4e-9

@@ -17,7 +17,6 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 from thunderstorm.thunder.importers.tools import plug_dict
-from thunderstorm.istormlib.istorm_view import View
 
 
 class Load(object):

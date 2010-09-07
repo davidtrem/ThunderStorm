@@ -221,7 +221,7 @@ class VIncRefFreq(FreqPulseSet, _IncRef):
 
     @property
     def to_time(self):
-        return FreqPulseSet.to_time(self, VincRefTime)
+        return FreqPulseSet.to_time(self, VIncRefTime)
 
 
 #----------------------------------
