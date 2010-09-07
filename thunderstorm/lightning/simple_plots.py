@@ -18,39 +18,56 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Simple TLP curve plot
+Simple typical TLP curves plot
 """
+
+import numpy as np
+import warnings
+
+class PulsesFigure(object):
+    def __init__(self, figure, pulses, title=""):
+        time = np.arange(pulses.pulses_length) * pulses.delta_t * 1e9 # in nanosecond
+        # V curves
+        v_pulse_plot = figure.add_subplot(211)
+        v_pulse_plot.grid(True)
+        v_pulse_plot.set_ylabel("Voltage")
+        v_pulse_plot.set_title(title)
+        v_pulse_plot.plot(time, pulses.voltage.T)
+        # I curves
+        i_pulse_plot = figure.add_subplot(212)
+        i_pulse_plot.grid(True)
+        i_pulse_plot.set_xlabel("time (ns)")
+        i_pulse_plot.set_ylabel("Current")
+        i_pulse_plot.set_title(title)
+        i_pulse_plot.plot(time, pulses.current.T)
+
+        self.v_plot = v_pulse_plot
+        self.i_plot = i_pulse_plot
+        self.draw = figure.canvas.draw
 
 class TLPFigure(object):
     """A simple TLP figure
     """
-    def __init__(self, figure, tlp_curve_data, title=""):
+    def __init__(self, figure, tlp_curve_data, title="", leakage_evol=None):
         tlp_plot = figure.add_subplot(111)
         tlp_plot.grid(True)
         tlp_plot.set_xlabel("Voltage (V)")
         tlp_plot.set_ylabel("Current (A)")
         tlp_plot.set_title(title + "TLP curve")
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
+
+        if (leakage_evol == None
+            or len(leakage_evol) == 0
+            or np.alltrue(leakage_evol == 0)):
+            warnings.warn("No proper leakage evolution available\n" +
+                          "Leakage evolution will not be plotted",
+                          RuntimeWarning)
+        else:
+            fig_leak_evol = tlp_plot.twiny()
+            fig_leak_evol.set_navigate(False)
+            fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
+                               'g-o',
+                               markersize=2)
         self.plot = tlp_plot
-        self.draw = figure.canvas.draw
-
-class PulsesFigure(object):
-    def __init__(self, figure, pulses, title=""):
-        # V curves
-        v_pulse_plot = figure.add_subplot(211)
-        v_pulse_plot.grid(True)
-        v_pulse_plot.set_ylabel("Voltage")
-        v_pulse_plot.set_title(title)
-        v_pulse_plot.plot(pulses.voltage.T)
-        # I curves
-        i_pulse_plot = figure.add_subplot(212)
-        i_pulse_plot.grid(True)
-        i_pulse_plot.set_xlabel("index")
-        i_pulse_plot.set_ylabel("Current")
-        i_pulse_plot.set_title(title)
-        i_pulse_plot.plot(pulses.current.T)
-
-        self.v_plot = v_pulse_plot
-        self.i_plot = i_pulse_plot
         self.draw = figure.canvas.draw
 
