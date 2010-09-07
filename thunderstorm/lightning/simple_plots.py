@@ -37,7 +37,7 @@ class PulsesFigure(object):
         v_pulse_plot.set_title(title)
         v_pulse_plot.plot(offseted_time, pulses.voltage.T)
         # I curves
-        i_pulse_plot = figure.add_subplot(212)
+        i_pulse_plot = figure.add_subplot(212, sharex=v_pulse_plot)
         i_pulse_plot.grid(True)
         i_pulse_plot.set_xlabel("time (ns)")
         i_pulse_plot.set_ylabel("Current")
