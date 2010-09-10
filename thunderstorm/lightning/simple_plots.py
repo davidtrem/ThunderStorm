@@ -47,6 +47,11 @@ class PulsesFigure(object):
         self.v_plot = v_pulse_plot
         self.i_plot = i_pulse_plot
         self.draw = figure.canvas.draw
+        figure.canvas.mpl_connect('key_press_event', self.on_press)
+        
+    def on_press(self, event):
+        print "key pressed", event.key
+
 
 class TLPFigure(object):
     """A simple TLP figure
