@@ -46,13 +46,13 @@ class ImportHPPI(ImportPlugin):
         data = alldata.data_to_num_array
         pulses = IVTime(data['tlp_pulses'].shape[2],
                         data['tlp_pulses'].shape[1],
-                        delta_t=data['delta_t'])
+                        delta_t=data['delta_t'],
+                        offsets_t=data['offsets_t'])
         pulses.voltage = data['tlp_pulses'][0]
         pulses.current = data['tlp_pulses'][1]
         pulses.valim = data['valim_tlp']
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
-        iv_leak = []
         leak_evol = data['leak_evol']
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,

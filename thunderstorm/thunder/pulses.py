@@ -64,6 +64,7 @@ class _TimePulseSet(_PulseSet):
         self._delta_t = delta_t
         self._offsets_t = offsets_t
 
+
     def to_freq(self, data_type):
         #self._data1 and self._data2 need to be defined by the object
         delta_f = 1 / (self.delta_t * self.pulses_length)
@@ -88,7 +89,7 @@ class _TimePulseSet(_PulseSet):
     def offsets_t(self):
         return self._offsets_t
 
-    @delta_t.setter
+    @offsets_t.setter
     def offsets_t(self, values):
         self._offsets_t = values
 
