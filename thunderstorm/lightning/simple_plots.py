@@ -46,24 +46,20 @@ class PulsesFigure(object):
 
         self.v_plot = v_pulse_plot
         self.i_plot = i_pulse_plot
-        self.draw = figure.canvas.draw
-        figure.canvas.mpl_connect('key_press_event', self.on_press)
-        
-    def on_press(self, event):
-        print "key pressed", event.key
+        figure.canvas.draw()
+
 
 
 class TLPFigure(object):
     """A simple TLP figure
     """
     def __init__(self, figure, tlp_curve_data, title="",
-                 leakage_evol=None, leak_on_y_axis=False):
-        figure.clear()
+                 leakage_evol=None):
         tlp_plot = figure.add_subplot(111)
         tlp_plot.grid(True)
         tlp_plot.set_xlabel("Voltage (V)")
         tlp_plot.set_ylabel("Current (A)")
-        tlp_plot.set_title(title + "TLP curve")
+        tlp_plot.set_title(title)
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
         if (leakage_evol == None
@@ -73,17 +69,36 @@ class TLPFigure(object):
                           "Leakage evolution will not be plotted",
                           RuntimeWarning)
         else:
-            if leak_on_y_axis == True:
-                fig_leak_evol = tlp_plot.twinx()
-                fig_leak_evol.semilogx(tlp_curve_data[0], leakage_evol,
-                                      'g-o',
-                                      markersize=2)
-            else:
-                fig_leak_evol = tlp_plot.twiny()
-                fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
-                                       'g-o',
-                                       markersize=2)
-            fig_leak_evol.set_navigate(False)
-        self.plot = tlp_plot
+            self.leak_evol_state = [True, False, False]
+            self.init_leak_evol(tlp_plot, tlp_curve_data, leakage_evol)
+            figure.canvas.mpl_connect('key_press_event',
+                                      self.on_key_press)
         self.draw = figure.canvas.draw
-
+        self.draw()
+        
+    def init_leak_evol(self, tlp_plot, tlp_curve_data, leakage_evol):
+        leak_evol_with_v = tlp_plot.twinx()
+        leak_evol_with_v.semilogy(tlp_curve_data[0],
+                                  leakage_evol,
+                                  'g-o',
+                                  markersize=2)
+        leak_evol_with_i = tlp_plot.twiny()
+        leak_evol_with_i.semilogx(leakage_evol,
+                                  tlp_curve_data[1],
+                                  'g-o',
+                                  markersize=2)
+        leak_evol_with_i.set_navigate(False)
+        leak_evol_with_v.set_navigate(False)
+        leak_evol_with_v.set_visible(False)
+        self.leak_evol_state = [True, False, False]
+        self._leak_evol_with_v = leak_evol_with_v
+        self._leak_evol_with_i = leak_evol_with_i     
+        
+    def on_key_press(self, event):
+        if event.inaxes:
+            if event.key == 'l':
+                leak_state = self.leak_evol_state
+                leak_state.insert(0, leak_state.pop())
+                self._leak_evol_with_i.set_visible(leak_state[0])
+                self._leak_evol_with_v.set_visible(leak_state[1])
+                self.draw()
