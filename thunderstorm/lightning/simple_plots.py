@@ -96,7 +96,7 @@ class TLPFigure(object):
         
     def on_key_press(self, event):
         if event.inaxes:
-            if event.key == 'l':
+            if event.key == 'n':
                 leak_state = self.leak_evol_state
                 leak_state.insert(0, leak_state.pop())
                 self._leak_evol_with_i.set_visible(leak_state[0])

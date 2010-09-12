@@ -23,7 +23,6 @@
 from matplotlib.pyplot import figure
 from thunderstorm.lightning.leakage_std import LeakFigure
 from thunderstorm.lightning.simple_plots import TLPFigure
-from thunderstorm.lightning.tlp_with_leakage import TLPFigureWithLeakage
 import matplotlib
 matplotlib.interactive(True)
 
@@ -32,9 +31,6 @@ class View(object):
 
     def __init__(self, experiment):
         self.experiment = experiment
-        self.raw_tlp_fig = None
-        self.raw_tlp_with_leak_fig = None
-        self.leak_fig = None
 
     def __repr__(self):
         message = "View of "
@@ -42,42 +38,18 @@ class View(object):
         return message
 
     def raw_tlp(self):
-        def handle_close(evt):
-            self.raw_tlp_fig = None
-        if 1:#self.raw_tlp_fig == None:
-            fig = figure()
-            #fig.canvas.mpl_connect('close_event', handle_close)
-            self.raw_tlp_fig = TLPFigure(fig,
-                                         self.experiment.raw_data.tlp_curve,
-                                         self.experiment.exp_name)
-        else: print "Raw TLP figure already on screen"
-
-    def raw_tlp_with_leak(self):
-        def handle_close(evt):
-            self.raw_tlp_with_leak_fig = None
-        if 1:#self.raw_tlp_with_leak_fig == None:
-            fig = figure()
-            #fig.canvas.mpl_connect('close_event', handle_close)
-            self.raw_tlp_with_leak_fig = TLPFigureWithLeakage(fig,
-                                         self.experiment.raw_data.tlp_curve,
-                                         self.experiment.raw_data.leak_evol,
-                                         self.experiment.exp_name)
-        else: print "Figure already on screen"
-
-    def tlp(self):
-        raise NotImplementedError
+        fig = figure()
+        self.raw_tlp_fig = TLPFigure(fig,
+                                     self.experiment.raw_data.tlp_curve,
+                                     self.experiment.exp_name,
+                                     self.experiment.raw_data.leak_evol)
 
     def leak(self):
         if self.experiment.raw_data.iv_leak == []:
             raise RuntimeError("No leakage curves available")
-        def handle_close(evt):
-            self.leak_fig = None
-        if 1:#self.leak_fig == None:
-            fig = figure()
-            #fig.canvas.mpl_connect('close_event', handle_close)
-            self.leak_fig = LeakFigure(fig, "test",
-                                       self.experiment.raw_data.iv_leak)
-        else: print "Raw TLP figure already on screen"
+        fig = figure()
+        self.leak_fig = LeakFigure(fig, "test",
+                                   self.experiment.raw_data.iv_leak)
 
 
 
