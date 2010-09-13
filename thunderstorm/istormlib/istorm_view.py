@@ -23,6 +23,8 @@
 from matplotlib.pyplot import figure
 from thunderstorm.lightning.leakage_std import LeakFigure
 from thunderstorm.lightning.simple_plots import TLPFigure
+from thunderstorm.lightning.pulse_observer import TLPPickFigure
+from thunderstorm.lightning.pulse_observer import PulsesFigure
 import matplotlib
 matplotlib.interactive(True)
 
@@ -47,6 +49,12 @@ class View(object):
     def pulse_observer(self):
         fig_tlp = figure()
         fig_pulses = figure()
+        pulses_figure = PulsesFigure(fig_pulses,
+                                     self.experiment.raw_data.pulses)
+        TLPPickFigure(fig_tlp,
+                      self.experiment.raw_data.tlp_curve,
+                      pulses_figure,
+                      self.experiment.exp_name)
         
     def leak(self):
         if self.experiment.raw_data.iv_leak == []:
