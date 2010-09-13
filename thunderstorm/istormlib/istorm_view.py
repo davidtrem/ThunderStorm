@@ -39,15 +39,20 @@ class View(object):
 
     def raw_tlp(self):
         fig = figure()
+        # TODO remove the self reference below
         self.raw_tlp_fig = TLPFigure(fig,
                                      self.experiment.raw_data.tlp_curve,
                                      self.experiment.exp_name,
                                      self.experiment.raw_data.leak_evol)
-
+    def pulse_observer(self):
+        fig_tlp = figure()
+        fig_pulses = figure()
+        
     def leak(self):
         if self.experiment.raw_data.iv_leak == []:
             raise RuntimeError("No leakage curves available")
         fig = figure()
+        # TODO remove the self reference below
         self.leak_fig = LeakFigure(fig, "test",
                                    self.experiment.raw_data.iv_leak)
 
