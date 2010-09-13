@@ -51,25 +51,30 @@ class ReadHPPI(object):
         (wfm_list, volt_list) = hppi_wfm.filecontents
         tlp_v = []
         tlp_i = []
+        offsets_t = []
         for filename in wfm_list:
             hppi_wfm_data = hppi_wfm.data_from_transient_file(filename)
             tlp_v.append(hppi_wfm_data[3])
             tlp_i.append(hppi_wfm_data[1])
+            offsets_t.append(hppi_wfm_data[0][0])
         time_array = hppi_wfm_data[0]
         delta_t = time_array[1]-time_array[0]
         tlp_v = np.asarray(tlp_v)
         tlp_i = np.asarray(tlp_i)
+        offsets_t = np.asarray(offsets_t)
 
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
         data['delta_t'] = delta_t * 1e-9
+        data['offsets_t'] = offsets_t * 1e-9
+
         return None
 
     @property
     def data_to_num_array(self):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
-                          'valim_leak', 'leak_evol'):
+                          'valim_leak', 'leak_evol', 'offsets_t'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['leak_data'] = self.data['leak_data']
         num_data['delta_t'] = self.data['delta_t']
@@ -145,5 +150,12 @@ class HPPITransientRead(object):
             elems = filename[:-5].split('_')
             voltages_list.append(elems[1])
         voltages_list.sort(key=float)
+        #sort waveforms according to returned string from get_wfm_number
+        wfm_list.sort(key=self.get_wfm_number)
         return (wfm_list, voltages_list)
+    
+    def get_wfm_number(self, filename):
+        #return first number in filename as an int
+        return int(filename.split('_')[0])
+
 
