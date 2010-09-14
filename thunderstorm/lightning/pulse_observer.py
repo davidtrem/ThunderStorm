@@ -87,14 +87,14 @@ class PulsesFigure(object):
         v_pulse_plot.hold(False)
         i_pulse_plot.hold(False)
         if not((-selected_flag).all()): # if at least one true...
-            v_pulse_plot.plot(self.offseted_time,
+            v_pulse_plot.plot(self.offseted_time.T[selected_flag].T,
                               self.pulses.voltage[selected_flag].T, 'b')
             v_pulse_plot.grid(True)
             v_pulse_plot.set_ylabel("Voltage")
             v_pulse_plot.set_visible(True)
             
-            i_pulse_plot.plot(self.offseted_time,
-                                   self.pulses.current[selected_flag].T, 'b')
+            i_pulse_plot.plot(self.offseted_time.T[selected_flag].T,
+                              self.pulses.current[selected_flag].T, 'b')
             i_pulse_plot.grid(True)
             i_pulse_plot.set_xlabel("time (ns)")
             i_pulse_plot.set_ylabel("Current")

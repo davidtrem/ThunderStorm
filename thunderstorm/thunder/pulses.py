@@ -149,8 +149,10 @@ class IVTime(_TimePulseSet, _IV):
     """
     """
     def __init__(self, pulses_length=2**2, pulses_nb=2,
-                 delta_t=1, offsets_t=0):
+                 delta_t=1, offsets_t=None):
         _IV.__init__(self)
+        if offsets_t == None:
+            offsets_t = np.zeros(pulses_nb)
         _TimePulseSet.__init__(self, pulses_length, pulses_nb, delta_t,
                                offsets_t)
 
