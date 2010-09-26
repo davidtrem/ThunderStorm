@@ -3,6 +3,8 @@ syntax: glob
 *~
 .DS_Store
 .spyderproject
+.project
+.pydevproject
 dist/
 build/
 MANIFEST
