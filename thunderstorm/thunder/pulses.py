@@ -100,11 +100,10 @@ class _FreqPulseSet(_PulseSet):
     def __init__(self, pulses_length, pulses_nb, delta_f):
         self.elem_type = np.complex128
         _PulseSet.__init__(self, pulses_length, pulses_nb)
-        self._delta_f = delta_f       
+        self._delta_f = delta_f
 
     def to_time(self, data_type):
         parity = self.pulses_length % 2
-        print parity
         delta_t =  0.5/((self.pulses_length-parity) * self.delta_f)
         data1_time = irfft(self._data[self._data1])
         data2_time = irfft(self._data[self._data2])
@@ -186,7 +185,7 @@ class IVFreq(_FreqPulseSet, _IV):
 #----------------------------------
 # Incident Reflected representation
 # TODO : should only provide AB transform with inc ref current and voltage
-# representation... 
+# representation...
 
 class _IncRef(object):
 
@@ -232,7 +231,7 @@ class VIncRefFreq(_FreqPulseSet, _IncRef):
         _IncRef.__init__(self)
         _FreqPulseSet.__init__(self, pulses_length,
                                pulses_nb, delta_f)
-                               
+
     @property
     def to_time(self):
         return _FreqPulseSet.to_time(self, VIncRefTime)
