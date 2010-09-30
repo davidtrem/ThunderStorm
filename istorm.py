@@ -23,6 +23,8 @@
 
 from thunderstorm.istormlib.thunder_interface import Load
 from thunderstorm.istormlib.istorm_view import View
+from thunderstorm.istormlib.storm import Storm
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -70,5 +72,6 @@ Enjoy!
 
 
 if __name__ == "__main__":
+    my_storm = Storm()
     prompt, message = console(locals())
     prompt(message)
