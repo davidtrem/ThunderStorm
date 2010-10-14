@@ -169,7 +169,8 @@ class OryxTransientZip(object):
         # filename format
         # for TLP voltage: 04-29-09_05'40'45_PM_TlpVolt_90V.wfm
         # for TLP current: 04-29-09_05'40'45_PM_TlpCurr_90V.wfm
-        voltages_dict = {'TlpCurr' : [], 'TlpVolt' : []}
+        voltages_dict = {'TlpCurr' : [], 'TlpVolt' : [],
+                         'TlpVMonCh3' : [], 'TlpVMonCh4' : []}
         for filename in zfile.namelist():
             if filename[-4:] == ".wfm":
                 elems = filename[:-5].split('_')
