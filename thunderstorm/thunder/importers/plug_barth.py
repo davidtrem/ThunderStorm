@@ -32,6 +32,7 @@ class ImportBarth(ImportPlugin):
     """Import data from Oryx TLP setup
     """
     label = "Barth"
+    file_ext = "*.tlp"
 
     def __init__(self):
         ImportPlugin.__init__(self)
@@ -42,20 +43,23 @@ class ImportBarth(ImportPlugin):
         print "Importing Barth data..."
         file_path = os.path.realpath(file_name)
 
-        alldata = ReadBarth(file_name)
-        data = alldata.data_to_num_array
-#        pulses = IVTime(data['tlp_pulses'].shape[2],
-#                        data['tlp_pulses'].shape[1],
-#                        delta_t=data['delta_t'])
-#        pulses.voltage = data['tlp_pulses'][0]
-#        pulses.current = data['tlp_pulses'][1]
-#        pulses.valim = data['valim_tlp']
-#        tlp_curve = data['tlp']
-#        iv_leak = data['leak_data']
-#       leak_evol = data['leak_evol']
-#        raw_data = RawTLPdata('not implemented', pulses, iv_leak,
-#                              tlp_curve, leak_evol, file_path,
-#                              tester_name = self.label)
+        data = ReadBarth(file_name).data
+        if data['waveform available'] == True:
+            pulses = IVTime(data['tlp_v_waveforms'].shape[0],
+                            data['tlp_v_waveforms'].shape[1],
+                            delta_t=data['delta_t'])
+            pulses.voltage = data['tlp_v_waveforms'].T
+            pulses.current = data['tlp_i_waveforms'].T
+        else:
+            pulses = IVTime(0, data['tlp'].shape[1], delta_t=1)
+        if data['valim_tlp'] != []:
+            pulses.valim = data['valim_tlp']
+        tlp_curve = data['tlp']
+        iv_leak = []
+        leak_evol = data['leak_evol']
+        raw_data = RawTLPdata('not implemented', pulses, iv_leak,
+                              tlp_curve, leak_evol, file_path,
+                              tester_name = self.label)
         return raw_data
 
 
