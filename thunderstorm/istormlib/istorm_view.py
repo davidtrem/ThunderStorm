@@ -39,22 +39,19 @@ class View(object):
         return message
 
     def raw_tlp(self):
-        fig = figure()
-        self.raw_tlp_fig = TLPFigure(fig,
+        self.raw_tlp_fig = TLPFigure(figure(),
                                      self.experiment.raw_data.tlp_curve,
                                      self.experiment.exp_name,
                                      self.experiment.raw_data.leak_evol)
     def pulse_observer(self):
-        fig = figure()
-        self.pickfig = TLPPulsePickFigure(fig,
+        self.pickfig = TLPPulsePickFigure(figure(),
                                           self.experiment.raw_data,
                                           self.experiment.exp_name)
 
     def leak(self):
         if self.experiment.raw_data.iv_leak == []:
             raise RuntimeError("No leakage curves available")
-        fig = figure()
-        self.leak_fig = LeakFigure(fig, "test",
+        self.leak_fig = LeakFigure(figure(), "test",
                                    self.experiment.raw_data.iv_leak)
 
 

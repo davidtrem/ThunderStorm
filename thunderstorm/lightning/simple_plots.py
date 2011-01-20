@@ -73,9 +73,10 @@ class TLPFigure(object):
             self.init_leak_evol(tlp_plot, tlp_curve_data, leakage_evol)
             figure.canvas.mpl_connect('key_press_event',
                                       self.on_key_press)
+        self.figure = figure
         self.draw = figure.canvas.draw
         self.draw()
-        
+
     def init_leak_evol(self, tlp_plot, tlp_curve_data, leakage_evol):
         leak_evol_with_v = tlp_plot.twinx()
         leak_evol_with_v.semilogy(tlp_curve_data[0],
@@ -92,8 +93,8 @@ class TLPFigure(object):
         leak_evol_with_v.set_visible(False)
         self.leak_evol_state = [True, False, False]
         self._leak_evol_with_v = leak_evol_with_v
-        self._leak_evol_with_i = leak_evol_with_i     
-        
+        self._leak_evol_with_i = leak_evol_with_i
+
     def on_key_press(self, event):
         if event.inaxes:
             if event.key == 'n':
