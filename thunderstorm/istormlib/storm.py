@@ -46,8 +46,8 @@ class Storm(list):
         if len(self) == 0:
             return "Empty"
         showtxt = ""
-        for elem in self:
-            showtxt += str(elem) + "\n"
+        for idx, elem in enumerate(self):
+            showtxt += "%s : %s" % (idx, elem)
         return showtxt
 
     def overlay_raw_tlp(self, index_list=()):

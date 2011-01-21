@@ -140,8 +140,8 @@ class Experiment(object):
         return
 
     def __repr__(self):
-        message = "Experiement\n"
-        message += "name: " + self._exp_name +"\n"
+        message = "Experiement: "
+        message += self._exp_name +"\n"
         return message
 
     @property
