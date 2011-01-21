@@ -59,6 +59,7 @@ class Storm(list):
         else:
             for idx in index_list:
                 tlp_fig.add_curve(self[idx].experiment.raw_data.tlp_curve)
+        self.overlay_tlp_fig = tlp_fig
 
 
 
