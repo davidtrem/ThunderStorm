@@ -29,3 +29,6 @@ apidoc: clean
 	export PYTHONPATH=`pwd`:$PYTHONPATH
 	epydoc -v --docformat="restructuredtext en" \
                --graph all thunderstorm -o ./doc/api_doc
+
+install:
+	python setup.py install --home=~

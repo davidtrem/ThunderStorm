@@ -22,20 +22,44 @@ Data storm
 """
 from thunderstorm.thunder.importers.tools import plug_dict
 from istorm_view import View
+from thunderstorm.lightning.simple_plots import TLPOverlay
+from matplotlib.pyplot import figure
 
 class Storm(list):
-    """ A storm to group your ESD data
+    """ A storm to manipulate a group of your ESD data
     """
     def __init__(self):
         list.__init__(self)
+        self.visu_flag = []
         for importer_name in plug_dict.keys():
             importer = plug_dict [importer_name]()
             setattr(self, 'import_'+importer_name,
                     self._gen_import_data(importer))
+
     def _gen_import_data(self, importer):
         def import_func(filename, comments=""):
             self.append(View(importer.load(filename, comments)))
+            self.visu_flag.append(True)
         return import_func
+
+    def __repr__(self):
+        if len(self) == 0:
+            return "Empty"
+        showtxt = ""
+        for elem in self:
+            showtxt += str(elem) + "\n"
+        return showtxt
+
+    def overlay_raw_tlp(self, index_list=()):
+        tlp_fig = TLPOverlay(figure())
+        if index_list == ():
+            for elem, is_visible in zip(self, self.visu_flag):
+                if is_visible:
+                    tlp_fig.add_curve(elem.experiment.raw_data.tlp_curve)
+        else:
+            for idx in index_list:
+                tlp_fig.add_curve(self[idx].experiment.raw_data.tlp_curve)
+
 
 
 
