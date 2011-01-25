@@ -26,7 +26,7 @@ from cStringIO import StringIO
 import os.path as osp
 from os import walk, listdir
 import re
-import warnings
+import logging
 
 class ReadHanwa(object):
     """
@@ -172,11 +172,11 @@ def filecontents(path):
     """ returns the number of common indexes in the transient
         V and I csv files
     """
+    log = logging.getLogger('thunderstorm.thunder.importers')
     v_path = osp.join(path, 'OsilloV')
     v_file_list = listdir(v_path)
     i_path = osp.join(path, 'OsilloI')
     i_file_list = listdir(i_path)
     if len(v_file_list) != len(i_file_list):
-        warnings.warn("Current and Voltage waveform mismatch",
-                      RuntimeWarning)
+        log.warn("Current and Voltage waveform mismatch")
     return len(i_file_list)

@@ -26,6 +26,7 @@ from thunderstorm.thunder.importers.util_barth import ReadBarth
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import os
+import logging
 
 
 class ImportBarth(ImportPlugin):
@@ -39,7 +40,8 @@ class ImportBarth(ImportPlugin):
     def import_data(self, file_name):
         """Import data
         return a RawTLPdata instance"""
-        print "Importing Barth data..."
+        log = logging.getLogger('thunderstorm.info')
+        log.info("Importing Barth data...")
         file_path = os.path.realpath(file_name)
 
         alldata = ReadBarth(file_name)

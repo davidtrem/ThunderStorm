@@ -26,6 +26,7 @@ from thunderstorm.thunder.importers.util_hppi import ReadHPPI
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import os
+import logging
 
 
 class ImportHPPI(ImportPlugin):
@@ -40,7 +41,8 @@ class ImportHPPI(ImportPlugin):
     def import_data(self, file_name):
         """Import data
         return a RawTLPdata instance"""
-        print "Importing HPPI data..."
+        log = logging.getLogger('thunderstorm.info')
+        log.info("Importing HPPI data...")
         file_path = os.path.realpath(file_name)
         alldata = ReadHPPI(file_name)
         data = alldata.data_to_num_array

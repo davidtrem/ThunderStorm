@@ -26,7 +26,7 @@ from thunderstorm.thunder.importers.tools import ImportPlugin
 from thunderstorm.thunder.importers.util_laas import ReadLAAS
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
-
+import logging
 
 class ImportLAAS(ImportPlugin):
     """Import data from LAAS TLP setup
@@ -39,11 +39,12 @@ class ImportLAAS(ImportPlugin):
 
     def import_data(self, file_name):
         """Import LAAS data"""
+        log = logging.getLogger('thunderstorm.info')
         file_path = os.path.realpath(file_name)
         datafile = open(file_name, 'U')
         alldata = ReadLAAS(datafile)
         datafile.close()
-        print "Importing LAAS data..."
+        log.info("Importing LAAS data...")
         data = alldata.data_to_num_array
         pulses = IVTime(data['tlp_pulses'].shape[2],
                         data['tlp_pulses'].shape[0],

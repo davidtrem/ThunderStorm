@@ -26,8 +26,8 @@ from zipfile import ZipFile
 from cStringIO import StringIO
 import re
 import os
+import logging
 
-DEBUG = False
 
 class ReadHPPI(object):
     """
@@ -123,21 +123,22 @@ class HPPITransientRead(object):
 
     @property
     def filecontents(self):
+        log = logging.getLogger('thunderstorm.thunder.importers')
         is_zip = False
         #check location of waveforms
         base_dir = self.base_dir
         if os.path.exists(os.path.join(base_dir,'wfm')):
             self.wfm_location = os.path.join(base_dir,'wfm')
-            print('waveforms in dir: wfm')
+            log.debug('waveforms in dir: wfm')
         elif os.path.exists(os.path.join(base_dir,'HV-Pulse')):
             self.wfm_location = os.path.join(base_dir,'HV-Pulse')
-            print('waveforms in dir: HV-Pulse')
+            log.debug('waveforms in dir: HV-Pulse')
         elif os.path.isfile(os.path.join(base_dir,'transients.zip')):
             self.wfm_location = os.path.join(base_dir,'transients.zip')
             is_zip = True
-            print('waveforms in zip file')
+            log.debug('waveforms in zip file')
         else:
-            print('No waveforms found')
+            log.debug('No waveforms found')
 
         if is_zip:
             zfile = ZipFile(self.wfm_location)
@@ -153,7 +154,7 @@ class HPPITransientRead(object):
         #sort waveforms according to returned string from get_wfm_number
         wfm_list.sort(key=self.get_wfm_number)
         return (wfm_list, voltages_list)
-    
+
     def get_wfm_number(self, filename):
         #return first number in filename as an int
         return int(filename.split('_')[0])

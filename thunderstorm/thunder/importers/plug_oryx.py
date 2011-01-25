@@ -26,6 +26,7 @@ from thunderstorm.thunder.importers.util_oryx import ReadOryx
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import os
+import logging
 
 
 class ImportOryx(ImportPlugin):
@@ -40,7 +41,8 @@ class ImportOryx(ImportPlugin):
     def import_data(self, file_name):
         """Import data
         return a RawTLPdata instance"""
-        print "Importing Oryx data..."
+        log = logging.getLogger('thunderstorm.info')
+        log.info("Importing Oryx data...")
         file_path = os.path.realpath(file_name)
         alldata = ReadOryx(file_name)
         data = alldata.data_to_num_array

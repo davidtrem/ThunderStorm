@@ -26,6 +26,7 @@ from thunderstorm.thunder.importers.util_hanwa import ReadHanwa
 from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import os
+import logging
 
 
 class ImportHanwa(ImportPlugin):
@@ -39,7 +40,8 @@ class ImportHanwa(ImportPlugin):
     def import_data(self, file_name):
         """Import data
         return a RawTLPdata instance"""
-        print "Importing Hanwa data..."
+        log = logging.getLogger('thunderstorm.info')
+        log.info("Importing Hanwa data...")
         file_path = os.path.realpath(file_name)
         alldata = ReadHanwa(file_name)
         data = alldata.data_to_num_array

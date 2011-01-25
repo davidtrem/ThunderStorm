@@ -25,9 +25,7 @@ import numpy as np
 from zipfile import ZipFile
 from cStringIO import StringIO
 import re
-import warnings
-
-DEBUG = False
+import logging
 
 class ReadOryx(object):
     """
@@ -120,8 +118,8 @@ def read_leak_curves(filename):
             string_file.reset()
             curves.append(np.loadtxt(string_file, delimiter=',').T[1:])
     except IOError:
-        warnings.warn("No leakage curves available",
-                      RuntimeWarning)
+        log = logging.getLogger('thunderstorm.thunder.importers')
+        log.warn("No leakage curves available")
     finally:
         return curves
 
@@ -159,11 +157,6 @@ class OryxTransientZip(object):
         Returns
         -------
         Return a list of voltages (list of string)
-
-        Raises
-        ------
-        Throw a warning if voltage and current waveform voltages do
-        not match.
         """
         zfile = ZipFile(self.zfilename)
         # filename format
@@ -177,8 +170,8 @@ class OryxTransientZip(object):
         voltages_dict['TlpCurr'].sort(key=float)
         voltages_dict['TlpVolt'].sort(key=float)
         if voltages_dict['TlpCurr'] != voltages_dict['TlpVolt']:
-            warnings.warn("Current and Voltage waveform mismatch",
-                          RuntimeWarning)
+            log = logging.getLogger('thunderstorm.thunder.importers')
+            log.warn("Current and Voltage waveform mismatch")
         return voltages_dict['TlpCurr']
 
     @property

@@ -29,6 +29,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.interactive(True)
+import logging
 
 def console(variables):
     import os, sys
@@ -72,6 +73,17 @@ Enjoy!
 
 
 if __name__ == "__main__":
+    # Setting up logging to send INFO to the console
+    log = logging.getLogger('thunderstorm')
+    log.setLevel(logging.INFO)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(name)-12s: %(message)s')
+    ch.setFormatter(formatter)
+    log.addHandler(ch)
+
+    # Create a Storm
     my_storm = Storm()
+
     prompt, message = console(locals())
     prompt(message)

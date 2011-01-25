@@ -22,8 +22,7 @@ Read the data from LAAS TLP setup file
 """
 
 import numpy as npy
-
-DEBUG = False
+import logging
 
 class ReadLAAS(object):
     """
@@ -57,6 +56,7 @@ class ReadLAAS(object):
         """
         Read and extract the data from LAAS TLP sequentially
         """
+        log = logging.getLogger('thunderstorm.thunder.importers')
         datafile = self.datafile
         data = self.data
         identification = self.identification
@@ -67,23 +67,19 @@ class ReadLAAS(object):
 
         line = datafile.readline()
         if line[0:16] != "Identification :":
-            print "Wrong file format"
+            log.warn("Wrong file format")
             return
         identification = line[17:-1]
-        if DEBUG:
-            print "Identification:" + identification
+        log.debug("Identification:" + identification)
         datafile.readline()
 
-        if DEBUG:
-            print "Reading TLP curve"
+        log.debug("Reading TLP curve")
         data['tlp'] = self.read_column()
         nb_pulse = len(data['tlp'])
         if nb_pulse == 0:
-            if DEBUG:
-                print "no data found"
+            log.debug("no data found")
         else:
-            if DEBUG:
-                print "Reading TLP pulses"
+            log.debug("Reading TLP pulses")
             while 1:
                 line = datafile.readline()
                 element = line.split('=')
@@ -94,8 +90,7 @@ class ReadLAAS(object):
                 datafile.readline()
                 data['tlp_pulses'].append(self.read_column())
 
-        if DEBUG:
-            print "Reading static measurements"
+        log.debug("Reading static measurements")
         while 1:
             line = datafile.readline()
             if line[:-1] == "Premiere mesure statique":
