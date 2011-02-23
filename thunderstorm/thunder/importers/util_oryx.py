@@ -27,6 +27,8 @@ from zipfile import ZipFile
 from cStringIO import StringIO
 import re
 import warnings
+import os
+import glob
 
 DEBUG = False
 
@@ -138,13 +140,37 @@ def read_leak_curves(filename):
 
 
 class OryxTransientZip(object):
-    """Utils to extract data from oryx zip files
+    """
+    Utils to extract data from oryx zip files
+    Waveforms can be stored in either a zip file with the same name as
+    the .tsr file, or it can be stored in a subfolder with the same name
+    as the .tsr file.
+    Note: Oryx deprecated saving as zip
     """
     def __init__(self, zfilename):
-        try:
-            self.zfile = ZipFile(zfilename)
-        except IOError:
+        #According to Justin unziped transient files
+        #subfolder is now the default
+        #This version create the zip file if it does not exists
+        #and remove it when done
+        self.zipcreated = ''
+        if os.path.exists(zfilename):
+            pass
+        elif os.path.exists(zfilename[:-4]):
+            #if a folder exist create the zip file
+            zfile = ZipFile(zfilename, 'w')
+            for filename in glob.glob(zfilename[:-4]+'/*'):
+                zfile.write(filename, os.path.basename(filename))
+            zfile.close()
+            self.zipcreated = zfilename
+        else:
             raise IOError("NoTransientFiles")
+        self.zfile = ZipFile(zfilename)
+
+    def __del__(self):
+        self.zfile.close()
+        #remove the zip file if created here
+        if self.zipcreated != '':
+            os.remove(self.zipcreated)
 
     def data_from_transient_file(self, filename):
         full_file = self.zfile.read(filename)
