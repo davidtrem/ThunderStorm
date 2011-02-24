@@ -46,13 +46,15 @@ class ImportOryx(ImportPlugin):
         file_path = os.path.realpath(file_name)
         alldata = ReadOryx(file_name)
         data = alldata.data_to_num_array
-        pulses = IVTime(data['tlp_pulses'].shape[2],
-                        data['tlp_pulses'].shape[1],
-                        delta_t=data['delta_t'],
-                        offsets_t=data['offsets_t'])
-        pulses.voltage = data['tlp_pulses'][0]
-        pulses.current = data['tlp_pulses'][1]
-        pulses.valim = data['valim_tlp']
+        if data['waveform_available'] == True:
+            pulses = IVTime(data['tlp_pulses'].shape[2],
+                            data['tlp_pulses'].shape[1],
+                            delta_t=data['delta_t'],
+                            offsets_t=data['offsets_t'])
+            pulses.voltage = data['tlp_pulses'][0]
+            pulses.current = data['tlp_pulses'][1]
+        else:
+            pulses = IVTime(0, data['tlp'].shape[1], delta_t=1)
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
         leak_evol = data['leak_evol']

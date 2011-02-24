@@ -5,6 +5,7 @@ syntax: glob
 .spyderproject
 .project
 .pydevproject
+.ropeproject
 dist/
 build/
 MANIFEST
