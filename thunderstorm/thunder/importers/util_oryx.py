@@ -163,14 +163,16 @@ class OryxTransientZip(object):
             zfile.close()
             self.zipcreated = zfilename
         else:
+            self.zipcreated = 'No transient data'
             raise IOError("NoTransientFiles")
         self.zfile = ZipFile(zfilename)
 
     def __del__(self):
-        self.zfile.close()
-        #remove the zip file if created here
-        if self.zipcreated != '':
-            os.remove(self.zipcreated)
+        if self.zipcreated != 'No transient data':
+            self.zfile.close()
+            #remove the zip file if created here
+            if self.zipcreated != '':
+                os.remove(self.zipcreated)
 
     def data_from_transient_file(self, filename):
         full_file = self.zfile.read(filename)
