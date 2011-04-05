@@ -23,7 +23,7 @@ Utils to read data from Barth TLP setup file
 
 from thunderstorm.thunder.utils import string2file
 import numpy as np
-import warnings
+import logging
 import re
 
 
@@ -108,6 +108,7 @@ def extract_data_from_twf(twf_file_name):
             data_iwf = np.loadtxt(string2file(dut_iwf_str))
             return data_vwf, data_iwf, delta_t_vwf, valim_vwf
     except IOError:
-        warnings.warn("No pulse data found", RuntimeWarning)
+        log = logging.getLogger('thunderstorm.thunder.importers')
+        log.warn("No pulse data found")
         return False
 
