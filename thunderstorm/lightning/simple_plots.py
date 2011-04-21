@@ -53,14 +53,18 @@ class TLPOverlay(object):
     """
     def __init__(self, figure, title=""):
         tlp_plot = figure.add_subplot(111)
-        tlp_plot.grid(True)
-        tlp_plot.set_xlabel("Voltage (V)")
-        tlp_plot.set_ylabel("Current (A)")
-        tlp_plot.set_title(title)
+        self.title = title
         self.tlp_plot = tlp_plot
         self.figure = figure
         self.draw = figure.canvas.draw
         self.draw()
+
+    def decorate(self):
+        tlp_plot = self.tlp_plot
+        tlp_plot.grid(True)
+        tlp_plot.set_xlabel("Voltage (V)")
+        tlp_plot.set_ylabel("Current (A)")
+        tlp_plot.set_title(self.title)
 
     def add_curve(self, tlp_curve_data):
         self.tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')

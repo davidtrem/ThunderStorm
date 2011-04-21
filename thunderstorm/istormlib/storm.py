@@ -28,18 +28,17 @@ from matplotlib.pyplot import figure
 class Storm(list):
     """ A storm to manipulate a group of your ESD data
     """
-    def __init__(self):
+    def __init__(self, overlay_tlp_fig=None):
         list.__init__(self)
-        self.visu_flag = []
         for importer_name in plug_dict.keys():
             importer = plug_dict [importer_name]()
             setattr(self, 'import_'+importer_name,
                     self._gen_import_data(importer))
+        self.overlay_tlp_fig = overlay_tlp_fig
 
     def _gen_import_data(self, importer):
         def import_func(filename, comments=""):
             self.append(View(importer.load(filename, comments)))
-            self.visu_flag.append(True)
         return import_func
 
     def __repr__(self):
@@ -50,16 +49,19 @@ class Storm(list):
             showtxt += "%s : %s" % (idx, elem)
         return showtxt
 
-    def overlay_raw_tlp(self, index_list=()):
-        tlp_fig = TLPOverlay(figure())
-        if index_list == ():
-            for elem, is_visible in zip(self, self.visu_flag):
-                if is_visible:
-                    tlp_fig.add_curve(elem.experiment.raw_data.tlp_curve)
+    def overlay_raw_tlp(self, index_list=(), experiment_list=()):
+        if self.overlay_tlp_fig == None:
+            tlp_fig = TLPOverlay(figure())
+        else:
+            tlp_fig = self.overlay_tlp_fig
+        tlp_fig.tlp_plot.cla()
+        tlp_fig.decorate()
+        if index_list == () and len(experiment_list) != 0:
+            for experiment in experiment_list:
+                    tlp_fig.add_curve(experiment.raw_data.tlp_curve)
         else:
             for idx in index_list:
                 tlp_fig.add_curve(self[idx].experiment.raw_data.tlp_curve)
-        self.overlay_tlp_fig = tlp_fig
 
 
 
