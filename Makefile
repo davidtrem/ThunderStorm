@@ -20,7 +20,7 @@ archivegz : clean
 	cd ../ && tar -czf $(Name).tar.gz $(Name)
 
 zip_archive: clean
-	cd ../ && zip -9 -r $(Name).zip $(Name) -x "$(Name)/.hg/*" "$(Name)/.hgignore"
+	cd ../ && zip -9 -r $(Name).zip $(Name) -x "$(Name)/.hg/*" "$(Name)/.hgignore" "$(Name)/.git/*" "$(Name)/.gitignore" "$(Name)/.hgtags"
 
 sdist : clean
 	python setup.py sdist
