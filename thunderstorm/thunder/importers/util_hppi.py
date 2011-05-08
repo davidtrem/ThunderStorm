@@ -146,6 +146,9 @@ class HPPITransientRead(object):
         else:
             wfm_list = os.listdir(self.wfm_location)
 
+        #filter all .csv files
+        wfm_list = [elem for elem in wfm_list if elem.count('.csv')]
+
         voltages_list = []
         for filename in wfm_list:
             elems = filename[:-5].split('_')
@@ -157,6 +160,4 @@ class HPPITransientRead(object):
 
     def get_wfm_number(self, filename):
         #return first number in filename as an int
-        return int(filename.split('_')[0])
-
-
+        return int(re.search("\d+",filename).group(0))
