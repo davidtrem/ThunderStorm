@@ -39,7 +39,7 @@ class TLPPulsePickFigure(object):
         selected_point, = tlp_plot.plot(volt[selected_flag],
                                         curr[selected_flag], 'ro')
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
-        
+
         # pulses figure
         time = np.arange(pulses.pulses_length) * pulses.delta_t
         offseted_time = pulses.offsets_t + time[:, np.newaxis]
@@ -53,29 +53,29 @@ class TLPPulsePickFigure(object):
                                        sharex=v_pulse_plot)
         self.figure = figure
         self.v_pulse_plot = v_pulse_plot
-        self.i_pulse_plot = i_pulse_plot        
+        self.i_pulse_plot = i_pulse_plot
         self.selected_flag = selected_flag
         self. selected_point = selected_point
         self.volt = volt
         self.curr = curr
         self.update(selected_flag)
 
-        
+
     def onpickevent(self, event):
         if event.mouseevent.button == 1:
             #ax1.set_autoscale_on(False)
             selected_flag = self.selected_flag
-            ind = event.ind
+            ind = event.ind[0]
             selected_flag[ind] = not selected_flag[ind]
-            if not((-selected_flag).all()): # at least one true 
-                self.selected_point.set_data(self.volt[selected_flag], 
+            if not((-selected_flag).all()): # at least one true
+                self.selected_point.set_data(self.volt[selected_flag],
                                              self.curr[selected_flag])
                 self.selected_point.set_visible(True)
             else:
                 self.selected_point.set_visible(False)
             self.update(selected_flag)
             self.figure.canvas.draw()
-            
+
     def update(self, selected_flag):
         v_pulse_plot = self.v_pulse_plot
         i_pulse_plot = self.i_pulse_plot
@@ -87,7 +87,7 @@ class TLPPulsePickFigure(object):
             v_pulse_plot.grid(True)
             v_pulse_plot.set_ylabel("Voltage")
             v_pulse_plot.set_visible(True)
-            
+
             i_pulse_plot.plot(self.offseted_time.T[selected_flag].T,
                               self.pulses.current[selected_flag].T, 'b')
             i_pulse_plot.grid(True)
@@ -98,7 +98,7 @@ class TLPPulsePickFigure(object):
             v_pulse_plot.set_visible(False)
             i_pulse_plot.set_visible(False)
         self.figure.canvas.draw()
-            
+
 
 class PulsesFigure(object):
     def __init__(self, figure, pulses, title=""):
@@ -116,7 +116,7 @@ class PulsesFigure(object):
         self.figure = figure
         self.v_pulse_plot = v_pulse_plot
         self.i_pulse_plot = i_pulse_plot
-        
+
     def update(self, selected_flag):
         v_pulse_plot = self.v_pulse_plot
         i_pulse_plot = self.i_pulse_plot
@@ -128,7 +128,7 @@ class PulsesFigure(object):
             v_pulse_plot.grid(True)
             v_pulse_plot.set_ylabel("Voltage")
             v_pulse_plot.set_visible(True)
-            
+
             i_pulse_plot.plot(self.offseted_time.T[selected_flag].T,
                               self.pulses.current[selected_flag].T, 'b')
             i_pulse_plot.grid(True)
@@ -139,4 +139,4 @@ class PulsesFigure(object):
             v_pulse_plot.set_visible(False)
             i_pulse_plot.set_visible(False)
         self.figure.canvas.draw()
-        
+
