@@ -100,11 +100,11 @@ class TLPFigure(object):
     def init_leak_evol(self, tlp_plot, tlp_curve_data, leakage_evol):
         leak_evol_with_v = tlp_plot.twinx()
         leak_evol_with_v.semilogy(tlp_curve_data[0],
-                                  leakage_evol,
+                                  np.abs(leakage_evol),
                                   'g-o',
                                   markersize=2)
         leak_evol_with_i = tlp_plot.twiny()
-        leak_evol_with_i.semilogx(leakage_evol,
+        leak_evol_with_i.semilogx(np.abs(leakage_evol),
                                   tlp_curve_data[1],
                                   'g-o',
                                   markersize=2)
