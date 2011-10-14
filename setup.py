@@ -5,9 +5,10 @@
 """
 
 from distutils.core import setup
+from thunderstorm import __version__
 
 setup(name = 'ThunderStorm',
-      version = '0.7a1',
+      version = __version__,
       author = 'David Trémouilles, Dimitri Linten',
       author_email = 'david.trem at gmail.com Dimitri Linten at gmail.com',
       url = 'http://code.google.com/p/esdanalysistools/',
