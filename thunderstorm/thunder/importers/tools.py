@@ -64,6 +64,7 @@ def _init():
     import plug_laas
     import plug_oryx
     import plug_hppi
+    import plug_serma
     import plug_hanwa
     import plug_barth
     plug_dict = {}
