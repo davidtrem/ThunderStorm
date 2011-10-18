@@ -51,7 +51,7 @@ class ImportSERMA(ImportPlugin):
                         offsets_t=data['offsets_t'])
         pulses.voltage = data['tlp_pulses'][0]
         pulses.current = data['tlp_pulses'][1]
-        pulses.valim = data['valim_tlp']
+        #pulses.valim = data['valim_tlp'] #not implemented
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
         leak_evol = data['leak_evol']
