@@ -87,7 +87,7 @@ class ReadOryx(object):
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol', 'offsets_t'):
             num_data[data_name] = np.array(self.data[data_name])
-        num_data['leak_data'] = self.data['leak_data']
+        num_data['leak_data'] = np.array(self.data['leak_data'])
         num_data['delta_t'] = self.data['delta_t']
         num_data['waveform_available'] = self.data['waveform_available']
         return num_data
