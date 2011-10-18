@@ -23,13 +23,12 @@
 
 from thunderstorm.istormlib.thunder_interface import Load
 from thunderstorm.istormlib.istorm_view import View
-from thunderstorm.istormlib.storm import Storm
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.interactive(True)
-import logging
+from thunderstorm.interact import my_storm
 
 def console(variables):
     import os, sys
@@ -71,19 +70,7 @@ Enjoy!
         return (shell.interact,
                 init_message + plt_info +" and -Interactive Console-")
 
-
+ 
 if __name__ == "__main__":
-    # Setting up logging to send INFO to the console
-    log = logging.getLogger('thunderstorm')
-    log.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(name)-12s: %(message)s')
-    ch.setFormatter(formatter)
-    log.addHandler(ch)
-
-    # Create a Storm
-    my_storm = Storm()
-
     prompt, message = console(locals())
     prompt(message)
