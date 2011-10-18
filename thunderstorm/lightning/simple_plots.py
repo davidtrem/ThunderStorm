@@ -25,9 +25,11 @@ import numpy as np
 import warnings
 
 class PulsesFigure(object):
+    """ Plot all transient curve
+    """
     def __init__(self, figure, pulses, title=""):
         time = np.arange(pulses.pulses_length) * pulses.delta_t
-        offseted_time = pulses.offsets_t + time[:,np.newaxis]
+        offseted_time = pulses.offsets_t + time[:, np.newaxis]
         offseted_time = offseted_time * 1e9
         # time in nanosecond
         # V curves
@@ -89,10 +91,14 @@ class TLPFigure(object):
                           "Leakage evolution will not be plotted",
                           RuntimeWarning)
         else:
+            self._leak_evol_with_v = None
+            self._leak_evol_with_i = None
             self.leak_evol_state = [True, False, False]
             self.init_leak_evol(tlp_plot, tlp_curve_data, leakage_evol)
             figure.canvas.mpl_connect('key_press_event',
                                       self.on_key_press)
+        self._leak_evol_with_v = None
+        self._leak_evol_with_i = None
         self.figure = figure
         self.draw = figure.canvas.draw
         self.draw()
@@ -122,4 +128,38 @@ class TLPFigure(object):
                 leak_state.insert(0, leak_state.pop())
                 self._leak_evol_with_i.set_visible(leak_state[0])
                 self._leak_evol_with_v.set_visible(leak_state[1])
+                self.draw()
+
+class LeakageIVsFigure(object):
+    """Plot all leakge-iv data
+    """
+    def __init__(self, figure, ivs_data, title=""):
+        ivs_plot = figure.add_subplot(111)
+        ivs_plot.grid(True)
+        ivs_plot.set_xlabel("Voltage (V)")
+        ivs_plot.set_ylabel("Current (A)")
+        ivs_plot.set_title(title)
+        ivs_plot.plot(ivs_data[:, 0].T, ivs_data[:, 1].T)
+        self.absolute_current_value = False
+        figure.canvas.mpl_connect('key_press_event',
+                                  self.on_key_press)
+        self._ivs_data = ivs_data
+        self._ivs_plot = ivs_plot
+        self.figure = figure
+        self.draw = figure.canvas.draw
+        self.draw()
+        
+    def on_key_press(self, event):
+        if event.inaxes:
+            if event.key == 'a':
+                ivs_data = self._ivs_data
+                self.absolute_current_value = not(self.absolute_current_value)
+                if self.absolute_current_value:
+                    self._ivs_plot.clear()
+                    self._ivs_plot.plot(np.abs(ivs_data[:, 0].T),
+                                        np.abs(ivs_data[:, 1].T))
+                else:
+                    self._ivs_plot.clear()
+                    self._ivs_plot.plot(ivs_data[:, 0].T,
+                                        ivs_data[:, 1].T)
                 self.draw()

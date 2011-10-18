@@ -21,7 +21,7 @@
 """
 
 from matplotlib.pyplot import figure
-from thunderstorm.lightning.leakage_std import LeakFigure
+from thunderstorm.lightning.simple_plots import LeakageIVsFigure
 from thunderstorm.lightning.simple_plots import TLPFigure
 from thunderstorm.lightning.pulse_observer import TLPPulsePickFigure
 import matplotlib
@@ -32,6 +32,9 @@ class View(object):
 
     def __init__(self, experiment):
         self.experiment = experiment
+        self.raw_tlp_fig = None
+        self.pickfig = None
+        self.leak_fig = None
 
     def __repr__(self):
         message = "View of "
@@ -51,8 +54,9 @@ class View(object):
     def leak(self):
         if self.experiment.raw_data.iv_leak == []:
             raise RuntimeError("No leakage curves available")
-        self.leak_fig = LeakFigure(figure(), "test",
-                                   self.experiment.raw_data.iv_leak)
+        self.leak_fig = LeakageIVsFigure(figure(),
+                                         self.experiment.raw_data.iv_leak,
+                                         "test")
 
 
 
