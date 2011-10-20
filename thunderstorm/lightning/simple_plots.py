@@ -97,8 +97,6 @@ class TLPFigure(object):
             self.init_leak_evol(tlp_plot, tlp_curve_data, leakage_evol)
             figure.canvas.mpl_connect('key_press_event',
                                       self.on_key_press)
-        self._leak_evol_with_v = None
-        self._leak_evol_with_i = None
         self.figure = figure
         self.draw = figure.canvas.draw
         self.draw()
