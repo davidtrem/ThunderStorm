@@ -62,6 +62,7 @@ class ImportBarth(ImportPlugin):
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
                               tester_name = self.label)
+        log.info("Importing Barth data. Done!")
         return raw_data
 
 

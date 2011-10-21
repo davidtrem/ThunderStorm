@@ -62,6 +62,7 @@ class ImportLAAS(ImportPlugin):
         raw_data = RawTLPdata(alldata.identification, pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
                               tester_name = self.label)
+        log.info("Importing LAAS data. Done!")
         return raw_data
 
 
