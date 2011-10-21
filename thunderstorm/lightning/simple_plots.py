@@ -22,7 +22,7 @@ Simple typical TLP curves plot
 """
 
 import numpy as np
-import warnings
+import logging
 
 class PulsesFigure(object):
     """ Plot all transient curve
@@ -87,9 +87,8 @@ class TLPFigure(object):
         if (leakage_evol == None
             or len(leakage_evol) == 0
             or np.alltrue(leakage_evol == 0)):
-            warnings.warn("No proper leakage evolution available\n" +
-                          "Leakage evolution will not be plotted",
-                          RuntimeWarning)
+            log = logging.getLogger('thunderstorm.lightning')
+            log.warn("Leakage evolution cannot be plotted, no data")
         else:
             self._leak_evol_with_v = None
             self._leak_evol_with_i = None
@@ -146,7 +145,7 @@ class LeakageIVsFigure(object):
         self.figure = figure
         self.draw = figure.canvas.draw
         self.draw()
-        
+
     def on_key_press(self, event):
         if event.inaxes:
             if event.key == 'a':

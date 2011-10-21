@@ -22,7 +22,7 @@ Simple TLP curve plot
 """
 
 import numpy as np
-import warnings
+import logging
 
 class TLPFigureWithLeakage(object):
     """A simple TLP figure
@@ -38,9 +38,8 @@ class TLPFigureWithLeakage(object):
         if (leakage_evol == None
             or len(leakage_evol) == 0
             or np.alltrue(leakage_evol == 0)):
-            warnings.warn("No proper leakage evolution available\n" +
-                          "Leakage evolution will not be plotted",
-                          RuntimeWarning)
+            log = logging.getLogger('thunderstorm.lightning')
+            log.warn("Leakage evolution cannot be plotted, no data")
         else:
             fig_leak_evol = tlp_plot.twiny()
             fig_leak_evol.set_navigate(False)
