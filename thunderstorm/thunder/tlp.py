@@ -107,7 +107,7 @@ class RawTLPdata(object):
             self.has_leakage_evolution = True
             self._leak_evol = leak_evol
 
-        if iv_leak == []:
+        if len(iv_leak) == 0:
             self.has_leakage_ivs = False
             self._iv_leak_data = None
         else:
