@@ -85,13 +85,36 @@ class RawTLPdata(object):
         tlp_curve:
             TLP curve data
         """
-        assert type(device_name) is str
-        assert pulses.__class__ is IVTime
+        if not(type(device_name) is str):
+            raise TypeError("Device name must be a string")
         self._device_name = device_name
+
+        if not(pulses.__class__ is IVTime):
+            raise TypeError("Pulses must be an IVTime object")
         self._pulses_data = pulses
-        self._iv_leak_data = iv_leak
+        #TODO this should be reworked to handle None
+        #if no transient data is available
+        if pulses.pulses_length == 0 or pulses.pulses_nb == 0:
+            self.has_transient_pulses = False
+        else:
+            self.has_transient_pulses = True
+
+        if (leak_evol == None or len(leak_evol) == 0
+            or np.alltrue(leak_evol == 0)):
+            self.has_leakage_evolution = False
+            self._leak_evol = None
+        else:
+            self.has_leakage_evolution = True
+            self._leak_evol = leak_evol
+
+        if iv_leak == []:
+            self.has_leakage_ivs = False
+            self._iv_leak_data = None
+        else:
+            self.has_leakage_ivs = True
+            self._iv_leak_data = iv_leak
+
         self._tlp_curve = tlp_curve
-        self._leak_evol = leak_evol
         self._tester_name = tester_name
         self._original_data_file_path = file_path
 

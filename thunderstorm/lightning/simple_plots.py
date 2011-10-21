@@ -84,9 +84,7 @@ class TLPFigure(object):
         tlp_plot.set_title(title)
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
-        if (leakage_evol == None
-            or len(leakage_evol) == 0
-            or np.alltrue(leakage_evol == 0)):
+        if leakage_evol == None:
             log = logging.getLogger('thunderstorm.lightning')
             log.warn("Leakage evolution cannot be plotted, no data")
         else:
