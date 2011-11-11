@@ -30,4 +30,4 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
  # Create a Storm : my_storm
-my_storm = Storm()
+mystorm = Storm()
