@@ -46,7 +46,8 @@ class ReadSERMA(object):
         data['valim_leak'] = csv_data[0]
         data['tlp'] = csv_data[1:3]
         data['leak_evol'] = csv_data[3]
-        data['leak_data'] = [] # not implemented
+        #data['leak_data'] = [] # not implemented
+
         serma_wfm = SERMATransientRead(base_name)
         (wfm_list, volt_list) = serma_wfm.filecontents
         tlp_v = []
@@ -64,6 +65,20 @@ class ReadSERMA(object):
         tlp_v = np.asarray(tlp_v)
         tlp_i = np.asarray(tlp_i)
         offsets_t = np.asarray(offsets_t)
+        
+        serma_leak = SERMALeakageRead(base_name)
+        leak_list = serma_leak.filecontents
+        leak_v = []
+        leak_i = []
+        for filename in leak_list:
+            serma_leak_data = serma_leak.data_from_leakage_file(filename)
+            leak_v.append(serma_leak_data[0])
+            leak_i.append(serma_leak_data[1])
+        leak_v = np.asarray(leak_v)
+        leak_i = np.asarray(leak_i)
+
+        data['tlp_leakages'] = np.array((leak_v, leak_i))
+        data['leak_data'] = np.array((leak_v, leak_i))
 
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
@@ -101,7 +116,7 @@ def extract_data_from_csv(tsr_file_name):
 
 
 class SERMATransientRead(object):
-    """Utils to extract data from SERMA tester files
+    """Utils to extract Waveform data from SERMA tester files
     """
     def __init__(self, base_dir):
         self.base_dir = os.path.dirname(base_dir)
@@ -166,3 +181,64 @@ class SERMATransientRead(object):
         #print( "%s;%i" % (elems[2],int(re.search("\d+",elems[2]).group(0))))
         return int(re.search("\d+",elems[2]).group(0))
 
+
+class SERMALeakageRead(object):
+    """Utils to extract leakage data from SERMA tester files
+    """
+    
+    def __init__(self, base_dir):
+        self.base_dir = os.path.dirname(base_dir)
+        self.leak_location = None #determined in filecontents function
+
+    def data_from_leakage_file(self, filename):
+        if self.leak_location.find('.zip') == -1:
+            filepath = os.path.join(self.leak_location, filename)
+            with open(filepath, 'U') as leak_file:
+                full_file = leak_file.read()
+            leak_file.close()
+        else:
+            zfile = ZipFile(self.leak_location)
+            full_file = zfile.read(filename)
+            zfile.close()
+        data_string = '\n'.join(full_file.split('\r\n'))
+        data_string_file = StringIO()
+        data_string_file.write(data_string)
+        data_string_file.reset()
+        return np.loadtxt(data_string_file, delimiter=',', skiprows=1).T
+
+    @property
+    def filecontents(self):
+        log = logging.getLogger('thunderstorm.thunder.importers')
+        is_zip = False
+        #check location of waveforms
+        base_dir = self.base_dir
+        if os.path.exists(os.path.join(base_dir,'IV-FILE')):
+            self.leak_location = os.path.join(base_dir,'IV-FILE')
+            log.debug('leakage curve in dir: IV-FILE')
+        elif os.path.exists(os.path.join(base_dir,'Leak-Curve')):
+            self.leak_location = os.path.join(base_dir,'Leak-Curve')
+            log.debug('leakage curve in dir: Leak-Curve')
+        elif os.path.isfile(os.path.join(base_dir,'leakages.zip')):
+            self.leak_location = os.path.join(base_dir,'leakages.zip')
+            is_zip = True
+            log.debug('leakages in zip file')
+        else:
+            log.debug('No leakages found')
+
+        if is_zip:
+            zfile = ZipFile(self.leak_location)
+            leak_list = zfile.namelist()
+        else:
+            leak_list = os.listdir(self.leak_location)
+
+        #filter all .csv files
+        leak_list = [elem for elem in leak_list if elem.count('.csv')]
+
+        leak_list.sort(key=self.get_leak_number)
+        return (leak_list)
+
+    def get_leak_number(self, filename):
+        #return first number in filename as an int
+        elems = filename.split('.')
+        #print( "%s;%i" % (elems[2],int(re.search("\d+",elems[2]).group(0))))
+        return int(re.search("\d+",elems[2]).group(0))

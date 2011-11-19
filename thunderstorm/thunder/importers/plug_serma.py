@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#from thunder import pulses
 
 # Copyright (C) 2010 SALOME Pascal
 
@@ -51,13 +52,12 @@ class ImportSERMA(ImportPlugin):
                         offsets_t=data['offsets_t'])
         pulses.voltage = data['tlp_pulses'][0]
         pulses.current = data['tlp_pulses'][1]
-        #pulses.valim = data['valim_tlp'] #not implemented
+        #pulses.valim = data['valim_tlp']#not implemented
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
         leak_evol = data['leak_evol']
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
                               tester_name = self.label)
-        log.info("Importing SERMA data. Done!")
         return raw_data
 
