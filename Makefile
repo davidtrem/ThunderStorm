@@ -30,5 +30,5 @@ apidoc: clean
 	epydoc -v --docformat="restructuredtext en" \
                --graph all thunderstorm -o ./doc/api_doc
 
-install:
+install: clean
 	python setup.py install --home=~
