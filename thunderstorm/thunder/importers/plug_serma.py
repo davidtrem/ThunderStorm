@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#from thunder import pulses
 
 # Copyright (C) 2010 SALOME Pascal
 
