@@ -65,16 +65,12 @@ class ReadSERMA(object):
 
         serma_leak = SERMALeakageRead(base_name)
         leak_list = serma_leak.filecontents
-        leak_v = []
-        leak_i = []
+        leak_data = []
         for filename in leak_list:
             serma_leak_data = serma_leak.data_from_leakage_file(filename)
-            leak_v.append(serma_leak_data[0])
-            leak_i.append(serma_leak_data[1])
-        leak_v = np.asarray(leak_v)
-        leak_i = np.asarray(leak_i)
+            leak_data.append(serma_leak_data)
 
-        data['leak_data'] = np.array((leak_v, leak_i))
+        data['leak_data'] = leak_data
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
         data['delta_t'] = delta_t * 1e-9
