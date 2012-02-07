@@ -74,9 +74,9 @@ class ReadHPPI(object):
     def data_to_num_array(self):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
-                          'valim_leak', 'leak_evol', 'offsets_t'):
+                          'valim_leak', 'leak_evol',
+                          'offsets_t', 'leak_data'):
             num_data[data_name] = np.array(self.data[data_name])
-        num_data['leak_data'] = self.data['leak_data']
         num_data['delta_t'] = self.data['delta_t']
         return num_data
 

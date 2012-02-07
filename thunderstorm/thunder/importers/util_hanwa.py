@@ -90,9 +90,8 @@ class ReadHanwa(object):
         """
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
-                          'valim_leak', 'leak_evol'):
+                          'valim_leak', 'leak_evol', 'leak_data'):
             num_data[data_name] = np.array(self.data[data_name])
-        num_data['leak_data'] = self.data['leak_data']
         num_data['delta_t'] = self.data['delta_t']
         return num_data
 

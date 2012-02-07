@@ -23,7 +23,6 @@ class TLPLeakagePickFigure(object):
     """A simple TLP figure
     """
     def __init__(self, figure, raw_data, title=""):
-        iv_leak = np.array(raw_data.iv_leak)                 #PSA for data compatibility
         tlp_plot = figure.add_axes((0.1, 0.1, 0.35, 0.8))
         tlp_plot.grid(True)
         tlp_plot.set_xlabel("Voltage (V)")
@@ -41,7 +40,7 @@ class TLPLeakagePickFigure(object):
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
 
 
-        self.iv_leak = iv_leak
+        self.iv_leak = raw_data.iv_leak
         # curves
         leak_plot = figure.add_axes((0.62, 0.1, 0.35, 0.8))
         leak_plot.set_title("DC Leakage Curves")
@@ -73,43 +72,17 @@ class TLPLeakagePickFigure(object):
 
     def update(self, selected_flag):
         leak_plot = self.leak_plot
-        leak_plot.hold(False)
-        if not((-selected_flag).all()): # if at least one true...
-            leak_plot.plot(self.iv_leak[selected_flag].T[:,0], self.iv_leak[selected_flag].T[:,1], 'b')   #PSA for data compatibility
-            leak_plot.set_visible(True)
-            leak_plot.set_title("DC Leakage Curves")
-            leak_plot.grid(True)
-            leak_plot.set_xlabel("Voltage (V)")
-            leak_plot.set_ylabel("Current (A)")
-        else:
-            leak_plot.set_visible(False)
-        self.figure.canvas.draw()
-
-
-class LeakagesFigure(object):
-    def __init__(self, figure, iv_leak, title=""):
-        self.iv_leak = iv_leak
-        # curves
-        leak_plot = figure.add_axes((0.62, 0.1, 0.35, 0.8))
+        leak_plot.cla()
         leak_plot.set_title("DC Leakage Curves")
         leak_plot.grid(True)
         leak_plot.set_xlabel("Voltage (V)")
         leak_plot.set_ylabel("Current (A)")
-        figure.canvas.draw()
-        self.figure = figure
-        self.leak_plot = leak_plot
-
-    def update(self, selected_flag):
-        leak_plot = self.leak_plot
-        leak_plot.hold(False)
         if not((-selected_flag).all()): # if at least one true...
-            leak_plot.plot(self.iv_leak[selected_flag].T[:,0], self.iv_leak[selected_flag].T[:,1], 'b')   #PSA
-            leak_plot.grid(True)
-            leak_plot.set_xlabel("Voltage (V)")
-            leak_plot.set_ylabel("Current (A)")
-            leak_plot.set_visible(True)
+            data = self.iv_leak[selected_flag].T
+            leak_plot.plot(data[:,0], data[:,1])
         else:
-            leak_plot.set_visible(False)
-
+            pass
+            #Should print something on the graph to say "please select
+            # a point on TLP plot"
         self.figure.canvas.draw()
 

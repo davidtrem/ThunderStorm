@@ -123,8 +123,8 @@ class ReadLAAS(object):
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak'):
             num_data[data_name] = npy.array(self.data[data_name])
-        num_data['leak_data'] = [npy.array(dat).transpose()
-                                 for dat in self.data['leak_data']]
+        num_data['leak_data'] = np.array([npy.array(dat).transpose()
+                                          for dat in self.data['leak_data']])
         num_data['tlp'] = num_data['tlp'].transpose()[1:]
         num_data['tlp_pulses'] = npy.array([x.transpose()
                                             for x in num_data['tlp_pulses']])
