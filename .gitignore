@@ -5,6 +5,7 @@
 .project
 .pydevproject
 .ropeproject
+.#*
 dist/
 build/
 MANIFEST
