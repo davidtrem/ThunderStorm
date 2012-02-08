@@ -16,6 +16,9 @@
 #
 #You should have received a copy of the GNU Lesser General Public License
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
+"""
+Tools to observe leakage curves corresponding to TLP points
+"""
 
 from tlp_observer import TLPPickFigure
 import numpy as np
