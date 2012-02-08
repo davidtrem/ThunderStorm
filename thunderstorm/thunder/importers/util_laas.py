@@ -21,7 +21,7 @@
 Read the data from LAAS TLP setup file
 """
 
-import numpy as npy
+import numpy as np
 import logging
 
 class ReadLAAS(object):
@@ -122,10 +122,10 @@ class ReadLAAS(object):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak'):
-            num_data[data_name] = npy.array(self.data[data_name])
-        num_data['leak_data'] = np.array([npy.array(dat).transpose()
+            num_data[data_name] = np.array(self.data[data_name])
+        num_data['leak_data'] = np.array([np.array(dat).transpose()
                                           for dat in self.data['leak_data']])
         num_data['tlp'] = num_data['tlp'].transpose()[1:]
-        num_data['tlp_pulses'] = npy.array([x.transpose()
+        num_data['tlp_pulses'] = np.array([x.transpose()
                                             for x in num_data['tlp_pulses']])
         return num_data
