@@ -18,6 +18,7 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+import matplotlib.cm
 
 class TLPLeakagePickFigure(object):
     """A simple TLP figure
@@ -32,11 +33,8 @@ class TLPLeakagePickFigure(object):
         curr = raw_data.tlp_curve[1]
         tlp_plot.plot(volt, curr, '-')
         selected_flag = np.zeros(volt.shape[0], dtype=np.bool)
-        selected_flag[0] = True # set first one True
         points, = tlp_plot.plot(volt, curr, 'o', picker=5)
         points.identity = "Who am I?"
-        selected_point, = tlp_plot.plot(volt[selected_flag],
-                                        curr[selected_flag], 'ro')
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
 
 
@@ -48,12 +46,13 @@ class TLPLeakagePickFigure(object):
         leak_plot.set_xlabel("Voltage (V)")
         leak_plot.set_ylabel("Current (A)")
         self.figure = figure
+        self.tlp_plot = tlp_plot
         self.leak_plot = leak_plot
         self.selected_flag = selected_flag
-        self. selected_point = selected_point
         self.volt = volt
         self.curr = curr
-        self.update(selected_flag)
+        self.selected_point = None
+        self.color_map = matplotlib.cm.get_cmap('RdYlBu_r')
 
 
     def onpickevent(self, event):
@@ -61,12 +60,17 @@ class TLPLeakagePickFigure(object):
             selected_flag = self.selected_flag
             ind = event.ind[0]
             selected_flag[ind] = not selected_flag[ind]
+            if self.selected_point != None:
+                self.selected_point.remove()
             if not((-selected_flag).all()): # at least one true
-                self.selected_point.set_data(self.volt[selected_flag],
-                                             self.curr[selected_flag])
-                self.selected_point.set_visible(True)
+                indexes = np.linspace(0, 1, selected_flag.sum())
+                self.selected_point = self.tlp_plot.scatter(self.volt[selected_flag],
+                                                            self.curr[selected_flag],
+                                                            c=indexes, s=40, zorder=3,
+                                                            cmap=self.color_map)
+
             else:
-                self.selected_point.set_visible(False)
+                self.selected_point = None
             self.update(selected_flag)
             self.figure.canvas.draw()
 
@@ -78,11 +82,13 @@ class TLPLeakagePickFigure(object):
         leak_plot.set_xlabel("Voltage (V)")
         leak_plot.set_ylabel("Current (A)")
         if not((-selected_flag).all()): # if at least one true...
+            indexes = np.linspace(0, 1, selected_flag.sum())
+            colors = self.color_map(indexes)
+            leak_plot.axes.set_color_cycle(colors)
             data = self.iv_leak[selected_flag].T
             leak_plot.plot(data[:,0], data[:,1])
         else:
             pass
             #Should print something on the graph to say "please select
             # a point on TLP plot"
-        self.figure.canvas.draw()
 
