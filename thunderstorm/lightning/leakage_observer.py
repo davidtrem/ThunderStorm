@@ -32,6 +32,7 @@ class TLPLeakagePickFigure(object):
         volt = raw_data.tlp_curve[0]
         curr = raw_data.tlp_curve[1]
         tlp_plot.plot(volt, curr, '-')
+        tlp_plot.set_autoscale_on(False)
         selected_flag = np.zeros(volt.shape[0], dtype=np.bool)
         points, = tlp_plot.plot(volt, curr, 'o', picker=5)
         points.identity = "Who am I?"
@@ -60,7 +61,6 @@ class TLPLeakagePickFigure(object):
             selected_flag = self.selected_flag
             ind = event.ind[0]
             selected_flag[ind] = not selected_flag[ind]
-            self.tlp_plot.set_autoscale_on(False)
             if self.selected_point != None:
                 self.selected_point.remove()
             if not((-selected_flag).all()): # at least one true
