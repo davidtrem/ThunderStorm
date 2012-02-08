@@ -60,6 +60,7 @@ class TLPLeakagePickFigure(object):
             selected_flag = self.selected_flag
             ind = event.ind[0]
             selected_flag[ind] = not selected_flag[ind]
+            self.tlp_plot.set_autoscale_on(False)
             if self.selected_point != None:
                 self.selected_point.remove()
             if not((-selected_flag).all()): # at least one true
