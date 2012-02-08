@@ -24,6 +24,7 @@ class TLPLeakagePickFigure(object):
     """A simple TLP figure
     """
     def __init__(self, figure, raw_data, title=""):
+        # init tlp plot
         tlp_plot = figure.add_axes((0.1, 0.1, 0.35, 0.8))
         tlp_plot.grid(True)
         tlp_plot.set_xlabel("Voltage (V)")
@@ -35,24 +36,24 @@ class TLPLeakagePickFigure(object):
         tlp_plot.set_autoscale_on(False)
         selected_flag = np.zeros(volt.shape[0], dtype=np.bool)
         points, = tlp_plot.plot(volt, curr, 'o', picker=5)
-        points.identity = "Who am I?"
+        points.identity = "Who am I?" #for latter implementation
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
-
-
-        self.iv_leak = raw_data.iv_leak
-        # curves
+        # init leak-curves plot
         leak_plot = figure.add_axes((0.62, 0.1, 0.35, 0.8))
         leak_plot.set_title("DC Leakage Curves")
         leak_plot.grid(True)
         leak_plot.set_xlabel("Voltage (V)")
         leak_plot.set_ylabel("Current (A)")
+        # init object attributes
+        self.iv_leak = raw_data.iv_leak
+        self.selected_point = None
+        self.leak_plot_lines = None
         self.figure = figure
         self.tlp_plot = tlp_plot
         self.leak_plot = leak_plot
         self.selected_flag = selected_flag
         self.volt = volt
         self.curr = curr
-        self.selected_point = None
         self.color_map = matplotlib.cm.get_cmap('RdYlBu_r')
 
 
@@ -69,7 +70,6 @@ class TLPLeakagePickFigure(object):
                                                             self.curr[selected_flag],
                                                             c=indexes, s=40, zorder=3,
                                                             cmap=self.color_map)
-
             else:
                 self.selected_point = None
             self.update(selected_flag)
@@ -77,19 +77,17 @@ class TLPLeakagePickFigure(object):
 
     def update(self, selected_flag):
         leak_plot = self.leak_plot
-        leak_plot.cla()
-        leak_plot.set_title("DC Leakage Curves")
-        leak_plot.grid(True)
-        leak_plot.set_xlabel("Voltage (V)")
-        leak_plot.set_ylabel("Current (A)")
+        if self.leak_plot_lines != None:
+            for line in self.leak_plot_lines:
+                line.remove()
         if not((-selected_flag).all()): # if at least one true...
             indexes = np.linspace(0, 1, selected_flag.sum())
             colors = self.color_map(indexes)
             leak_plot.axes.set_color_cycle(colors)
             data = self.iv_leak[selected_flag].T
-            leak_plot.plot(data[:,0], data[:,1])
+            self.leak_plot_lines = leak_plot.plot(data[:,0], data[:,1])
         else:
-            pass
+            self.leak_plot_lines = None
             #Should print something on the graph to say "please select
             # a point on TLP plot"
 
