@@ -21,4 +21,4 @@
 """thunderstorm python package.
 """
 
-__version__ = "0.7a2"
+__version__ = "0.7a3"
