@@ -23,6 +23,7 @@ This module contain base utils to observ a TLP curve
 
 import numpy as np
 import matplotlib.cm
+import logging
 
 class TLPPickFigure(object):
     """
@@ -52,6 +53,8 @@ class TLPPickFigure(object):
         self.volt = volt
         self.curr = curr
         self.color_map = matplotlib.cm.get_cmap('RdYlBu_r')
+        self.log = logging.getLogger('thunderstorm.info')
+
 
 
     def on_key_press(self, event):
@@ -70,6 +73,8 @@ class TLPPickFigure(object):
                         selected_flag[:] = False
                     self.update_graphs()
                     self.figure.canvas.draw()
+                else:
+                    self.specific_key_press(key_code)
 
     def onpickevent(self, event):
         if event.mouseevent.button == 1:
@@ -96,8 +101,16 @@ class TLPPickFigure(object):
 
     def update(self):
         """
-        Method to update the graph (leakages or pulses for example)
-        associated with the TLP IV plot.
-        Must be implemented in child class
+        Method to update the associated graph (leakages or pulses
+        for example) associated with the TLP IV plot.
+        Must be implemented by child class.
         """
         raise NotImplementedError
+
+    def specific_key_press(self, key_code):
+        """
+        Method to handle key press event specific to the assiciated
+        graph.
+        Should be implemented by child class.
+        """
+        self.log.info("No action is associated with keycode : %i" % key_code)
