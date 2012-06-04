@@ -54,9 +54,10 @@ class TLPPulsePickFigure(TLPPickFigure):
         self.i_pulse_lines = None
         self.pulses = raw_data.pulses
 
-    def update(self, selected_flag):
+    def update(self):
         v_pulse_plot = self.v_pulse_plot
         i_pulse_plot = self.i_pulse_plot
+        selected_flag = self.selected_flag
         if self.v_pulse_lines != None:
             for line in self.v_pulse_lines:
                 line.remove()
