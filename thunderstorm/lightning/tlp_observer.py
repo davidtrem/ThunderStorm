@@ -86,7 +86,7 @@ class TLPPickFigure(object):
 
     def update_graphs(self):
         selected_flag = self.selected_flag
-        if self.selected_point != None:
+        if self.selected_point is not None:
             self.selected_point.remove()
         if not((-selected_flag).all()): # at least one true
             indexes = np.linspace(0, 1, selected_flag.sum())

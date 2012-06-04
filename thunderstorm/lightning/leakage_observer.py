@@ -45,7 +45,7 @@ class TLPLeakagePickFigure(TLPPickFigure):
     def update(self):
         leak_plot = self.leak_plot
         selected_flag = self.selected_flag
-        if self.leak_plot_lines != None:
+        if self.leak_plot_lines is not None:
             for line in self.leak_plot_lines:
                 line.remove()
         if not((-selected_flag).all()): # if at least one true...
