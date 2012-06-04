@@ -42,9 +42,10 @@ class TLPLeakagePickFigure(TLPPickFigure):
         self.leak_plot_lines = None
         self.leak_plot = leak_plot
 
-    def update(self, selected_flag):
+    def update(self):
         leak_plot = self.leak_plot
-        if self.leak_plot_lines != None:
+        selected_flag = self.selected_flag
+        if self.leak_plot_lines is not None:
             for line in self.leak_plot_lines:
                 line.remove()
         if not((-selected_flag).all()): # if at least one true...
@@ -52,7 +53,8 @@ class TLPLeakagePickFigure(TLPPickFigure):
             colors = self.color_map(indexes)
             leak_plot.axes.set_color_cycle(colors)
             data = self.iv_leak[selected_flag].T
-            self.leak_plot_lines = leak_plot.plot(data[:,0], data[:,1])
+            self.leak_plot_lines = leak_plot.plot(data[:, 0],
+                                                  data[:, 1])
         else:
             self.leak_plot_lines = None
             #Should print something on the graph to say "please select

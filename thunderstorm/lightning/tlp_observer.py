@@ -23,6 +23,7 @@ This module contain base utils to observ a TLP curve
 
 import numpy as np
 import matplotlib.cm
+import logging
 
 class TLPPickFigure(object):
     """
@@ -43,6 +44,7 @@ class TLPPickFigure(object):
         points, = tlp_plot.plot(volt, curr, 'o', picker=5)
         points.identity = "Who am I?" #for latter implementation
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
+        figure.canvas.mpl_connect('key_press_event', self.on_key_press)
         # init object attributes
         self.selected_flag = selected_flag
         self.figure = figure
@@ -51,26 +53,64 @@ class TLPPickFigure(object):
         self.volt = volt
         self.curr = curr
         self.color_map = matplotlib.cm.get_cmap('RdYlBu_r')
+        self.log = logging.getLogger('thunderstorm.info')
+
+
+
+    def on_key_press(self, event):
+        key_codes = {'SHIFT+a':65, 'SHIFT+d':68}
+        if event.inaxes:
+            if len(event.key) == 1:
+                #to get the ASCII code for the combination of keys
+                key_code = ord(event.key)
+                selected_flag = self.selected_flag
+                if key_code in key_codes.values():
+                    if key_code == key_codes['SHIFT+a']:
+                        #Select all
+                        selected_flag[:] = True
+                    if key_code == key_codes['SHIFT+d']:
+                        #Deselect all
+                        selected_flag[:] = False
+                    self.update_graphs()
+                    self.figure.canvas.draw()
+                else:
+                    self.specific_key_press(key_code)
 
     def onpickevent(self, event):
         if event.mouseevent.button == 1:
             selected_flag = self.selected_flag
             ind = event.ind[0]
             selected_flag[ind] = not selected_flag[ind]
-            if self.selected_point != None:
-                self.selected_point.remove()
-            if not((-selected_flag).all()): # at least one true
-                indexes = np.linspace(0, 1, selected_flag.sum())
-                self.selected_point = self.tlp_plot.scatter(self.volt[selected_flag],
-                                                            self.curr[selected_flag],
-                                                            c=indexes, s=40, zorder=3,
-                                                            cmap=self.color_map)
-            else:
-                self.selected_point = None
-            self.update(selected_flag)
+            self.update_graphs()
             self.figure.canvas.draw()
 
-    def update(self, selected_flag):
-        """Must be implemented in child class
+    def update_graphs(self):
+        selected_flag = self.selected_flag
+        if self.selected_point is not None:
+            self.selected_point.remove()
+        if not((-selected_flag).all()): # at least one true
+            indexes = np.linspace(0, 1, selected_flag.sum())
+            self.selected_point = self.tlp_plot.scatter(
+                                      self.volt[selected_flag],
+                                      self.curr[selected_flag],
+                                      c=indexes, s=40, zorder=3,
+                                      cmap=self.color_map)
+        else:
+            self.selected_point = None
+        self.update()
+
+    def update(self):
+        """
+        Method to update the associated graph (leakages or pulses
+        for example) associated with the TLP IV plot.
+        Must be implemented by child class.
         """
         raise NotImplementedError
+
+    def specific_key_press(self, key_code):
+        """
+        Method to handle key press event specific to the assiciated
+        graph.
+        Should be implemented by child class.
+        """
+        self.log.info("No action is associated with keycode : %i" % key_code)
