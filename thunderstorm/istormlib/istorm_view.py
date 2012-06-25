@@ -25,6 +25,7 @@ from thunderstorm.lightning.simple_plots import LeakageIVsFigure
 from thunderstorm.lightning.simple_plots import TLPFigure
 from thunderstorm.lightning.pulse_observer import TLPPulsePickFigure
 from thunderstorm.lightning.leakage_observer import TLPLeakagePickFigure
+from thunderstorm.thunder.tlp import Droplet
 import matplotlib
 matplotlib.interactive(True)
 
@@ -32,6 +33,8 @@ matplotlib.interactive(True)
 class View(object):
 
     def __init__(self, experiment):
+        if not(experiment.__class__ is Droplet):
+            raise TypeError("An experiment is expected")
         self.experiment = experiment
         self.raw_tlp_fig = None
         self.pickfig = None
@@ -62,6 +65,3 @@ class View(object):
         self.leak_fig = LeakageIVsFigure(figure(),
                                          self.experiment.raw_data.iv_leak,
                                          "test")
-
-
-

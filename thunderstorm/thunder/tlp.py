@@ -23,6 +23,69 @@
 import numpy as np
 
 from thunderstorm.thunder.pulses import IVTime
+import h5py
+
+class Index(object):
+    def __init__(self, data, idx):
+        self._data = data
+        self._idx = idx
+    def __getitem__(self, index):
+        return self._data[index, self._idx]
+
+class H5IVTime(object):
+    """Contain the transient waveforms
+    """
+    def __init__(self, droplet=None):
+        if not(droplet.__class__ is h5py.Group):
+            raise TypeError("group must be an h5py.Group object")
+        self.droplet = droplet
+
+    def import_ivtime(self, pulses):
+        if not(pulses.__class__ is IVTime):
+            raise TypeError("Must give an IVTime object")
+        alldat = np.transpose(np.array((pulses.voltage, pulses.current)),
+                              (1, 0, 2))
+        self.droplet.create_dataset('IVTime',
+                             data=alldat,
+                             chunks=(2, 1, pulses.pulses_length),
+                             # Fist dim is pulse id, 2nd I ou V
+                             compression='gzip',
+                             compression_opts=9)
+        self.droplet.create_dataset('Valim', data=pulses.valim,
+                             chunks=True, compression='gzip',
+                             compression_opts=9)
+        self.droplet['delta_t'] = pulses.delta_t
+        self.droplet['offsets_t'] = pulses.offsets_t
+
+
+    @property
+    def voltage(self):
+        return Index(self.droplet['IVTime'], 0)
+
+    @property
+    def current(self):
+        return Index(self.droplet['IVTime'], 1)
+
+    @property
+    def pulses_length(self):
+        return self.droplet['IVTime'].shape[2]
+
+    @property
+    def pulses_nb(self):
+        return self.droplet['IVTime'].shape[0]
+
+    @property
+    def valim(self):
+        return self.droplet['Valim']
+
+    @property
+    def delta_t(self):
+        return self.droplet['delta_t']
+
+    @property
+    def offsets_t(self):
+        return self.droplet['offsets_t']
+
 
 
 class TLPcurve(object):
@@ -38,9 +101,9 @@ class TLPcurve(object):
         assert current.shape == voltage.shape
         assert len(current.shape) == 1
         length = current.shape[0]
-        format = np.dtype([('Voltage', (np.float64, length)),
-                           ('Current', (np.float64, length))])
-        data = np.zeros(1, format)
+        data_fmt = np.dtype([('Voltage', (np.float64, length)),
+                             ('Current', (np.float64, length))])
+        data = np.zeros(1, data_fmt)
         data['Voltage'] = voltage
         data['Current'] = current
         self._data = data
@@ -156,12 +219,22 @@ class RawTLPdata(object):
         return self._original_data_file_path
 
 
-class Experiment(object):
-
+class Droplet(object):
+    """ A Droplet is basically one TLP measurement i.e. a set
+        of TLP pulses, a TLP curve, leakages measurement etc...
+        A Droplet is base on an hdf5 file (*.oef file)
+    """
     def __init__(self, raw_data, exp_name="Unknown"):
         assert raw_data.__class__ is RawTLPdata
+        h5file = h5py.File("%s.oef" % exp_name, 'w')
+        device_group = h5file.create_group(exp_name)
+        data = H5IVTime(device_group)
+        if raw_data.pulses.__class__ is IVTime:
+            data.import_ivtime(raw_data.pulses)
+            raw_data._pulses_data = data
         self._raw_data = raw_data
         self._exp_name = exp_name
+        self._h5file = h5file
         return
 
     def __repr__(self):
@@ -180,3 +253,6 @@ class Experiment(object):
     @exp_name.setter
     def exp_name(self, value):
         self._exp_name = value
+
+    def __del__(self):
+        self._h5file.close()

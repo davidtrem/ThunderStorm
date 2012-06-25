@@ -27,7 +27,8 @@ Only plugin files starting with "plug" followed by underscore and ending with
 import_plugs variable contains all the import plugins
 
 """
-from thunderstorm.thunder.tlp import Experiment
+from thunderstorm.thunder.tlp import Droplet
+from os.path import basename, splitext
 
 class ImportPlugin(object):
     """Generic import plugin class"""
@@ -37,7 +38,7 @@ class ImportPlugin(object):
     def __init__(self):
         pass
 
-    def import_data(self,filename):
+    def import_data(self, filename):
         """Must return the data to be plotted
         return a RawTLPdata instance
         """
@@ -49,17 +50,20 @@ class ImportPlugin(object):
         """
         return "%s" % (self.__class__.__name__)
 
-    def load(self, file_name, experiment_name=""):
+    def load(self, file_name, experiment_name=None):
         """import data and pack them in an experiment
         return an experiment
         """
         raw_data = self.import_data(file_name)
-        return Experiment(raw_data, experiment_name)
+        if experiment_name is None:
+            experiment_name = splitext(basename(file_name))[0]
+        #TODO pass the device name to set the experiment_name
+        return Droplet(raw_data, experiment_name)
 
 
 def _init():
     """Activate importer plugins
-    available in importers this directory
+    available in this directory
     """
     import plug_laas
     import plug_oryx
