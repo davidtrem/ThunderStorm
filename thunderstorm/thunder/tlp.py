@@ -54,7 +54,7 @@ class H5IVTime(object):
         self.droplet.create_dataset('Valim', data=pulses.valim,
                              chunks=True, compression='gzip',
                              compression_opts=9)
-        self.droplet['delta_t'] = pulses.delta_t
+        self.droplet.attrs['delta_t'] = pulses.delta_t
         self.droplet['offsets_t'] = pulses.offsets_t
 
 
@@ -80,7 +80,7 @@ class H5IVTime(object):
 
     @property
     def delta_t(self):
-        return self.droplet['delta_t']
+        return self.droplet.attrs['delta_t']
 
     @property
     def offsets_t(self):
@@ -227,11 +227,20 @@ class Droplet(object):
     def __init__(self, raw_data, exp_name="Unknown"):
         assert raw_data.__class__ is RawTLPdata
         h5file = h5py.File("%s.oef" % exp_name, 'w')
-        device_group = h5file.create_group(exp_name)
-        data = H5IVTime(device_group)
+        dev_grp = h5file.create_group(exp_name)
+        data = H5IVTime(dev_grp)
         if raw_data.pulses.__class__ is IVTime:
             data.import_ivtime(raw_data.pulses)
-            raw_data._pulses_data = data
+            dev_grp['tlp_curve'] = raw_data.tlp_curve
+            raw_data._tlp_curve = dev_grp['tlp_curve']
+            dev_grp.attrs['device_name'] = raw_data.device_name
+            raw_data._device_name = dev_grp.attrs['device_name']
+            if raw_data.has_leakage_evolution:
+                dev_grp['leak_evol'] = raw_data.leak_evol
+                raw_data._leak_evol = dev_grp['leak_evol']
+            if raw_data.has_leakage_ivs:
+                dev_grp['iv_leak'] = raw_data.iv_leak
+                raw_data._iv_leak_data = dev_grp['iv_leak']
         self._raw_data = raw_data
         self._exp_name = exp_name
         self._h5file = h5file

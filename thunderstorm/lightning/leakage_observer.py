@@ -41,6 +41,10 @@ class TLPLeakagePickFigure(TLPPickFigure):
         self.iv_leak = raw_data.iv_leak
         self.leak_plot_lines = None
         self.leak_plot = leak_plot
+        #Plot the very first leakage curve
+        leak_plot.plot(self.iv_leak[0][0],
+                       self.iv_leak[0][1],
+                       '--k')
 
     def update(self):
         leak_plot = self.leak_plot
@@ -52,7 +56,9 @@ class TLPLeakagePickFigure(TLPPickFigure):
             indexes = np.linspace(0, 1, selected_flag.sum())
             colors = self.color_map(indexes)
             leak_plot.axes.set_color_cycle(colors)
-            data = self.iv_leak[selected_flag].T
+            #Do not forget the very first leakage curve
+            #is always visible
+            data = self.iv_leak[1:][selected_flag].T
             self.leak_plot_lines = leak_plot.plot(data[:, 0],
                                                   data[:, 1])
         else:
