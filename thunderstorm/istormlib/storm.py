@@ -20,10 +20,13 @@
 """
 Data storm
 """
+from matplotlib.pyplot import figure
+
 from thunderstorm.thunder.importers.tools import plug_dict
 from thunderstorm.istormlib.istorm_view import View
 from thunderstorm.lightning.simple_plots import TLPOverlay
-from matplotlib.pyplot import figure
+from thunderstorm.thunder.tlp import Droplet
+
 
 
 class Storm(list):
@@ -49,6 +52,9 @@ class Storm(list):
         for idx, elem in enumerate(self):
             showtxt += "%s : %s" % (idx, elem)
         return showtxt
+
+    def load(self, oef_filename):
+        self.append(View(Droplet(oef_filename)))
 
     def overlay_raw_tlp(self, index_list=(), experiment_list=()):
         if self.overlay_tlp_fig is None:

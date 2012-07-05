@@ -127,62 +127,15 @@ class TLPcurve(object):
         return self._data.copy()
 
 
-class RawTLPdata(object):
-    """All measurement data: device name, pulses, TLP curve, leakage ...
-    are packed in this class
-    """
-
-    def __init__(self, device_name, pulses,
-                 iv_leak, tlp_curve, leak_evol,
-                 file_path, tester_name=None):
-        """
-        Parameters
-        ----------
-        device_name: string
-            The device name
-
-        pulses:
-            A set of TLP IVTime pulses
-
-        iv_leak:
-            Leakage curves data
-
-        tlp_curve:
-            TLP curve data
-        """
-        if not(type(device_name) is str):
-            raise TypeError("Device name must be a string")
-        self._device_name = device_name
-
-        if not(pulses.__class__ is IVTime):
-            raise TypeError("Pulses must be an IVTime object")
-        self._pulses_data = pulses
-        #TODO this should be reworked to handle None
-        #if no transient data is available
-        if pulses.pulses_length == 0 or pulses.pulses_nb == 0:
-            self.has_transient_pulses = False
-        else:
-            self.has_transient_pulses = True
-
-        if (leak_evol is None or len(leak_evol) == 0
-                or np.alltrue(leak_evol == 0)):
-            self.has_leakage_evolution = False
-            self._leak_evol = None
-        else:
-            self.has_leakage_evolution = True
-            self._leak_evol = leak_evol
-
-        if len(iv_leak) == 0:
-            self.has_leakage_ivs = False
-            self._iv_leak_data = None
-        else:
-            self.has_leakage_ivs = True
-            self._iv_leak_data = iv_leak
-
-        self._tlp_curve = tlp_curve
-        self._tester_name = tester_name
-        self._original_data_file_path = file_path
-
+class _RawTLPdata(object):
+    def __init__(self):
+        self._tester_name = None
+        self._pulses_data = None
+        self._iv_leak_data = None
+        self._device_name = None
+        self._tlp_curve = None
+        self._leak_evol = None
+        self._original_data_file_path = None
     def __repr__(self):
         message = "%g pulses \n" % self.pulses.pulses_nb
         message += "Original file: " + self.original_file_name
@@ -219,32 +172,111 @@ class RawTLPdata(object):
         return self._original_data_file_path
 
 
+class H5RawTLPdata(_RawTLPdata):
+    """All measurement data: device name, pulses, TLP curve, leakage ...
+    from the h5File are made accessible throught this class
+    """
+    def __init__(self, droplet=None):
+        if not(droplet.__class__ is h5py.Group):
+            raise TypeError("group must be an h5py.Group object")
+        _RawTLPdata.__init__(self)
+        self.droplet = droplet
+        self._pulses_data = H5IVTime(droplet)
+        if self.pulses.pulses_length == 0 or self.pulses.pulses_nb == 0:
+            self.has_transient_pulses = False
+        else:
+            self.has_transient_pulses = True
+        if 'leak_evol' in droplet.keys():
+            self.has_leakage_evolution = True
+            self._leak_evol = droplet['leak_evol']
+        else:
+            self.has_leakage_evolution = False
+            self._leak_evol = None
+
+        if 'iv_leak' in droplet.keys():
+            self.has_leakage_ivs = True
+            self._iv_leak_data = droplet['iv_leak']
+        else:
+            self.has_leakage_ivs = False
+            self._iv_leak_data = None
+
+        self._tlp_curve = droplet['tlp_curve']
+        self._device_name = droplet.attrs['device_name']
+        self._tester_name = droplet.attrs['tester_name']
+        self._original_data_file_path = droplet.attrs['original_file_path']
+
+
+class RawTLPdata(_RawTLPdata):
+    """All measurement data: device name, pulses, TLP curve, leakage ...
+    are packed in this class
+    """
+
+    def __init__(self, device_name, pulses,
+                 iv_leak, tlp_curve, leak_evol,
+                 file_path, tester_name=None):
+        """
+        Parameters
+        ----------
+        device_name: string
+            The device name
+
+        pulses:
+            A set of TLP IVTime pulses
+
+        iv_leak:
+            Leakage curves data
+
+        tlp_curve:
+            TLP curve data
+        """
+        if not(type(device_name) is str):
+            raise TypeError("Device name must be a string")
+        if not(pulses.__class__ is IVTime):
+            raise TypeError("Pulses must be an IVTime object")
+        _RawTLPdata.__init__(self)
+        self._device_name = device_name
+        self._pulses_data = pulses
+        #TODO this should be reworked to handle None
+        #if no transient data is available
+        if pulses.pulses_length == 0 or pulses.pulses_nb == 0:
+            self.has_transient_pulses = False
+        else:
+            self.has_transient_pulses = True
+
+        if (leak_evol is None or len(leak_evol) == 0
+                or np.alltrue(leak_evol == 0)):
+            self.has_leakage_evolution = False
+            self._leak_evol = None
+        else:
+            self.has_leakage_evolution = True
+            self._leak_evol = leak_evol
+
+        if len(iv_leak) == 0:
+            self.has_leakage_ivs = False
+            self._iv_leak_data = None
+        else:
+            self.has_leakage_ivs = True
+            self._iv_leak_data = iv_leak
+
+        self._tlp_curve = tlp_curve
+        self._tester_name = tester_name
+        self._original_data_file_path = file_path
+
+
+
+
 class Droplet(object):
     """ A Droplet is basically one TLP measurement i.e. a set
         of TLP pulses, a TLP curve, leakages measurement etc...
         A Droplet is base on an hdf5 file (*.oef file)
     """
-    def __init__(self, raw_data, exp_name="Unknown"):
-        assert raw_data.__class__ is RawTLPdata
-        h5file = h5py.File("%s.oef" % exp_name, 'w')
-        dev_grp = h5file.create_group(exp_name)
-        data = H5IVTime(dev_grp)
-        if raw_data.pulses.__class__ is IVTime:
-            data.import_ivtime(raw_data.pulses)
-            dev_grp['tlp_curve'] = raw_data.tlp_curve
-            raw_data._tlp_curve = dev_grp['tlp_curve']
-            dev_grp.attrs['device_name'] = raw_data.device_name
-            raw_data._device_name = dev_grp.attrs['device_name']
-            if raw_data.has_leakage_evolution:
-                dev_grp['leak_evol'] = raw_data.leak_evol
-                raw_data._leak_evol = dev_grp['leak_evol']
-            if raw_data.has_leakage_ivs:
-                dev_grp['iv_leak'] = raw_data.iv_leak
-                raw_data._iv_leak_data = dev_grp['iv_leak']
+    def __init__(self, h5filename):
+        h5file = h5py.File(h5filename, 'r')
+        self._exp_name = h5file.keys()[0]
+        droplet = h5file[self._exp_name]
+        raw_data = H5RawTLPdata(droplet)
         self._raw_data = raw_data
-        self._exp_name = exp_name
         self._h5file = h5file
-        return
 
     def __repr__(self):
         message = "Experiement: "

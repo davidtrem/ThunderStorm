@@ -27,7 +27,8 @@ Only plugin files starting with "plug" followed by underscore and ending with
 import_plugs variable contains all the import plugins
 
 """
-from thunderstorm.thunder.tlp import Droplet
+import h5py
+from thunderstorm.thunder.tlp import Droplet, H5IVTime
 from os.path import basename, splitext
 
 class ImportPlugin(object):
@@ -50,15 +51,28 @@ class ImportPlugin(object):
         """
         return "%s" % (self.__class__.__name__)
 
-    def load(self, file_name, experiment_name=None):
-        """import data and pack them in an experiment
-        return an experiment
+    def load(self, file_name, exp_name=None):
+        """import data and pack them in a droplet
+        return the droplet
         """
         raw_data = self.import_data(file_name)
-        if experiment_name is None:
-            experiment_name = splitext(basename(file_name))[0]
-        #TODO pass the device name to set the experiment_name
-        return Droplet(raw_data, experiment_name)
+        if exp_name is None:
+            exp_name = splitext(basename(file_name))[0]
+        h5filename = "%s.oef" % exp_name
+        h5file = h5py.File(h5filename, 'w')
+        droplet = h5file.create_group(exp_name)
+        data = H5IVTime(droplet)
+        data.import_ivtime(raw_data.pulses)
+        droplet['tlp_curve'] = raw_data.tlp_curve
+        droplet.attrs['device_name'] = raw_data.device_name
+        droplet.attrs['tester_name'] = raw_data.tester_name
+        droplet.attrs['original_file_path'] = str(raw_data.original_file_name)
+        if raw_data.has_leakage_evolution:
+            droplet['leak_evol'] = raw_data.leak_evol
+        if raw_data.has_leakage_ivs:
+            droplet['iv_leak'] = raw_data.iv_leak
+        h5file.close()
+        return Droplet(h5filename)
 
 
 def _init():
