@@ -71,6 +71,10 @@ class ReadSERMA(object):
             serma_leak_data = serma_leak.data_from_leakage_file(filename)
             leak_data.append(serma_leak_data)
 
+        if len(leak_data) == len(data['tlp'][0]):
+        	ref_data=leak_data[0]
+        	leak_data.insert(0,ref_data)
+   
         data['leak_data'] = leak_data
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
