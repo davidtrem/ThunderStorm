@@ -532,6 +532,10 @@ class TLPAnalysis(object):
         if self.has_leakage_evolution:
             self.my_leak_analysis.update_evol_analysis(self.tlp_data)
 
+        kInd = self.extract_triggering_point(self.seuil)
+        trig_inf = self.set_triggering_str()
+        #TODO Bad design above
+
         self.get_fitting_data()
 
         self.make_derivative_plot(baseDir + '/report_analysis/derivative.png')
