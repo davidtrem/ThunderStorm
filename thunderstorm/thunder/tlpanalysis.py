@@ -44,7 +44,6 @@ class RawTLPdataAnalysis(object):
 
         file_path = raw_data.original_file_name
         tlp_curve = raw_data.tlp_curve
-        leak_evol = raw_data.leak_evol
         ## PSA thi is a trial to integrate the data analysis
         baseDir = os.path.dirname(file_path)
 
@@ -60,13 +59,13 @@ class RawTLPdataAnalysis(object):
         my_tlp_analysis = TLPAnalysis(tlp_curve)
         my_tlp_analysis.set_threshold(self.seuil)
 
-        if self.has_leakage_ivs:
-            my_tlp_analysis.set_leak_analysis(self._iv_leak_data)
+        if raw_data.has_leakage_ivs:
+            my_tlp_analysis.set_leak_analysis(raw_data._iv_leak_data)
             my_tlp_analysis.set_spot(self.spot_v)
             my_tlp_analysis.set_fail(self.fail_perc)
 
-        elif self.has_leakage_evolution:
-            my_tlp_analysis.set_evol_analysis(leak_evol)
+        elif raw_data.has_leakage_evolution:
+            my_tlp_analysis.set_evol_analysis(raw_data.leak_evol)
             my_tlp_analysis.set_fail(self.fail_perc)
 
         my_tlp_analysis.set_device_name(devName)
