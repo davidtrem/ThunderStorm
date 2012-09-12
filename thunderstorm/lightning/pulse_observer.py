@@ -24,6 +24,7 @@ Tools to observe transient curves corresponding to TLP points
 from tlp_observer import TLPPickFigure
 import numpy as np
 
+
 class TLPPulsePickFigure(TLPPickFigure):
     """
     TLP picking tool showing transient pulses
@@ -47,7 +48,7 @@ class TLPPulsePickFigure(TLPPickFigure):
         i_pulse_plot.set_ylabel("Current")
 
         # Init object attributes
-        self.offseted_time = offseted_time * 1e9 # time in nanosecond
+        self.offseted_time = offseted_time * 1e9  # time in nanosecond
         self.v_pulse_plot = v_pulse_plot
         self.v_pulse_lines = None
         self.i_pulse_plot = i_pulse_plot
@@ -63,7 +64,7 @@ class TLPPulsePickFigure(TLPPickFigure):
                 line.remove()
             for line in self.i_pulse_lines:
                 line.remove()
-        if not((-selected_flag).all()): # if at least one true...
+        if not((-selected_flag).all()):  # if at least one true...
             indexes = np.linspace(0, 1, selected_flag.sum())
             colors = self.color_map(indexes)
             v_pulse_plot.axes.set_color_cycle(colors)
@@ -81,4 +82,3 @@ class TLPPulsePickFigure(TLPPickFigure):
             self.i_pulse_lines = None
             #Should print something on the graph to say "please select
             # a point on TLP plot"
-

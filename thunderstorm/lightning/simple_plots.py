@@ -24,6 +24,7 @@ Simple typical TLP curves plot
 import numpy as np
 import logging
 
+
 class PulsesFigure(object):
     """ Plot all transient curve
     """
@@ -50,6 +51,7 @@ class PulsesFigure(object):
         self.i_plot = i_pulse_plot
         figure.canvas.draw()
 
+
 class TLPOverlay(object):
     """ A tool to visualize overlay of TLP I-V curves
     """
@@ -72,6 +74,7 @@ class TLPOverlay(object):
         self.tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
         self.draw()
 
+
 class TLPFigure(object):
     """A simple TLP figure
     """
@@ -84,7 +87,7 @@ class TLPFigure(object):
         tlp_plot.set_title(title)
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
-        if leakage_evol == None:
+        if leakage_evol is None:
             log = logging.getLogger('thunderstorm.lightning')
             log.warn("Leakage evolution cannot be plotted, no data")
         else:
@@ -124,6 +127,7 @@ class TLPFigure(object):
                 self._leak_evol_with_i.set_visible(leak_state[0])
                 self._leak_evol_with_v.set_visible(leak_state[1])
                 self.draw()
+
 
 class LeakageIVsFigure(object):
     """Plot all leakge-iv data
