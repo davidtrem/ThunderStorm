@@ -112,6 +112,7 @@ class TLPReporting(object):
         wbody_appnd("#### Main Leakage Graphs")
         wbody_appnd("")
         wbody_appnd(
+            "\n" +
             '|Initial Leakage of the Cell | Leakage Evolution       |\n'
             + '|:--------------------------:|:--------------------------:|\n'
             + '|[<img src="./report_analysis/reference.png" width=352'
@@ -119,8 +120,7 @@ class TLPReporting(object):
             + '(./report_analysis/reference.html)  |'
             + ' [<img src=\"./report_analysis/evolution.png\"'
             + ' width=352 align=\"center\" alt=\"evolution\">]'
-            + '(./report_analysis/evolution.html)|')
-
+            + '(./report_analysis/evolution.html)|\n')
         return self.wBody
 
     def set_doc(self, dev_name, abstract_data):
@@ -148,17 +148,16 @@ class TLPReporting(object):
         wbody_appnd('|<img src="./images/reference.png" width=352' +
                     'align="center" alt="reference">  | ' +
                     '<img src="./images/evolution.png" width=352 ' +
-                    'align="center" alt="evolution">|')
+                    'align="center" alt="evolution">|\n')
 
         return self.wBody
 
     def set_spot_value(self, spot, fail_level):
         wbody_appnd = self.wBody.append
-        txt = """#### Failure Assumption\n
-        |Spot Value | Failure criterion|
-        |:---------:|:----------------:|
-        """
-        wbody_appnd(txt)
+        wbody_appnd("#### Failure Assumption")
+        wbody_appnd("")
+        wbody_appnd("|Spot Value | Failure criterion|")
+        wbody_appnd("|:---------:|:----------------:|")
         wbody_appnd("|{0:.2}V|{1}%".format(spot, fail_level))
         wbody_appnd("")
 
@@ -167,21 +166,21 @@ class TLPReporting(object):
         str2 = ""
         str3 = ""
         wbody_appnd = self.wBody.append
-        txt = """#### Additional Leakage Information
-        statistical information on leakage data taken at the spot value are \
-        provided in the table here below.\n
-        |Reference Value | Mean| Minimum | Maximum | Standard Deviation |
-        |:--------------:|:---:|:-------:|:-------:|:------------------:|
-        """
-        wbody_appnd(txt)
+        wbody_appnd("#### Additional Leakage Information")
+        wbody_appnd("statistical information on leakage data taken at the " +
+                    "spot value are provided in the table here below.")
+        wbody_appnd("")
+        t = "|Reference Value | Mean| Minimum | Maximum | Standard Deviation |"
+        wbody_appnd(t)
+        t = "|:--------------:|:---:|:-------:|:-------:|:------------------:|"
+        wbody_appnd(t)
         wbody_appnd(statistic)
-        txt = """
-        Statistics on leakage evolution are summarized in the table here \
-        below.\n
-        |Error Mean| Minimum | Maximum | Standard Deviation |
-        |:--------:|:-------:|:-------:|:------------------:|
-        """
-        wbody_appnd(txt)
+        wbody_appnd("")
+        wbody_appnd("Statistics on leakage evolution are summarized in " +
+                    "the table here below.")
+        wbody_appnd("")
+        wbody_appnd("|Error Mean| Minimum | Maximum | Standard Deviation |")
+        wbody_appnd("|:--------:|:-------:|:-------:|:------------------:|")
         wbody_appnd(err_stat)
         wbody_appnd("")
         if soft_bool:
