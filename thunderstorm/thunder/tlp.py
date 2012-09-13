@@ -21,7 +21,9 @@
 """
 
 import numpy as np
+
 from thunderstorm.thunder.pulses import IVTime
+
 
 class TLPcurve(object):
     """The data for a TLP curve
@@ -37,7 +39,7 @@ class TLPcurve(object):
         assert len(current.shape) == 1
         length = current.shape[0]
         format = np.dtype([('Voltage', (np.float64, length)),
-                            ('Current', (np.float64, length))])
+                           ('Current', (np.float64, length))])
         data = np.zeros(1, format)
         data['Voltage'] = voltage
         data['Current'] = current
@@ -99,8 +101,8 @@ class RawTLPdata(object):
         else:
             self.has_transient_pulses = True
 
-        if (leak_evol == None or len(leak_evol) == 0
-            or np.alltrue(leak_evol == 0)):
+        if (leak_evol is None or len(leak_evol) == 0
+                or np.alltrue(leak_evol == 0)):
             self.has_leakage_evolution = False
             self._leak_evol = None
         else:
@@ -119,7 +121,7 @@ class RawTLPdata(object):
         self._original_data_file_path = file_path
 
     def __repr__(self):
-        message = "%g pulses \n" %self.pulses.pulses_nb
+        message = "%g pulses \n" % self.pulses.pulses_nb
         message += "Original file: " + self.original_file_name
         return message
 
@@ -164,7 +166,7 @@ class Experiment(object):
 
     def __repr__(self):
         message = "Experiement: "
-        message += self._exp_name +"\n"
+        message += self._exp_name + "\n"
         return message
 
     @property

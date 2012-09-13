@@ -18,6 +18,7 @@ setup(name = 'ThunderStorm',
                   'thunderstorm.thunder',
                   'thunderstorm.thunder.importers',
                   'thunderstorm.lightning',
-                  'thunderstorm.istormlib'],
+                  'thunderstorm.istormlib',
+                  'thunderstorm.thunder.analysis'],
       scripts = ['istorm.py',],
       )
