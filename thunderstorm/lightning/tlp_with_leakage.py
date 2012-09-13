@@ -24,6 +24,7 @@ Simple TLP curve plot
 import numpy as np
 import logging
 
+
 class TLPFigureWithLeakage(object):
     """A simple TLP figure
     """
@@ -35,17 +36,15 @@ class TLPFigureWithLeakage(object):
         tlp_plot.set_title(title + "TLP curve")
         tlp_plot.plot(tlp_curve_data[0], tlp_curve_data[1], '-o')
 
-        if (leakage_evol == None
-            or len(leakage_evol) == 0
-            or np.alltrue(leakage_evol == 0)):
+        if (leakage_evol is None
+                or len(leakage_evol) == 0
+                or np.alltrue(leakage_evol == 0)):
             log = logging.getLogger('thunderstorm.lightning')
             log.warn("Leakage evolution cannot be plotted, no data")
         else:
             fig_leak_evol = tlp_plot.twiny()
             fig_leak_evol.set_navigate(False)
             fig_leak_evol.semilogx(leakage_evol, tlp_curve_data[1],
-                               'g-o',
-                               markersize=2)
+                                   'g-o', markersize=2)
         self.plot = tlp_plot
         self.draw = figure.canvas.draw
-

@@ -27,6 +27,7 @@ from numpy import ma
 from utils import autoscale_visible_lines
 import thunderstorm.thunder.leak_evol_calculation as leak_evol_calculation
 
+
 class LeakFigure(object):
     """A standard leakage figure
     """
@@ -39,8 +40,8 @@ class LeakFigure(object):
         fig_leak.set_xlabel('Voltage (V)')
         fig_leak.set_ylabel('Current (A)')
         fig_leak.set_title(device_name)
-        fig_leak.fmt_xdata = lambda num : "%.2e" % num
-        fig_leak.fmt_ydata = lambda num : "%.2e" % num
+        fig_leak.fmt_xdata = lambda num: "%.2e" % num
+        fig_leak.fmt_ydata = lambda num: "%.2e" % num
         # Initialize leakage curves
         fig_leak_curves = []
         idx = iv_leak.shape[0]
@@ -48,11 +49,11 @@ class LeakFigure(object):
             temp, = fig_leak.plot([1], [1])
             fig_leak_curves.append(temp)
             idx -= 1
-        yleak = abs(iv_leak[:,1,:])
+        yleak = abs(iv_leak[:, 1, :])
         self.noise_floor_limit = (yleak.max().max(), yleak.min().min())
         #Graph related attributes
-        self._graph['leak_points'], = fig_leak.plot([1], [1],
-                                                   'g-o', markersize=6 )
+        self._graph['leak_points'], = fig_leak.plot(
+            [1], [1], 'g-o', markersize=6)
         self._graph['leak_curves'] = fig_leak_curves
         self._graph['fig_leak'] = fig_leak
         self.visible_flags = iv_leak.shape[0] * [True]
@@ -65,8 +66,8 @@ class LeakFigure(object):
 
     def update_leak_evol_points(self):
         """Update evol points plot for next time drawing """
-        data = leak_evol_calculation.point_evol(self.iv_leak,
-                                                self._leak_evol_points_position)
+        data = leak_evol_calculation.point_evol(
+            self.iv_leak, self._leak_evol_points_position)
         noise_floor = self._noise_floor
         xdata = data[0]
         ydata = ma.array(abs(data[1]))

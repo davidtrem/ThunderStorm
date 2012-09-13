@@ -22,6 +22,7 @@ Various utility functions
 """
 import matplotlib
 
+
 def autoscale_visible_lines(axs):
     """
     Function to autoscale only on visible lines.
@@ -30,7 +31,7 @@ def autoscale_visible_lines(axs):
     ignore = True
     for line in (axs.lines):
         if not line.get_visible():
-            continue #jump to next line if this one is not visible
+            continue  # jump to next line if this one is not visible
         if mplt_ver[0] == 0 and mplt_ver[1] < 98:
             axs.dataLim.update_numerix(line.get_xdata(),
                                        line.get_ydata(),
@@ -41,6 +42,7 @@ def autoscale_visible_lines(axs):
         ignore = False
     axs.autoscale_view()
     return None
+
 
 def neg_bool_list(a_list):
     return [not elem for elem in a_list]

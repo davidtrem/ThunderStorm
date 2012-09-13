@@ -25,6 +25,7 @@ import numpy as np
 import matplotlib.cm
 import logging
 
+
 class TLPPickFigure(object):
     """
     Base class for tlp point picking
@@ -42,7 +43,7 @@ class TLPPickFigure(object):
         tlp_plot.set_autoscale_on(False)
         selected_flag = np.zeros(volt.shape[0], dtype=np.bool)
         points, = tlp_plot.plot(volt, curr, 'o', picker=5)
-        points.identity = "Who am I?" #for latter implementation
+        points.identity = "Who am I?"  # For latter implementation
         figure.canvas.mpl_connect('pick_event', self.onpickevent)
         figure.canvas.mpl_connect('key_press_event', self.on_key_press)
         # init object attributes
@@ -55,10 +56,8 @@ class TLPPickFigure(object):
         self.color_map = matplotlib.cm.get_cmap('RdYlBu_r')
         self.log = logging.getLogger('thunderstorm.info')
 
-
-
     def on_key_press(self, event):
-        key_codes = {'SHIFT+a':65, 'SHIFT+d':68}
+        key_codes = {'SHIFT+a': 65, 'SHIFT+d': 68}
         if event.inaxes:
             if len(event.key) == 1:
                 #to get the ASCII code for the combination of keys
@@ -88,13 +87,13 @@ class TLPPickFigure(object):
         selected_flag = self.selected_flag
         if self.selected_point is not None:
             self.selected_point.remove()
-        if not((-selected_flag).all()): # at least one true
+        if not((-selected_flag).all()):  # at least one true
             indexes = np.linspace(0, 1, selected_flag.sum())
             self.selected_point = self.tlp_plot.scatter(
-                                      self.volt[selected_flag],
-                                      self.curr[selected_flag],
-                                      c=indexes, s=40, zorder=3,
-                                      cmap=self.color_map)
+                self.volt[selected_flag],
+                self.curr[selected_flag],
+                c=indexes, s=40, zorder=3,
+                cmap=self.color_map)
         else:
             self.selected_point = None
         self.update()

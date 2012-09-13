@@ -48,7 +48,7 @@ class TLPLeakagePickFigure(TLPPickFigure):
         if self.leak_plot_lines is not None:
             for line in self.leak_plot_lines:
                 line.remove()
-        if not((-selected_flag).all()): # if at least one true...
+        if not((-selected_flag).all()):  # if at least one true...
             indexes = np.linspace(0, 1, selected_flag.sum())
             colors = self.color_map(indexes)
             leak_plot.axes.set_color_cycle(colors)
@@ -59,4 +59,3 @@ class TLPLeakagePickFigure(TLPPickFigure):
             self.leak_plot_lines = None
             #Should print something on the graph to say "please select
             # a point on TLP plot"
-
