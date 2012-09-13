@@ -110,12 +110,17 @@ class TLPOverlayWithLeakEvol(object):
         leak_evol_plot.locator_params(axis='x', nbins=4)
 
     def add_curve(self, raw_tlp_data):
-        self.tlp_plot.plot(raw_tlp_data.tlp_curve[0],
-                           raw_tlp_data.tlp_curve[1], '-o')
-        self.leak_evol_plot.semilogx(raw_tlp_data.leak_evol,
-                                     raw_tlp_data.tlp_curve[1],
-                                     '-o', markersize=2)
-        self.leak_evol_plot.xaxis.get_major_locator().numticks = 3
+        line, = self.tlp_plot.plot(raw_tlp_data.tlp_curve[0],
+                                   raw_tlp_data.tlp_curve[1], '-o')
+        if raw_tlp_data.has_leakage_evolution:
+            self.leak_evol_plot.semilogx(raw_tlp_data.leak_evol,
+                                         raw_tlp_data.tlp_curve[1],
+                                         '%s-o' % line.get_color(),
+                                         markersize=2)
+            self.leak_evol_plot.xaxis.get_major_locator().numticks = 3
+        else:
+            log = logging.getLogger('thunderstorm.lightning')
+            log.warn("Leakage evolution cannot be plotted, no data")
         self.draw()
 
 
