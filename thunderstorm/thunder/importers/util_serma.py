@@ -46,7 +46,7 @@ class ReadSERMA(object):
         data['valim_leak'] = csv_data[0]
         data['tlp'] = csv_data[1:3]
         data['leak_evol'] = csv_data[3]
-        data['leak_data'] = [] 
+        data['leak_data'] = []
 
         serma_wfm = SERMATransientRead(base_name)
         (wfm_list, volt_list) = serma_wfm.filecontents
@@ -59,11 +59,11 @@ class ReadSERMA(object):
             tlp_i.append(serma_wfm_data[2])
             offsets_t.append(serma_wfm_data[0][0])
         time_array = serma_wfm_data[0]
-        delta_t = time_array[1]-time_array[0]
+        delta_t = time_array[1] - time_array[0]
         tlp_v = np.asarray(tlp_v)
         tlp_i = np.asarray(tlp_i)
         offsets_t = np.asarray(offsets_t)
-        
+
         serma_leak = SERMALeakageRead(base_name)
         leak_list = serma_leak.filecontents
         leak_data = []
@@ -72,9 +72,9 @@ class ReadSERMA(object):
             leak_data.append(serma_leak_data)
 
         if len(leak_data) == len(data['tlp'][0]):
-        	ref_data=leak_data[0]
-        	leak_data.insert(0,ref_data)
-   
+            ref_data = leak_data[0]
+            leak_data.insert(0, ref_data)
+
         data['leak_data'] = leak_data
         data['tlp_pulses'] = np.array((tlp_v, tlp_i))
         data['valim_tlp'] = volt_list
@@ -88,10 +88,11 @@ class ReadSERMA(object):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol',
-                        'offsets_t','leak_data'):
+                        'offsets_t', 'leak_data'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['delta_t'] = self.data['delta_t']
         return num_data
+
 
 def extract_data_from_csv(tsr_file_name):
     """Extract data from *.csv file
@@ -115,19 +116,20 @@ class SERMATransientRead(object):
     """
     def __init__(self, base_dir):
         self.base_dir = os.path.dirname(base_dir)
-        self.wfm_location = None #determined in filecontents function
+        self.wfm_location = None  # Determined in filecontents function
 
     def data_from_transient_file(self, filename):
-        if os.path.isfile(self.wfm_location) and tf.is_tarfile(self.wfm_location):
-            tfile = tf.open(self.wfm_location,'r')
+        if (os.path.isfile(self.wfm_location)
+            and tf.is_tarfile(self.wfm_location)):
+            tfile = tf.open(self.wfm_location, 'r')
             my_file = tfile.extractfile(filename)
             full_file = my_file.read()
             tfile.close()
         elif z.is_zipfile(self.wfm_location):
             zfile = z.ZipFile(self.wfm_location)
             full_file = zfile.read(filename)
-            zfile.close()            
-        else :
+            zfile.close()
+        else:
             filepath = os.path.join(self.wfm_location, filename)
             with open(filepath, 'U') as wfm_file:
                 full_file = wfm_file.read()
@@ -146,38 +148,38 @@ class SERMATransientRead(object):
         is_tar = False
         #check location of waveforms
         base_dir = self.base_dir
-        if os.path.exists(os.path.join(base_dir,'WFM')):
-            self.wfm_location = os.path.join(base_dir,'WFM')
+        if os.path.exists(os.path.join(base_dir, 'WFM')):
+            self.wfm_location = os.path.join(base_dir, 'WFM')
             log.debug('waveforms in dir: wfm')
-        elif os.path.exists(os.path.join(base_dir,'HV-Pulse')):
-            self.wfm_location = os.path.join(base_dir,'HV-Pulse')
+        elif os.path.exists(os.path.join(base_dir, 'HV-Pulse')):
+            self.wfm_location = os.path.join(base_dir, 'HV-Pulse')
             log.debug('waveforms in dir: HV-Pulse')
-        else:        
+        else:
             found_file = False
-            file_list = os.listdir(base_dir)     
+            file_list = os.listdir(base_dir)
             for item in file_list:
                 if 'transients' in item:
-                    self.wfm_location = os.path.join(base_dir,item)
+                    self.wfm_location = os.path.join(base_dir, item)
                     if tf.is_tarfile(self.wfm_location):
                         is_tar = True
-                        log.debug('waveforms in tar file') 
+                        log.debug('waveforms in tar file')
                         found_file = True
                     elif z.is_zipfile(self.wfm_location):
                         is_zip = True
-                        log.debug('waveforms in zip file')   
+                        log.debug('waveforms in zip file')
                         found_file = True
-                    else:     
-                        log.debug('waveforms in unknown type of file')   
+                    else:
+                        log.debug('waveforms in unknown type of file')
 
             if not found_file:
                 log.debug('No waveforms found')
 
-        wfm_list  = [] 
+        wfm_list = []
         if is_zip:
             zfile = z.ZipFile(self.wfm_location)
             wfm_list = zfile.namelist()
         elif is_tar:
-            tfile = tf.open(self.wfm_location,'r')
+            tfile = tf.open(self.wfm_location, 'r')
             for info in tfile.getmembers():
                 wfm_list.append(info.name)
         else:
@@ -198,29 +200,29 @@ class SERMATransientRead(object):
         #return first number in filename as an int
         elems = filename.split('.')
         #print( "%s;%i" % (elems[2],int(re.search("\d+",elems[2]).group(0))))
-        return int(re.search("\d+",elems[2]).group(0))
+        return int(re.search("\d+", elems[2]).group(0))
 
 
 class SERMALeakageRead(object):
     """Utils to extract leakage data from SERMA tester files
     """
-    
+
     def __init__(self, base_dir):
         self.base_dir = os.path.dirname(base_dir)
-        self.leak_location = None #determined in filecontents function
+        self.leak_location = None  # Determined in filecontents function
 
     def data_from_leakage_file(self, filename):
-        
-        if os.path.isfile(self.leak_location) and tf.is_tarfile(self.leak_location):
-            tfile = tf.open(self.leak_location,'r')
+        if (os.path.isfile(self.leak_location)
+            and tf.is_tarfile(self.leak_location)):
+            tfile = tf.open(self.leak_location, 'r')
             my_file = tfile.extractfile(filename)
             full_file = my_file.read()
             tfile.close()
         elif z.is_zipfile(self.leak_location):
             zfile = z.ZipFile(self.leak_location)
             full_file = zfile.read(filename)
-            zfile.close()            
-        else :
+            zfile.close()
+        else:
             filepath = os.path.join(self.leak_location, filename)
             with open(filepath, 'U') as leak_file:
                 full_file = leak_file.read()
@@ -239,29 +241,29 @@ class SERMALeakageRead(object):
         is_tar = False
         #check location of waveforms
         base_dir = self.base_dir
-        if os.path.exists(os.path.join(base_dir,'IV-FILE')):
-            self.leak_location = os.path.join(base_dir,'IV-FILE')
+        if os.path.exists(os.path.join(base_dir, 'IV-FILE')):
+            self.leak_location = os.path.join(base_dir, 'IV-FILE')
             log.debug('leakage curve in dir: IV-FILE')
-        elif os.path.exists(os.path.join(base_dir,'Leak-Curve')):
-            self.leak_location = os.path.join(base_dir,'Leak-Curve')
+        elif os.path.exists(os.path.join(base_dir, 'Leak-Curve')):
+            self.leak_location = os.path.join(base_dir, 'Leak-Curve')
             log.debug('leakage curve in dir: Leak-Curve')
-        elif os.path.isfile(os.path.join(base_dir,'leakages.zip')):
-            self.leak_location = os.path.join(base_dir,'leakages.zip')
+        elif os.path.isfile(os.path.join(base_dir, 'leakages.zip')):
+            self.leak_location = os.path.join(base_dir, 'leakages.zip')
             is_zip = True
             log.debug('leakages in zip file')
-        elif os.path.isfile(os.path.join(base_dir,'leakages.tar.gz')):
-            self.leak_location = os.path.join(base_dir,'leakages.tar.gz')
+        elif os.path.isfile(os.path.join(base_dir, 'leakages.tar.gz')):
+            self.leak_location = os.path.join(base_dir, 'leakages.tar.gz')
             is_tar = True
-            log.debug('leakages in tar file')             
+            log.debug('leakages in tar file')
         else:
             log.debug('No leakages found')
 
-        leak_list  = [] 
+        leak_list = []
         if is_zip:
             zfile = z.ZipFile(self.leak_location)
             leak_list = zfile.namelist()
         elif is_tar:
-            tfile = tf.open(self.leak_location,'r')
+            tfile = tf.open(self.leak_location, 'r')
             for info in tfile.getmembers():
                 leak_list.append(info.name)
         else:
@@ -277,4 +279,4 @@ class SERMALeakageRead(object):
         #return first number in filename as an int
         elems = filename.split('.')
         #print( "%s;%i" % (elems[2],int(re.search("\d+",elems[2]).group(0))))
-        return int(re.search("\d+",elems[2]).group(0))
+        return int(re.search("\d+", elems[2]).group(0))

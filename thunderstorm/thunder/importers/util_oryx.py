@@ -157,7 +157,7 @@ class OryxTransientZip(object):
         elif os.path.exists(zfilename[:-4]):
             #if a folder exist create the zip file
             zfile = ZipFile(zfilename, 'w')
-            for filename in glob.glob(zfilename[:-4]+'/*'):
+            for filename in glob.glob(zfilename[:-4] + '/*'):
                 zfile.write(filename, os.path.basename(filename))
             zfile.close()
             self.zipcreated = zfilename
@@ -200,9 +200,9 @@ class OryxTransientZip(object):
         # filename format
         # for TLP voltage: 04-29-09_05'40'45_PM_TlpVolt_90V.wfm
         # for TLP current: 04-29-09_05'40'45_PM_TlpCurr_90V.wfm
-        voltages_dict = {'TlpCurr' : [], 'TlpVolt' : [],
-                         'TlpVMonCh3' : [], 'TlpVMonCh4' : [],
-                         'TlpVoltCh3' : [], 'TlpVoltCh4' : []}
+        voltages_dict = {'TlpCurr': [], 'TlpVolt': [],
+                         'TlpVMonCh3': [], 'TlpVMonCh4': [],
+                         'TlpVoltCh3': [], 'TlpVoltCh4': []}
         for filename in self.zfile.namelist():
             if filename[-4:] == ".wfm":
                 elems = filename[:-5].split('_')
@@ -219,4 +219,3 @@ class OryxTransientZip(object):
         volt_list = self.supply_voltage_list
         basename = '_'.join(self.zfile.namelist()[0].split('_')[0:3])
         return (basename, volt_list)
-

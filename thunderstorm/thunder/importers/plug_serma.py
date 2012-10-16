@@ -28,6 +28,7 @@ from thunderstorm.thunder.pulses import IVTime
 import os
 import logging
 
+
 class ImportSERMA(ImportPlugin):
     """Import data from SERMA TLP setup
     """
@@ -57,7 +58,6 @@ class ImportSERMA(ImportPlugin):
         leak_evol = data['leak_evol']
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
-                              tester_name = self.label)
+                              tester_name=self.label)
         log.info("Importing SERMA data. Done!")
         return raw_data
-

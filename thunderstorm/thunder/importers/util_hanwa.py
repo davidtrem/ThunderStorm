@@ -28,6 +28,7 @@ from os import walk, listdir
 import re
 import logging
 
+
 class ReadHanwa(object):
     """
     Read Hanwa TLP data and do few treatment
@@ -44,10 +45,10 @@ class ReadHanwa(object):
         tcf_data = extract_data_from_tcf(self.base_file_name + '.tcf')
         user_name = tcf_data[0]
         result_base_name = \
-            osp.join(head,'Result', tail + '_' + user_name +'_' + tail)
+            osp.join(head, 'Result', tail + '_' + user_name + '_' + tail)
         sdb_data = extract_data_from_sbd(result_base_name + '.sbd')
 
-        self.data['valim_leak'] = tcf_data[1]*np.ones(len(sdb_data[0]))
+        self.data['valim_leak'] = tcf_data[1] * np.ones(len(sdb_data[0]))
         self.data['tlp'] = sdb_data[2:4]
         self.data['leak_evol'] = sdb_data[4]
         self.data['valim_tlp'] = sdb_data[0]
@@ -67,15 +68,15 @@ class ReadHanwa(object):
                     0 : time line
                     1 : the v or I data ( corresponding to the selected type
             """
-            pulse_id_filename = pulse_type+'_'+ str(pulse_id) + '.csv'
-            pulse_w_filename = osp.join(head, 'Osillo'+pulse_type, \
+            pulse_id_filename = pulse_type + '_' + str(pulse_id) + '.csv'
+            pulse_w_filename = osp.join(head, 'Osillo' + pulse_type, \
                 pulse_id_filename)
             return data_from_transient_file(pulse_w_filename)[idx]
 
         tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)), \
             pulse_id_array))
-        tlp_i = np.asarray( map(lambda x: (read_pulse_file('I', x, 1)), \
-            pulse_id_array) )
+        tlp_i = np.asarray(map(lambda x: (read_pulse_file('I', x, 1)), \
+            pulse_id_array))
         time_array = read_pulse_file('I', 1, 0)
         delta_t = time_array[1] - time_array[0]
 
@@ -111,8 +112,9 @@ def extract_data_from_sbd(sbd_file_name):
     data_str_file = StringIO()
     data_str_file.write(data_str[0])
     data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter = ',', usecols = (0, 1, 2, 3, 4))
+    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 1, 2, 3, 4))
     return data.T
+
 
 def extract_data_from_tcf(tcf_file_name):
     """ from the .tcf file, username, leak voltage evuation
@@ -126,13 +128,15 @@ def extract_data_from_tcf(tcf_file_name):
     data.append(user_name)
     re_str = re.compile('LeakSelectPoint=(.*?)\n')
     leak_select_point = re_str.findall(tcf_file_str)[0]
-    re_str = re.compile( 'Voltage' + leak_select_point + '=(.*?)\n')
+    re_str = re.compile('Voltage' + leak_select_point + '=(.*?)\n')
     leak_select_voltage = re_str.findall(tcf_file_str)[0]
     # if leakvoltage is e.g. 800m replace by 0.8
     if 'm' in leak_select_voltage:
-        leak_select_voltage = float(leak_select_voltage.replace('m', ''))*1e-3
+        leak_select_voltage = (float(leak_select_voltage.replace('m', ''))
+                               * 1e-3)
     data.append(leak_select_voltage)
     return data
+
 
 def get_number_of_files_in_dir(pathname):
     """ returns the number of files in a directory """
@@ -140,6 +144,7 @@ def get_number_of_files_in_dir(pathname):
     for files in walk(pathname):
         file_count += len(files)
     return file_count
+
 
 def read_leak_curves(leak_path):
     """Read *.tld files and
@@ -149,21 +154,22 @@ def read_leak_curves(leak_path):
     if osp.isdir(leak_path):
         n_files = get_number_of_files_in_dir(leak_path)
         for index in np.arange(n_files):
-            leak_index_filename = 'Leak_'+ str(index)+'.tld'
+            leak_index_filename = 'Leak_' + str(index) + '.tld'
             leak_file_path = osp.join(leak_path, leak_index_filename)
             with open(leak_file_path, 'r') as leak_file:
                 file_str = leak_file.read()
                 data_str_file = StringIO()
                 data_str_file.write(file_str)
                 data_str_file.reset()
-                data = np.loadtxt(data_str_file, delimiter = ',', \
-                    usecols = (0, 1))
+                data = (np.loadtxt(data_str_file, delimiter=',',
+                                   usecols=(0, 1)))
             curves.append(data.T)
     return curves
 
+
 def data_from_transient_file(filename):
     """ Extracts the data form transient csv files """
-    data = np.loadtxt(filename, delimiter = ',', skiprows = 1)
+    data = np.loadtxt(filename, delimiter=',', skiprows=1)
     return data.T
 
 

@@ -28,7 +28,6 @@ from thunderstorm.lightning.simple_plots import TLPOverlay
 from thunderstorm.thunder.tlp import Droplet
 
 
-
 class Storm(list):
     """ A storm to manipulate a group of your ESD data
     """
