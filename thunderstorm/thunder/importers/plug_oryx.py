@@ -60,8 +60,6 @@ class ImportOryx(ImportPlugin):
         leak_evol = data['leak_evol']
         raw_data = RawTLPdata('not implemented', pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
-                              tester_name = self.label)
+                              tester_name=self.label)
         log.info("Importing Oryx data. Done!")
         return raw_data
-
-

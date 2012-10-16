@@ -31,6 +31,7 @@ import h5py
 from thunderstorm.thunder.tlp import Droplet, H5IVTime
 from os.path import basename, splitext
 
+
 class ImportPlugin(object):
     """Generic import plugin class"""
     label = "Unknown"

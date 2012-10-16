@@ -46,7 +46,7 @@ class ReadHPPI(object):
         data['valim_leak'] = csv_data[0]
         data['tlp'] = csv_data[1:3]
         data['leak_evol'] = csv_data[3]
-        data['leak_data'] = [] # not implemented
+        data['leak_data'] = []  # not implemented
         hppi_wfm = HPPITransientRead(base_name)
         (wfm_list, volt_list) = hppi_wfm.filecontents
         tlp_v = []
@@ -58,7 +58,7 @@ class ReadHPPI(object):
             tlp_i.append(hppi_wfm_data[1])
             offsets_t.append(hppi_wfm_data[0][0])
         time_array = hppi_wfm_data[0]
-        delta_t = time_array[1]-time_array[0]
+        delta_t = time_array[1] - time_array[0]
         tlp_v = np.asarray(tlp_v)
         tlp_i = np.asarray(tlp_i)
         offsets_t = np.asarray(offsets_t)
@@ -103,7 +103,7 @@ class HPPITransientRead(object):
     """
     def __init__(self, base_dir):
         self.base_dir = os.path.dirname(base_dir)
-        self.wfm_location = None #determined in filecontents function
+        self.wfm_location = None  # Determined in filecontents function
 
     def data_from_transient_file(self, filename):
         if self.wfm_location.find('.zip') == -1:
@@ -127,14 +127,14 @@ class HPPITransientRead(object):
         is_zip = False
         #check location of waveforms
         base_dir = self.base_dir
-        if os.path.exists(os.path.join(base_dir,'wfm')):
-            self.wfm_location = os.path.join(base_dir,'wfm')
+        if os.path.exists(os.path.join(base_dir, 'wfm')):
+            self.wfm_location = os.path.join(base_dir, 'wfm')
             log.debug('waveforms in dir: wfm')
-        elif os.path.exists(os.path.join(base_dir,'HV-Pulse')):
-            self.wfm_location = os.path.join(base_dir,'HV-Pulse')
+        elif os.path.exists(os.path.join(base_dir, 'HV-Pulse')):
+            self.wfm_location = os.path.join(base_dir, 'HV-Pulse')
             log.debug('waveforms in dir: HV-Pulse')
-        elif os.path.isfile(os.path.join(base_dir,'transients.zip')):
-            self.wfm_location = os.path.join(base_dir,'transients.zip')
+        elif os.path.isfile(os.path.join(base_dir, 'transients.zip')):
+            self.wfm_location = os.path.join(base_dir, 'transients.zip')
             is_zip = True
             log.debug('waveforms in zip file')
         else:
@@ -160,4 +160,4 @@ class HPPITransientRead(object):
 
     def get_wfm_number(self, filename):
         #return first number in filename as an int
-        return int(re.search("\d+",filename).group(0))
+        return int(re.search("\d+", filename).group(0))

@@ -20,7 +20,7 @@
 """
 Testing pulses_dev.py
 """
-
+#TODO Remove import * below !
 from __future__ import division
 from thunderstorm.thunder.pulses import *
 import numpy as np
@@ -67,6 +67,7 @@ def test():
     print test_pulse_set_freq_ab.pulses_length
     print "ABFreq() Ok"
 
+
 def testpulse(pulse_time):
     pulse_freq = pulse_time.to_freq
     back_time = pulse_freq.to_time
@@ -84,30 +85,34 @@ def testpulse(pulse_time):
     plt.plot(np.absolute(pulse_freq.current[0]))
     plt.show()
 
+
 def testIV():
-    size = 2**5 +1
+    size = 2 ** 5 + 1
     pulse_time = IVTime(size)
-    pulse_time.current[0][:] = np.sin(np.arange(size)/2.0)
-    pulse_time.voltage[0][:] = np.arange(size)*(-0.1)
+    pulse_time.current[0][:] = np.sin(np.arange(size) / 2.0)
+    pulse_time.voltage[0][:] = np.arange(size) * (-0.1)
     pulse_time.delta_t = 0.4e-9
     #pulse_time.time[:] = np.arange(size)*0.4e-9
     testpulse(pulse_time)
 
+
 def testVIncRef():
-    size = 2**9
+    size = 2 ** 9
     pulse_time = VIncRefTime(size)
-    pulse_time.v_inc[0][:] = np.sin(num.arange(size)/2.0)
+    pulse_time.v_inc[0][:] = np.sin(num.arange(size) / 2.0)
     pulse_time.v_ref[0][:] = np.arange(size) * (-0.1)
     pulse_time.time[:] = np.arange(size) * 0.4e-9
     testpulse(pulse_time)
 
+
 def testab():
-    size = 2**9
+    size = 2 ** 9
     pulse_time = ABTime(size)
-    pulse_time.a[0][:] = np.sin(np.arange(size)/2.0)
+    pulse_time.a[0][:] = np.sin(np.arange(size) / 2.0)
     pulse_time.b[0][:] = np.arange(size) * (-0.1)
     pulse_time.time[:] = np.arange(size) * 0.4e-9
     testpulse(pulse_time)
+
 
 def main():
     print "Module test"
@@ -116,7 +121,7 @@ def main():
     testVIncRef()
     testab()
 
-    raw_input ("Press enter to end")
+    raw_input("Press enter to end")
 
 if __name__ == "__main__":
     main()

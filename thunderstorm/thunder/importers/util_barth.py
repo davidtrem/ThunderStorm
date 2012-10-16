@@ -40,7 +40,7 @@ class ReadBarth(object):
         data = self.data
         tlp_data = extract_data_from_tlp(base_name + '.tlp')
         data['valim_tlp'] = tlp_data[0]
-        data['tlp'] = np.array((tlp_data[1],tlp_data[2]))
+        data['tlp'] = np.array((tlp_data[1], tlp_data[2]))
         data['leak_evol'] = tlp_data[3]
         twf_data = extract_data_from_twf(base_name + '.twf')
         if twf_data != False:
@@ -57,6 +57,7 @@ class ReadBarth(object):
         num_data = {}
         return num_data
 
+
 def extract_data_from_tlp(tlp_file_name):
     with open(tlp_file_name, 'U') as tlp_data_file:
         tlp_file_str = tlp_data_file.read()
@@ -65,10 +66,10 @@ def extract_data_from_tlp(tlp_file_name):
         barth_file_version = version_re.findall(tlp_file_str)[0]
         if int(barth_file_version.split('.')[0]) < 4:
             re_str = r'^I\(AMPS\).*?\n(.*)\Z'
-            col_id = {'pulseV':None, 'idut':0, 'vdut':1, 'leak':2}
+            col_id = {'pulseV': None, 'idut': 0, 'vdut': 1, 'leak': 2}
         else:
             re_str = r'^Pulse V\(Volts\).*?\n(.*)\Z'
-            col_id = {'pulseV':0, 'vdut':1, 'idut':2, 'leak':3}
+            col_id = {'pulseV': 0, 'vdut': 1, 'idut': 2, 'leak': 3}
         test_result_re = re.compile(re_str, re.S | re.M)
         data_str = test_result_re.findall(tlp_file_str)
         data = np.loadtxt(string2file(data_str[0])).T
@@ -97,8 +98,9 @@ def extract_data_from_twf(twf_file_name):
             # _vwf voltage waveform related
             # _iwf current waveform related
             delta_t_vwf = float(data[1].split('\t')[2])
-            valim_vwf =  np.asarray(data[1].split('\n')[1].split(),
+            valim_vwf = np.asarray(data[1].split('\n')[1].split(),
                                     dtype=np.float)
+            # FIXME two unused variables below
             delta_t_iwf = float(data[3].split('\t')[2])
             valim_iwf = np.asarray(data[3].split('\n')[1].split(),
                                    dtype=np.float)
@@ -111,4 +113,3 @@ def extract_data_from_twf(twf_file_name):
         log = logging.getLogger('thunderstorm.thunder.importers')
         log.warn("No pulse data found")
         return False
-

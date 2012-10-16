@@ -28,6 +28,7 @@ from thunderstorm.thunder.tlp import RawTLPdata
 from thunderstorm.thunder.pulses import IVTime
 import logging
 
+
 class ImportLAAS(ImportPlugin):
     """Import data from LAAS TLP setup
     """
@@ -58,13 +59,9 @@ class ImportLAAS(ImportPlugin):
         # implemter : recupération du delta_t dans l'util_laas
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
-        leak_evol = None # To be implemented
+        leak_evol = None  # To be implemented
         raw_data = RawTLPdata(alldata.identification, pulses, iv_leak,
                               tlp_curve, leak_evol, file_path,
-                              tester_name = self.label)
+                              tester_name=self.label)
         log.info("Importing LAAS data. Done!")
         return raw_data
-
-
-
-

@@ -55,15 +55,13 @@ class _PulseSet(object):
 
 
 class _TimePulseSet(_PulseSet):
-    """
-    """
+
     def __init__(self, pulses_length, pulses_nb, delta_t,
                  offsets_t):
         self.elem_type = np.float64
         _PulseSet.__init__(self, pulses_length, pulses_nb)
         self._delta_t = delta_t
         self._offsets_t = offsets_t
-
 
     def to_freq(self, data_type):
         #self._data1 and self._data2 need to be defined by the object
@@ -95,8 +93,7 @@ class _TimePulseSet(_PulseSet):
 
 
 class _FreqPulseSet(_PulseSet):
-    """
-    """
+
     def __init__(self, pulses_length, pulses_nb, delta_f):
         self.elem_type = np.complex128
         _PulseSet.__init__(self, pulses_length, pulses_nb)
@@ -104,7 +101,7 @@ class _FreqPulseSet(_PulseSet):
 
     def to_time(self, data_type):
         parity = self.pulses_length % 2
-        delta_t =  0.5/((self.pulses_length-parity) * self.delta_f)
+        delta_t = 0.5 / ((self.pulses_length - parity) * self.delta_f)
         data1_time = irfft(self._data[self._data1])
         data2_time = irfft(self._data[self._data2])
         time_pulses_length = data1_time.shape[1]
@@ -145,9 +142,8 @@ class _IV(object):
 
 
 class IVTime(_TimePulseSet, _IV):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2,
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2,
                  delta_t=1, offsets_t=None):
         _IV.__init__(self)
         if offsets_t == None:
@@ -164,15 +160,14 @@ class IVTime(_TimePulseSet, _IV):
         vinc_ref = VIncRefTime(self.pulses_length, self.pulses_nb,
                                    self.delta_t)
         vinc_ref._data['Valim'] = self.valim
-        vinc_ref._data['Incident'] = (self.voltage + 50*self.current)/2.0
-        vinc_ref._data['Reflected'] = (self.voltage - 50*self.current)/2.0
+        vinc_ref._data['Incident'] = (self.voltage + 50 * self.current) / 2.0
+        vinc_ref._data['Reflected'] = (self.voltage - 50 * self.current) / 2.0
         return vinc_ref
 
 
 class IVFreq(_FreqPulseSet, _IV):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2, delta_f=1):
         _IV.__init__(self)
         _FreqPulseSet.__init__(self, pulses_length,
                                pulses_nb, delta_f)
@@ -203,9 +198,8 @@ class _IncRef(object):
 
 
 class VIncRefTime(_TimePulseSet, _IncRef):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2,
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2,
                  delta_t=1, offsets_t=0):
         _IncRef.__init__(self)
         _TimePulseSet.__init__(self, pulses_length, pulses_nb, delta_t,
@@ -220,14 +214,13 @@ class VIncRefTime(_TimePulseSet, _IncRef):
         iv = IVTime(self.pulses_length, self.pulses_nb, self.delta_t)
         iv._data['Valim'] = self.valim
         iv._data['Voltage'] = self.incident + self.reflected
-        iv._data['Current'] = (self.incident - self.reflected)/50.0
+        iv._data['Current'] = (self.incident - self.reflected) / 50.0
         return iv
 
 
 class VIncRefFreq(_FreqPulseSet, _IncRef):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2, delta_f=1):
         _IncRef.__init__(self)
         _FreqPulseSet.__init__(self, pulses_length,
                                pulses_nb, delta_f)
@@ -241,9 +234,8 @@ class VIncRefFreq(_FreqPulseSet, _IncRef):
 # Incident Reflected Wave representation
 
 class ABTime(_TimePulseSet, _IncRef):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2,
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2,
                  delta_t=1, offsets_t=0):
         _IncRef.__init__(self)
         _TimePulseSet.__init__(self, pulses_length, pulses_nb, delta_t,
@@ -253,10 +245,10 @@ class ABTime(_TimePulseSet, _IncRef):
     def to_freq(self):
         return _TimePulseSet.to_freq(self, ABFreq)
 
+
 class ABFreq(_FreqPulseSet, _IncRef):
-    """
-    """
-    def __init__(self, pulses_length=2**2, pulses_nb=2, delta_f=1):
+
+    def __init__(self, pulses_length=2 ** 2, pulses_nb=2, delta_f=1):
         _IncRef.__init__(self)
         _FreqPulseSet.__init__(self, pulses_length,
                                pulses_nb, delta_f)

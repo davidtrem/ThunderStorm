@@ -24,6 +24,7 @@ Read the data from LAAS TLP setup file
 import numpy as np
 import logging
 
+
 class ReadLAAS(object):
     """
     Read LAAS TLP data and do few treatment for TLPtools
@@ -46,7 +47,7 @@ class ReadLAAS(object):
             return [[0.0, 0.0]]
         data = []
         while dat_line:
-            dat = dat_line.split()[0:nb_col+1]
+            dat = dat_line.split()[0:nb_col + 1]
             dat = [float(x) for x in dat]
             data.append(dat)
             dat_line = datafile.readline()[:-1]

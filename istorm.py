@@ -30,8 +30,10 @@ import matplotlib
 matplotlib.interactive(True)
 from thunderstorm.interact import my_storm
 
+
 def console(variables):
-    import os, sys
+    import os
+    import sys
     # hook thunderstorm tree in path
     thunderstorm_dir = os.path.dirname(os.path.realpath(__file__))
     sys.path.insert(0, thunderstorm_dir)
@@ -68,9 +70,9 @@ Enjoy!
         print init_message
         shell = code.InteractiveConsole(variables)
         return (shell.interact,
-                init_message + plt_info +" and -Interactive Console-")
+                init_message + plt_info + " and -Interactive Console-")
 
- 
+
 if __name__ == "__main__":
     prompt, message = console(locals())
     prompt(message)

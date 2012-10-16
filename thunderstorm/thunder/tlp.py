@@ -25,12 +25,15 @@ import numpy as np
 from thunderstorm.thunder.pulses import IVTime
 import h5py
 
+
 class Index(object):
     def __init__(self, data, idx):
         self._data = data
         self._idx = idx
+
     def __getitem__(self, index):
         return self._data[index, self._idx]
+
 
 class H5IVTime(object):
     """Contain the transient waveforms
@@ -56,7 +59,6 @@ class H5IVTime(object):
                              compression_opts=9)
         self.droplet.attrs['delta_t'] = pulses.delta_t
         self.droplet['offsets_t'] = pulses.offsets_t
-
 
     @property
     def voltage(self):
@@ -85,7 +87,6 @@ class H5IVTime(object):
     @property
     def offsets_t(self):
         return self.droplet['offsets_t']
-
 
 
 class TLPcurve(object):
@@ -136,6 +137,7 @@ class _RawTLPdata(object):
         self._tlp_curve = None
         self._leak_evol = None
         self._original_data_file_path = None
+        
     def __repr__(self):
         message = "%g pulses \n" % self.pulses.pulses_nb
         message += "Original file: " + self.original_file_name
@@ -261,8 +263,6 @@ class RawTLPdata(_RawTLPdata):
         self._tlp_curve = tlp_curve
         self._tester_name = tester_name
         self._original_data_file_path = file_path
-
-
 
 
 class Droplet(object):

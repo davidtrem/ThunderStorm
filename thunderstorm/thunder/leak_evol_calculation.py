@@ -24,6 +24,7 @@ Various way to calculate leakage evolution
 from numpy import log, absolute
 import numpy as npy
 
+
 def point_evol(iv_leak, evol_point):
     """
     Return the voltage and current evolution at the point define in the given
@@ -42,4 +43,3 @@ def sum_var(iv_leak):
     evol = npy.sum(log(absolute(iv_leak[:, 0]) + 1e-60), axis=1)
     relative_evol = (evol - evol[0]) / abs(evol[0]) * 100
     return relative_evol
-
