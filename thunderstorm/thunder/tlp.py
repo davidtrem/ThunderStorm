@@ -137,7 +137,7 @@ class _RawTLPdata(object):
         self._tlp_curve = None
         self._leak_evol = None
         self._original_data_file_path = None
-        
+
     def __repr__(self):
         message = "%g pulses \n" % self.pulses.pulses_nb
         message += "Original file: " + self.original_file_name
