@@ -51,11 +51,10 @@ class UniversalCursors(object):
         self._update(event)
 
     def _update(self, event):
-        # 1 Reset background
-        for ax in self.all_axes.values():
-            canvas = ax.get_figure().canvas
-            canvas.restore_region(self.backgrounds[id(ax)])
-        # 2 update cursors
+        # 1/ Reset background
+        for canvas in self.all_canvas.values():
+            canvas.restore_region(self.backgrounds[id(canvas)])
+        # 2/ update cursors
         for cursors in self.all_cursor_orient.keys():
             orient = self.all_cursor_orient[cursors]
             if (event.inaxes in [line.get_axes() for line in cursors]
@@ -72,17 +71,16 @@ class UniversalCursors(object):
                 line.set_visible(visible)
                 ax = line.get_axes()
                 ax.draw_artist(line)
-        # 3 update canvas
+        # 3/ update canvas
         for canvas in self.all_canvas.values():
             canvas.blit(canvas.figure.bbox)
 
     def _clear(self, event):
         """clear the cursor"""
         self.backgrounds = {}
-        for ax in self.all_axes.values():
-            canvas = ax.get_figure().canvas
-            self.backgrounds[id(ax)] = (
-                canvas.copy_from_bbox(ax.bbox))
+        for canvas in self.all_canvas.values():
+            self.backgrounds[id(canvas)] = (
+                canvas.copy_from_bbox(canvas.figure.bbox))
         for cursor in self.all_cursor_orient.keys():
             for line in cursor:
                 line.set_visible(False)
