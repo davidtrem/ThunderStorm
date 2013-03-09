@@ -56,7 +56,8 @@ class Storm(list):
         self.append(View(Droplet(oef_filename)))
 
     def overlay_raw_tlp(self, index_list=(), experiment_list=()):
-        self.overlay_tlp_fig = TLPOverlayWithLeakEvol(figure())
+        if self.overlay_tlp_fig is None:
+            self.overlay_tlp_fig = TLPOverlayWithLeakEvol(figure())
         tlp_fig = self.overlay_tlp_fig
         tlp_fig.clean()
         tlp_fig.decorate()
