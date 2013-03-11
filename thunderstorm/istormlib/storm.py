@@ -24,7 +24,7 @@ from matplotlib.pyplot import figure
 
 from thunderstorm.thunder.importers.tools import plug_dict
 from thunderstorm.istormlib.istorm_view import View
-from thunderstorm.lightning.simple_plots import TLPOverlay
+from thunderstorm.lightning.simple_plots import TLPOverlayWithLeakEvol
 from thunderstorm.thunder.tlp import Droplet
 
 
@@ -57,9 +57,8 @@ class Storm(list):
 
     def overlay_raw_tlp(self, index_list=(), experiment_list=()):
         if self.overlay_tlp_fig is None:
-            tlp_fig = TLPOverlay(figure())
-        else:
-            tlp_fig = self.overlay_tlp_fig
+            self.overlay_tlp_fig = TLPOverlayWithLeakEvol(figure())
+        tlp_fig = self.overlay_tlp_fig
         tlp_fig.clean()
         tlp_fig.decorate()
         if index_list == () and len(experiment_list) != 0:
