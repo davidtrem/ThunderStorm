@@ -23,6 +23,7 @@ Simple typical TLP curves plot
 
 import numpy as np
 import logging
+from utils import UniversalCursors
 
 
 class PulsesFigure(object):
@@ -83,6 +84,17 @@ class TLPOverlayWithLeakEvol(object):
         tlp_plot = figure.add_axes([0.1, 0.1, 0.64, 0.8])
         leak_evol_plot = figure.add_axes([0.75, 0.1, 0.20, 0.8],
                                          sharey=tlp_plot)
+        self.cursors = UniversalCursors()
+        curs = self.cursors
+        self.cursor_i = curs.add_cursor((tlp_plot, leak_evol_plot),
+                                        orient='horizontal', lw=1,
+                                        color='r')
+        self.cursor_leak = curs.add_cursor((leak_evol_plot, ),
+                                           orient='vertical', lw=1,
+                                           color='r')
+        self.cursor_v = curs.add_cursor((tlp_plot,),
+                                        orient='vertical', lw=1,
+                                        color='r')
         self.title = title
         self.tlp_plot = tlp_plot
         self.leak_evol_plot = leak_evol_plot
