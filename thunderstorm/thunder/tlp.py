@@ -21,9 +21,9 @@
 """
 
 import numpy as np
-
-from thunderstorm.thunder.pulses import IVTime
 import h5py
+
+from .pulses import IVTime
 
 
 class Index(object):
@@ -49,14 +49,14 @@ class H5IVTime(object):
         alldat = np.transpose(np.array((pulses.voltage, pulses.current)),
                               (1, 0, 2))
         self.droplet.create_dataset('IVTime',
-                             data=alldat,
-                             chunks=(2, 1, pulses.pulses_length),
-                             # Fist dim is pulse id, 2nd I ou V
-                             compression='gzip',
-                             compression_opts=9)
+                                    data=alldat,
+                                    chunks=(2, 1, pulses.pulses_length),
+                                    # Fist dim is pulse id, 2nd I ou V
+                                    compression='gzip',
+                                    compression_opts=9)
         self.droplet.create_dataset('Valim', data=pulses.valim,
-                             chunks=True, compression='gzip',
-                             compression_opts=9)
+                                    chunks=True, compression='gzip',
+                                    compression_opts=9)
         self.droplet.attrs['delta_t'] = pulses.delta_t
         self.droplet['offsets_t'] = pulses.offsets_t
 

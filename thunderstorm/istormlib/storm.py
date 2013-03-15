@@ -20,45 +20,24 @@
 """
 Data storm
 """
-from matplotlib.pyplot import figure
 
-from thunderstorm.thunder.importers.tools import plug_dict
-from thunderstorm.istormlib.istorm_view import View
-from thunderstorm.lightning.simple_plots import TLPOverlayWithLeakEvol
-from thunderstorm.thunder.tlp import Droplet
+from .istorm_view import View
+from ..thunder.tlp import Droplet
 
 
 class Storm(list):
     """ A storm to manipulate a group of your ESD data
     """
-    def __init__(self, overlay_tlp_fig=None):
+    def __init__(self):
         list.__init__(self)
-        for importer_name in plug_dict.keys():
-            importer = plug_dict[importer_name]()
-            setattr(self, 'import_' + importer_name,
-                    self._gen_import_data(importer))
-        self.overlay_tlp_fig = overlay_tlp_fig
-
-    def _gen_import_data(self, importer):
-        def import_func(filename, comments=""):
-            self.append(View(importer.load(filename, comments)))
-        return import_func
-
-    def __repr__(self):
-        if len(self) == 0:
-            return "Empty"
-        showtxt = ""
-        for idx, elem in enumerate(self):
-            showtxt += "%s : %s" % (idx, elem)
-        return showtxt
 
     def load(self, oef_filename):
         self.append(View(Droplet(oef_filename)))
 
-    def overlay_raw_tlp(self, index_list=(), experiment_list=()):
-        if self.overlay_tlp_fig is None:
-            self.overlay_tlp_fig = TLPOverlayWithLeakEvol(figure())
-        tlp_fig = self.overlay_tlp_fig
+    def overlay_raw_tlp(self, tlp_fig, index_list=None,
+                        experiment_list=()):
+        if index_list is None:
+            index_list = ()
         tlp_fig.clean()
         tlp_fig.decorate()
         if index_list == () and len(experiment_list) != 0:

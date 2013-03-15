@@ -32,9 +32,10 @@ class _PulseSet(object):
     Generic class for a set of pulses
     """
     def __init__(self, pulses_length, pulses_nb):
-        data_format = np.dtype([('Valim', np.float32),
-                        (self._data1, (self.elem_type, pulses_length)),
-                        (self._data2, (self.elem_type, pulses_length))])
+        data_format = np.dtype([
+            ('Valim', np.float32),
+            (self._data1, (self.elem_type, pulses_length)),
+            (self._data2, (self.elem_type, pulses_length))])
         self._data = np.empty(pulses_nb, data_format)
 
     @property
@@ -146,7 +147,7 @@ class IVTime(_TimePulseSet, _IV):
     def __init__(self, pulses_length=2 ** 2, pulses_nb=2,
                  delta_t=1, offsets_t=None):
         _IV.__init__(self)
-        if offsets_t == None:
+        if offsets_t is None:
             offsets_t = np.zeros(pulses_nb)
         _TimePulseSet.__init__(self, pulses_length, pulses_nb, delta_t,
                                offsets_t)
@@ -158,7 +159,7 @@ class IVTime(_TimePulseSet, _IV):
     @property
     def to_vinc_ref(self):
         vinc_ref = VIncRefTime(self.pulses_length, self.pulses_nb,
-                                   self.delta_t)
+                               self.delta_t)
         vinc_ref._data['Valim'] = self.valim
         vinc_ref._data['Incident'] = (self.voltage + 50 * self.current) / 2.0
         vinc_ref._data['Reflected'] = (self.voltage - 50 * self.current) / 2.0

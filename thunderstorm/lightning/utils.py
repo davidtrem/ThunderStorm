@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2010 Trémouilles David
+# Copyright (C) 2010-2013 Trémouilles David
 
 #This file is part of Thunderstorm.
 #
@@ -20,6 +20,7 @@
 """
 Various utility functions
 """
+
 import matplotlib
 from weakref import WeakValueDictionary
 from weakref import WeakKeyDictionary

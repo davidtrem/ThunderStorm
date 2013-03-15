@@ -24,8 +24,8 @@ Leakage plotting page
 import numpy as np
 from numpy import ma
 
-from utils import autoscale_visible_lines
-import thunderstorm.thunder.leak_evol_calculation as leak_evol_calculation
+from .utils import autoscale_visible_lines
+from ..thunder.leak_evol_calculation import point_evol
 
 
 class LeakFigure(object):
@@ -61,12 +61,12 @@ class LeakFigure(object):
         self.iv_leak = iv_leak
         self.figure = f_leak
         self._leak_evol_points_position = 0
-        self.noise_floor = self.noise_floor_limit[1]
+        self._noise_floor = self.noise_floor_limit[1]
         return
 
     def update_leak_evol_points(self):
         """Update evol points plot for next time drawing """
-        data = leak_evol_calculation.point_evol(
+        data = point_evol(
             self.iv_leak, self._leak_evol_points_position)
         noise_floor = self._noise_floor
         xdata = data[0]
