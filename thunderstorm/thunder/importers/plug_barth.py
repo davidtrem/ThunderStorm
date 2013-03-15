@@ -21,12 +21,13 @@
 Import module for Barth TLP setup data
 """
 
-from thunderstorm.thunder.importers.tools import ImportPlugin
-from thunderstorm.thunder.importers.util_barth import ReadBarth
-from thunderstorm.thunder.tlp import RawTLPdata
-from thunderstorm.thunder.pulses import IVTime
 import os
 import logging
+
+from .tools import ImportPlugin
+from .util_barth import ReadBarth
+from ..tlp import RawTLPdata
+from ..pulses import IVTime
 
 
 class ImportBarth(ImportPlugin):
@@ -46,7 +47,7 @@ class ImportBarth(ImportPlugin):
         file_path = os.path.realpath(file_name)
 
         data = ReadBarth(file_name).data
-        if data['waveform available'] == True:
+        if data['waveform available']:
             pulses = IVTime(data['tlp_v_waveforms'].shape[0],
                             data['tlp_v_waveforms'].shape[1],
                             delta_t=data['delta_t'])

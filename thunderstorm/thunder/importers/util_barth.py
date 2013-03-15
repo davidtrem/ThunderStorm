@@ -21,10 +21,12 @@
 Utils to read data from Barth TLP setup file
 """
 
-from thunderstorm.thunder.utils import string2file
-import numpy as np
 import logging
 import re
+
+import numpy as np
+
+from ..utils import string2file
 
 
 class ReadBarth(object):
@@ -43,7 +45,7 @@ class ReadBarth(object):
         data['tlp'] = np.array((tlp_data[1], tlp_data[2]))
         data['leak_evol'] = tlp_data[3]
         twf_data = extract_data_from_twf(base_name + '.twf')
-        if twf_data != False:
+        if twf_data is not False:
             data['tlp_v_waveforms'] = twf_data[0]
             data['tlp_i_waveforms'] = twf_data[1]
             data['delta_t'] = twf_data[2]
@@ -73,7 +75,7 @@ def extract_data_from_tlp(tlp_file_name):
         test_result_re = re.compile(re_str, re.S | re.M)
         data_str = test_result_re.findall(tlp_file_str)
         data = np.loadtxt(string2file(data_str[0])).T
-        if col_id['pulseV'] != None:
+        if col_id['pulseV'] is not None:
             v_alim = data[col_id['pulseV']]
         else:
             v_alim = []
@@ -99,7 +101,7 @@ def extract_data_from_twf(twf_file_name):
             # _iwf current waveform related
             delta_t_vwf = float(data[1].split('\t')[2])
             valim_vwf = np.asarray(data[1].split('\n')[1].split(),
-                                    dtype=np.float)
+                                   dtype=np.float)
             # FIXME two unused variables below
             delta_t_iwf = float(data[3].split('\t')[2])
             valim_iwf = np.asarray(data[3].split('\n')[1].split(),

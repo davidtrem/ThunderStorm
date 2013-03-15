@@ -22,11 +22,12 @@ Import module for LAAS TLP setup data
 """
 
 import os
-from thunderstorm.thunder.importers.tools import ImportPlugin
-from thunderstorm.thunder.importers.util_laas import ReadLAAS
-from thunderstorm.thunder.tlp import RawTLPdata
-from thunderstorm.thunder.pulses import IVTime
 import logging
+
+from .tools import ImportPlugin
+from .util_laas import ReadLAAS
+from ..tlp import RawTLPdata
+from ..pulses import IVTime
 
 
 class ImportLAAS(ImportPlugin):

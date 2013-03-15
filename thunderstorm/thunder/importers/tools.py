@@ -27,9 +27,12 @@ Only plugin files starting with "plug" followed by underscore and ending with
 import_plugs variable contains all the import plugins
 
 """
-import h5py
-from thunderstorm.thunder.tlp import Droplet, H5IVTime
+
 from os.path import basename, splitext
+
+import h5py
+
+from ..tlp import Droplet, H5IVTime
 
 
 class ImportPlugin(object):
