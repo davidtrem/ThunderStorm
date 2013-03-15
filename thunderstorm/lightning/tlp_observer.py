@@ -21,9 +21,10 @@
 This module contain base utils to observ a TLP curve
 """
 
+import logging
+
 import numpy as np
 import matplotlib.cm
-import logging
 
 
 class TLPPickFigure(object):

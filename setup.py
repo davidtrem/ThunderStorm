@@ -5,6 +5,7 @@
 """
 
 from distutils.core import setup
+
 from thunderstorm import __version__
 
 setup(name='ThunderStorm',

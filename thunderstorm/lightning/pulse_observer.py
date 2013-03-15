@@ -20,9 +20,9 @@
 Tools to observe transient curves corresponding to TLP points
 """
 
-
-from tlp_observer import TLPPickFigure
 import numpy as np
+
+from .tlp_observer import TLPPickFigure
 
 
 class TLPPulsePickFigure(TLPPickFigure):

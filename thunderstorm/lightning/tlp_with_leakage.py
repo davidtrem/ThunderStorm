@@ -21,8 +21,9 @@
 Simple TLP curve plot
 """
 
-import numpy as np
 import logging
+
+import numpy as np
 
 
 class TLPFigureWithLeakage(object):

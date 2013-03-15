@@ -21,9 +21,11 @@
 Simple typical TLP curves plot
 """
 
-import numpy as np
 import logging
-from utils import UniversalCursors
+
+import numpy as np
+
+from .utils import UniversalCursors
 
 
 class PulsesFigure(object):

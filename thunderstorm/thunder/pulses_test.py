@@ -22,8 +22,10 @@ Testing pulses_dev.py
 """
 #TODO Remove import * below !
 from __future__ import division
-from thunderstorm.thunder.pulses import *
+
 import numpy as np
+
+from .pulses import *
 
 
 def test():

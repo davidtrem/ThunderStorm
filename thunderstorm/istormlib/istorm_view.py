@@ -21,11 +21,11 @@
 """
 
 from matplotlib.pyplot import figure
-from thunderstorm.lightning.simple_plots import LeakageIVsFigure
-from thunderstorm.lightning.simple_plots import TLPFigure
-from thunderstorm.lightning.pulse_observer import TLPPulsePickFigure
-from thunderstorm.lightning.leakage_observer import TLPLeakagePickFigure
-from thunderstorm.thunder.tlp import Droplet
+from ..lightning.simple_plots import LeakageIVsFigure
+from ..lightning.simple_plots import TLPFigure
+from ..lightning.pulse_observer import TLPPulsePickFigure
+from ..lightning.leakage_observer import TLPLeakagePickFigure
+from ..thunder.tlp import Droplet
 import matplotlib
 matplotlib.interactive(True)
 

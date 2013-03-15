@@ -25,8 +25,8 @@ import os
 import glob
 import shutil
 
-from thunderstorm.thunder.analysis.tlp_analysis import TLPAnalysis
-from thunderstorm.thunder.analysis.report_analysis import TLPReporting
+from .analysis.tlp_analysis import TLPAnalysis
+from .analysis.report_analysis import TLPReporting
 
 
 class RawTLPdataAnalysis(object):

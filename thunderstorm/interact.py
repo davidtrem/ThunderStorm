@@ -18,7 +18,7 @@
 #along with ThunderStorm.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from thunderstorm.istormlib.storm import Storm
+from .istormlib.istorm import InteractiveStorm
 
 # Setting up logging to send INFO to the console
 log = logging.getLogger('thunderstorm')
@@ -29,5 +29,6 @@ formatter = logging.Formatter('%(name)-12s: %(message)s')
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
+
  # Create a Storm : my_storm
-mystorm = Storm()
+mystorm = InteractiveStorm()
