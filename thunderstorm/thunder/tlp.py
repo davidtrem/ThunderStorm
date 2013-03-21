@@ -268,15 +268,11 @@ class RawTLPdata(_RawTLPdata):
 class Droplet(object):
     """ A Droplet is basically one TLP measurement i.e. a set
         of TLP pulses, a TLP curve, leakages measurement etc...
-        A Droplet is base on an hdf5 file (*.oef file)
+        A Droplet is base on a hdf5 file group
     """
-    def __init__(self, h5filename):
-        h5file = h5py.File(h5filename, 'r')
-        self._exp_name = h5file.keys()[0]
-        droplet = h5file[self._exp_name]
-        raw_data = H5RawTLPdata(droplet)
-        self._raw_data = raw_data
-        self._h5file = h5file
+    def __init__(self, h5group):
+        self._exp_name = h5group.name[1:]
+        self._raw_data = H5RawTLPdata(h5group)
 
     def __repr__(self):
         message = "Experiement: "
@@ -294,6 +290,3 @@ class Droplet(object):
     @exp_name.setter
     def exp_name(self, value):
         self._exp_name = value
-
-    def __del__(self):
-        self._h5file.close()

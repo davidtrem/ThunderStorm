@@ -30,5 +30,6 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
 
- # Create a Storm : my_storm
-mystorm = InteractiveStorm()
+def new_storm(file_name):
+    """ Return a new interactive Storm with the given file name"""
+    return InteractiveStorm(file_name)
