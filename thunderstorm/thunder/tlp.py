@@ -40,7 +40,7 @@ class H5IVTime(object):
     """
     def __init__(self, droplet=None):
         if not(droplet.__class__ is h5py.Group):
-            raise TypeError("group must be an h5py.Group object")
+            raise TypeError("droplet must be an h5py.Group object")
         self.droplet = droplet
 
     def import_ivtime(self, pulses):
