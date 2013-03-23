@@ -55,13 +55,13 @@ class ImportPlugin(object):
         """
         return "%s" % (self.__class__.__name__)
 
-    def load(self, file_name, exp_name=None, h5file=None):
-        """import data and pack them in a droplet
-        return the droplet
-        """
-        raw_data = self.import_data(file_name)
+    def raw_data_from_file(self, file_name):
+        return self.import_data(file_name)
+
+    @staticmethod
+    def load_in_droplet(raw_data, h5file, exp_name=None):
         if exp_name is None:
-            exp_name = splitext(basename(file_name))[0]
+            exp_name = splitext(basename(raw_data.original_file_name))[0]
         h5group = h5file.create_group(exp_name)
         data = H5IVTime(h5group)
         data.import_ivtime(raw_data.pulses)
@@ -74,6 +74,13 @@ class ImportPlugin(object):
         if raw_data.has_leakage_ivs:
             h5group['iv_leak'] = raw_data.iv_leak
         return Droplet(h5group)
+
+    def load(self, file_name, exp_name=None, h5file=None):
+        """import data and pack them in a droplet
+        return the droplet
+        """
+        raw_data = self.raw_data_from_file(file_name)
+        return self.load_in_droplet(raw_data, h5file, exp_name)
 
 
 def _init():

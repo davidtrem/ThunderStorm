@@ -57,7 +57,7 @@ class ImportLAAS(ImportPlugin):
         delta_t = (data['tlp_pulses'][0, 0, 1] - data['tlp_pulses'][0, 0, 0])
         pulses.delta_t = delta_t
         # peupler l'objet avec les bonnes données
-        # implemter : recupération du delta_t dans l'util_laas
+        # TODO implemter : recupération du delta_t dans l'util_laas
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
         leak_evol = None  # To be implemented
