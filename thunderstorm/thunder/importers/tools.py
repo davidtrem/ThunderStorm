@@ -30,8 +30,6 @@ import_plugs variable contains all the import plugins
 
 from os.path import basename, splitext
 
-import h5py
-
 from ..tlp import Droplet, H5IVTime
 
 
@@ -73,6 +71,7 @@ class ImportPlugin(object):
             h5group['leak_evol'] = raw_data.leak_evol
         if raw_data.has_leakage_ivs:
             h5group['iv_leak'] = raw_data.iv_leak
+        h5file.flush()
         return Droplet(h5group)
 
     def load(self, file_name, exp_name=None, h5file=None):
