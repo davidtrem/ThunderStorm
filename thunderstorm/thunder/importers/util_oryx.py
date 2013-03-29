@@ -22,13 +22,14 @@ Utils to read data from Oryx TLP setup file
 This file was greatly improved with the help of Justin Katz
 """
 
-import numpy as np
 from zipfile import ZipFile
 from cStringIO import StringIO
 import re
 import logging
 import os
 import glob
+
+import numpy as np
 
 
 class ReadOryx(object):

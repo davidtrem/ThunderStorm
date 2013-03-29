@@ -20,19 +20,24 @@
 """
 Data storm
 """
+import logging
+
+import h5py
 
 from .istorm_view import View
 from ..thunder.tlp import Droplet
 
 
 class Storm(list):
-    """ A storm to manipulate a group of your ESD data
+    """ A storm to manipulate the content of ESD data file
+       (*.oef file)
     """
-    def __init__(self):
+    def __init__(self, h5filename):
+        h5file = h5py.File(h5filename, 'r+')
         list.__init__(self)
-
-    def load(self, oef_filename):
-        self.append(View(Droplet(oef_filename)))
+        self._h5file = h5file
+        for h5group in h5file.values():
+            self.append(View(Droplet(h5group)))
 
     def overlay_raw_tlp(self, tlp_fig, index_list=None,
                         experiment_list=()):
@@ -46,3 +51,9 @@ class Storm(list):
         else:
             for idx in index_list:
                 tlp_fig.add_curve(self[idx].experiment.raw_data)
+
+    def __del__(self):
+        log = logging.getLogger('thunderstorm.istormlib')
+        log.info("Closing %s file" % self._h5file.filename)
+        self._h5file.flush()
+        self._h5file.close()

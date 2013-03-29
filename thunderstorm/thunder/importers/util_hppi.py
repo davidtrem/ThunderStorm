@@ -21,12 +21,13 @@
 Utils to read data from HPPI TLP setup file
 """
 
-import numpy as np
 from zipfile import ZipFile
 from cStringIO import StringIO
 import re
 import os
 import logging
+
+import numpy as np
 
 
 class ReadHPPI(object):

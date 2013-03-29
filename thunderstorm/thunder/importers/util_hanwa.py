@@ -21,12 +21,13 @@
 Utils to read data from Hanwa TLP setup file
 """
 
-import numpy as np
 from cStringIO import StringIO
 import os.path as osp
 from os import walk, listdir
 import re
 import logging
+
+import numpy as np
 
 
 class ReadHanwa(object):
@@ -69,14 +70,14 @@ class ReadHanwa(object):
                     1 : the v or I data ( corresponding to the selected type
             """
             pulse_id_filename = pulse_type + '_' + str(pulse_id) + '.csv'
-            pulse_w_filename = osp.join(head, 'Osillo' + pulse_type, \
-                pulse_id_filename)
+            pulse_w_filename = osp.join(head, 'Osillo' + pulse_type,
+                                        pulse_id_filename)
             return data_from_transient_file(pulse_w_filename)[idx]
 
-        tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)), \
-            pulse_id_array))
-        tlp_i = np.asarray(map(lambda x: (read_pulse_file('I', x, 1)), \
-            pulse_id_array))
+        tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)),
+                               pulse_id_array))
+        tlp_i = np.asarray(map(lambda x: (read_pulse_file('I', x, 1)),
+                               pulse_id_array))
         time_array = read_pulse_file('I', 1, 0)
         delta_t = time_array[1] - time_array[0]
 

@@ -21,8 +21,9 @@
 Read the data from LAAS TLP setup file
 """
 
-import numpy as np
 import logging
+
+import numpy as np
 
 
 class ReadLAAS(object):

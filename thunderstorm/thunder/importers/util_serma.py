@@ -21,13 +21,14 @@
 Utils to read data from SERMA TLP setup file
 """
 
-import numpy as np
 import zipfile as z
 from cStringIO import StringIO
 import tarfile as tf
 import re
 import os
 import logging
+
+import numpy as np
 
 
 class ReadSERMA(object):
@@ -88,7 +89,7 @@ class ReadSERMA(object):
         num_data = {}
         for data_name in ('tlp', 'valim_tlp', 'tlp_pulses',
                           'valim_leak', 'leak_evol',
-                        'offsets_t', 'leak_data'):
+                          'offsets_t', 'leak_data'):
             num_data[data_name] = np.array(self.data[data_name])
         num_data['delta_t'] = self.data['delta_t']
         return num_data
@@ -120,7 +121,7 @@ class SERMATransientRead(object):
 
     def data_from_transient_file(self, filename):
         if (os.path.isfile(self.wfm_location)
-            and tf.is_tarfile(self.wfm_location)):
+                and tf.is_tarfile(self.wfm_location)):
             tfile = tf.open(self.wfm_location, 'r')
             my_file = tfile.extractfile(filename)
             full_file = my_file.read()
@@ -213,7 +214,7 @@ class SERMALeakageRead(object):
 
     def data_from_leakage_file(self, filename):
         if (os.path.isfile(self.leak_location)
-            and tf.is_tarfile(self.leak_location)):
+                and tf.is_tarfile(self.leak_location)):
             tfile = tf.open(self.leak_location, 'r')
             my_file = tfile.extractfile(filename)
             full_file = my_file.read()

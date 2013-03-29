@@ -22,11 +22,12 @@ Import module for LAAS TLP setup data
 """
 
 import os
-from thunderstorm.thunder.importers.tools import ImportPlugin
-from thunderstorm.thunder.importers.util_laas import ReadLAAS
-from thunderstorm.thunder.tlp import RawTLPdata
-from thunderstorm.thunder.pulses import IVTime
 import logging
+
+from .tools import ImportPlugin
+from .util_laas import ReadLAAS
+from ..tlp import RawTLPdata
+from ..pulses import IVTime
 
 
 class ImportLAAS(ImportPlugin):
@@ -56,7 +57,7 @@ class ImportLAAS(ImportPlugin):
         delta_t = (data['tlp_pulses'][0, 0, 1] - data['tlp_pulses'][0, 0, 0])
         pulses.delta_t = delta_t
         # peupler l'objet avec les bonnes données
-        # implemter : recupération du delta_t dans l'util_laas
+        # TODO implemter : recupération du delta_t dans l'util_laas
         tlp_curve = data['tlp']
         iv_leak = data['leak_data']
         leak_evol = None  # To be implemented
