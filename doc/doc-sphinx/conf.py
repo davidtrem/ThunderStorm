@@ -38,7 +38,7 @@ class Mock(object):
         else:
             return Mock()
 
-MOCK_MODULES = ['numpy', 'h5py', 'numpy.fft']
+MOCK_MODULES = ['numpy', 'h5py', 'numpy.fft', 'numpy.ma']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
 
