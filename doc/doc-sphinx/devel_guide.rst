@@ -26,7 +26,7 @@ leakage evolution
 
 import plug-ins
 ---------------
-.. automodule:: thunder.import_plugins
+.. automodule:: thunder.importers
    :members:
 
 lightning
@@ -34,3 +34,14 @@ lightning
 .. automodule:: lightning
    :members:
    :show-inheritance:
+
+.. automodule:: simple_plots
+   :members:
+
+.. automodule:: tlp_observer
+   :members:
+
+.. automodule:: pulse_observer
+   :members:
+
+
