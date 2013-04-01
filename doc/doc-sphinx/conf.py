@@ -39,7 +39,7 @@ class Mock(object):
             return Mock()
 
 MOCK_MODULES = ['numpy', 'h5py', 'numpy.fft', 'numpy.ma',
-                'matplotlib', 'matplotlib.cbook']
+                'matplotlib', 'matplotlib.cbook', 'matplotlib.cm']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
 
