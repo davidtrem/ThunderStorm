@@ -35,13 +35,13 @@ lightning
    :members:
    :show-inheritance:
 
-.. automodule:: simple_plots
+.. automodule:: lightning.simple_plots
    :members:
 
-.. automodule:: tlp_observer
+.. automodule:: lightning.tlp_observer
    :members:
 
-.. automodule:: pulse_observer
+.. automodule:: lightning.pulse_observer
    :members:
 
 
