@@ -135,6 +135,13 @@ class TLPOverlayWithLeakEvol(object):
         else:
             log = logging.getLogger('thunderstorm.lightning')
             log.warn("Leakage evolution cannot be plotted, no data")
+            # Need to update y bound of leak plot if no leakage data
+            # for proper autoscaling
+            self.tlp_plot.relim()
+            lim_tlp = self.tlp_plot.dataLim
+            lim_leak = self.leak_evol_plot.dataLim
+            lim_leak.update_from_data(lim_leak.intervalx, lim_tlp.intervaly)
+            self.tlp_plot.autoscale_view()
         self.draw()
 
 

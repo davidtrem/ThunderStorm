@@ -47,7 +47,7 @@ class ImportOryx(ImportPlugin):
         file_path = os.path.realpath(file_name)
         alldata = ReadOryx(file_name)
         data = alldata.data_to_num_array
-        if data['waveform_available'] == True:
+        if data['waveform_available']:
             pulses = IVTime(data['tlp_pulses'].shape[2],
                             data['tlp_pulses'].shape[1],
                             delta_t=data['delta_t'],
