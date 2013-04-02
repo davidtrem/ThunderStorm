@@ -183,11 +183,13 @@ class H5RawTLPdata(_RawTLPdata):
             raise TypeError("group must be an h5py.Group object")
         _RawTLPdata.__init__(self)
         self.droplet = droplet
-        self._pulses_data = H5IVTime(droplet)
-        if self.pulses.pulses_length == 0 or self.pulses.pulses_nb == 0:
-            self.has_transient_pulses = False
-        else:
+
+        if 'IVTime' in droplet.keys():
+            self._pulses_data = H5IVTime(droplet)
             self.has_transient_pulses = True
+        else:
+            self.has_transient_pulses = False
+
         if 'leak_evol' in droplet.keys():
             self.has_leakage_evolution = True
             self._leak_evol = droplet['leak_evol']

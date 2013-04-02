@@ -61,8 +61,9 @@ class ImportPlugin(object):
         if exp_name is None:
             exp_name = splitext(basename(raw_data.original_file_name))[0]
         h5group = h5file.create_group(exp_name)
-        data = H5IVTime(h5group)
-        data.import_ivtime(raw_data.pulses)
+        if raw_data.has_transient_pulses:
+            data = H5IVTime(h5group)
+            data.import_ivtime(raw_data.pulses)
         h5group['tlp_curve'] = raw_data.tlp_curve
         h5group.attrs['device_name'] = raw_data.device_name
         h5group.attrs['tester_name'] = raw_data.tester_name
