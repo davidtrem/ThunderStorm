@@ -112,6 +112,9 @@ class TLPOverlayWithLeakEvol(object):
             label.set_visible(False)
         self.leak_evol_plot.xaxis.tick_top()
         self.leak_evol_plot.xaxis.set_label_position('top')
+        # Ensure that (0,0) point is always visible on graph
+        line, = self.tlp_plot.plot(0, 0)
+        line.set_visible(False)
 
     def decorate(self):
         tlp_plot = self.tlp_plot
