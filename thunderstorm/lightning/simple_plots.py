@@ -140,7 +140,8 @@ class TLPOverlayWithLeakEvol(object):
             self.tlp_plot.relim()
             lim_tlp = self.tlp_plot.dataLim
             lim_leak = self.leak_evol_plot.dataLim
-            lim_leak.update_from_data(lim_leak.intervalx, lim_tlp.intervaly)
+            lim_leak.update_from_data_xy(zip(lim_leak.intervalx,
+                                             lim_tlp.intervaly))
             self.tlp_plot.autoscale_view()
         self.draw()
 
