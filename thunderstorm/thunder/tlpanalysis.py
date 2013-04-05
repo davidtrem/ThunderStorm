@@ -24,6 +24,7 @@ Orignal code from Pascal Salome 2012
 import os
 import glob
 import shutil
+from os.path import (realpath, dirname)
 
 from .analysis.tlp_analysis import TLPAnalysis
 from .analysis.report_analysis import TLPReporting
@@ -33,18 +34,18 @@ class RawTLPdataAnalysis(object):
     """Provide analysis on raw measurement data
     """
 
-    def __init__(self, raw_data):
+    def __init__(self, droplet):
         """
         Parameters
         ----------
-        raw_data: RawTLPdata
-            RawTLPdata instance
+        droplet: Droplet
+            Droplet instance
         """
         self.has_report = False
-
-        file_path = raw_data.original_file_name
+        file_path = droplet.full_file_name
+        raw_data = droplet.raw_data
         tlp_curve = raw_data.tlp_curve
-        ## PSA thi is a trial to integrate the data analysis
+
         baseDir = os.path.dirname(file_path)
 
         devName = os.path.splitext(os.path.basename(str(file_path)))[0]
@@ -74,7 +75,8 @@ class RawTLPdataAnalysis(object):
         my_tlp_analysis.update_analysis()
 
         self.myOfile = baseDir + os.sep + devName + '_report.html'
-        self.css = os.path.abspath("." + os.sep + "ESDAnalysisTool.css")
+        self.css = (dirname(realpath(__file__))
+                    + os.sep + "ESDAnalysisTool.css")
 
         self.report = TLPReporting()
         self.report.set_css_format(self.css)
@@ -83,7 +85,6 @@ class RawTLPdataAnalysis(object):
         self.report.save_report(self.myOfile)
 
         self.my_tlp_analysis = my_tlp_analysis
-########### end of addon by PAS July 2nd, 2012
 
     def update_analysis(self):
         #print "analysis running an update"

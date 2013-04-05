@@ -19,6 +19,7 @@
 
 """ tlp data
 """
+from os.path import realpath
 
 import numpy as np
 import h5py
@@ -273,6 +274,7 @@ class Droplet(object):
         A Droplet is base on a hdf5 file group
     """
     def __init__(self, h5group):
+        self._h5group = h5group
         self._exp_name = h5group.name[1:]
         self._raw_data = H5RawTLPdata(h5group)
 
@@ -280,6 +282,10 @@ class Droplet(object):
         message = "Experiement: "
         message += self._exp_name + "\n"
         return message
+
+    @property
+    def full_file_name(self):
+        return realpath(self._h5group.file.filename)
 
     @property
     def raw_data(self):
@@ -291,4 +297,5 @@ class Droplet(object):
 
     @exp_name.setter
     def exp_name(self, value):
-        self._exp_name = value
+        raise NotImplemented
+        #self._exp_name = value

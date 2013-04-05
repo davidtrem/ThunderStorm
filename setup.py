@@ -21,5 +21,5 @@ setup(name='ThunderStorm',
                 'thunderstorm.lightning',
                 'thunderstorm.istormlib',
                 'thunderstorm.thunder.analysis'],
-      scripts=['istorm.py', ],
+      package_data={'thunderstorm.thunder': ['ESDAnalysisTool.css']},
       )
