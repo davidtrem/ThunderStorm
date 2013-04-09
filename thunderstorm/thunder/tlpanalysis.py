@@ -42,16 +42,15 @@ class RawTLPdataAnalysis(object):
             Droplet instance
         """
         self.has_report = False
-        file_path = droplet.full_file_name
         raw_data = droplet.raw_data
         tlp_curve = raw_data.tlp_curve
 
-        baseDir = os.path.dirname(file_path)
-
-        devName = os.path.splitext(os.path.basename(str(file_path)))[0]
-
-        if not os.path.exists(os.path.join(baseDir, 'report_analysis')):
-            os.mkdir(os.path.join(baseDir, 'report_analysis'))
+        baseDir = os.path.dirname(droplet.full_file_name)
+        devName = droplet.exp_name
+        report_folder_dir_name = '%s_report' % devName
+        report_folder = os.path.join(baseDir, report_folder_dir_name)
+        if not os.path.exists(report_folder):
+            os.mkdir(report_folder)
 
         self.spot_v = 0.5    # default value for leakage extraction : 0.5V
         self.fail_perc = 15  # default value for failure level 15%
@@ -70,7 +69,7 @@ class RawTLPdataAnalysis(object):
             my_tlp_analysis.set_fail(self.fail_perc)
 
         my_tlp_analysis.set_device_name(devName)
-        my_tlp_analysis.set_base_dir(baseDir)
+        my_tlp_analysis.set_base_dir(report_folder)
 
         my_tlp_analysis.update_analysis()
 
@@ -78,13 +77,14 @@ class RawTLPdataAnalysis(object):
         self.css = (dirname(realpath(__file__))
                     + os.sep + "ESDAnalysisTool.css")
 
-        self.report = TLPReporting()
+        self.report = TLPReporting(report_folder_dir_name)
         self.report.set_css_format(self.css)
 
         self.has_report = self.report.create_report(my_tlp_analysis)
         self.report.save_report(self.myOfile)
 
         self.my_tlp_analysis = my_tlp_analysis
+        self.report_folder = report_folder
 
     def update_analysis(self):
         #print "analysis running an update"
@@ -112,11 +112,9 @@ class RawTLPdataAnalysis(object):
             f.write(self.report.output)
             f.close()
 
-            baseDir = os.path.dirname(self.myOfile)
             pathName = os.path.dirname(save_name)
-            rep = os.path.join(baseDir, 'report_analysis')
             #names=os.listdir(rep)
-            names = glob.glob(rep + os.sep + "*.png")
+            names = glob.glob(self.report_folder + os.sep + "*.png")
             #print rep+"/*.png",names
             for item in names:
                 (mypath, myname) = os.path.split(item)

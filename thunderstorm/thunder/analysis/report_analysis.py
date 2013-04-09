@@ -29,10 +29,11 @@ import markdown as md
 class TLPReporting(object):
     """Utils to report data analysis
     """
-    def __init__(self):
+    def __init__(self, report_folder_name):
         self.has_css = False
         self.output_css = ""
         self.clear_report()
+        self.report_dir_name = report_folder_name
 
     def clear_report(self):
         self.wBody = []
@@ -106,6 +107,7 @@ class TLPReporting(object):
         return self.wBody
 
     def set_dc_data(self):
+        rep = self.report_dir_name
         wbody_appnd = self.wBody.append
         wbody_appnd("### DC Characterization")
         wbody_appnd("")
@@ -115,12 +117,12 @@ class TLPReporting(object):
             "\n" +
             '|Initial Leakage of the Cell | Leakage Evolution       |\n'
             + '|:--------------------------:|:--------------------------:|\n'
-            + '|[<img src="./report_analysis/reference.png" width=352'
+            + '|[<img src="./%s/reference.png" width=352' % rep
             + ' align="center" alt="reference">]'
-            + '(./report_analysis/reference.html)  |'
-            + ' [<img src=\"./report_analysis/evolution.png\"'
+            + '(./%s/reference.html)  |' % rep
+            + ' [<img src=\"./%s/evolution.png\"' % rep
             + ' width=352 align=\"center\" alt=\"evolution\">]'
-            + '(./report_analysis/evolution.html)|\n')
+            + '(./%s/evolution.html)|\n' % rep)
         return self.wBody
 
     def set_doc(self, dev_name, abstract_data):
@@ -162,6 +164,7 @@ class TLPReporting(object):
         wbody_appnd("")
 
     def add_leakage_information(self, statistic, err_stat, soft_bool=False):
+        rep = self.report_dir_name
         str1 = ""
         str2 = ""
         str3 = ""
@@ -186,21 +189,22 @@ class TLPReporting(object):
         if soft_bool:
             str1 = " First Leakage evolution |"
             str2 = ":-----------------------:|"
-            str3 = ('[<img src="./report_analysis/first_evolution.png"'
+            str3 = ('[<img src="./%s/first_evolution.png"' % rep
                     + ' width=352 align="center" alt="leakage_error">]'
-                    + '(./report_analysis/first_evolution.html)')
+                    + '(./%S/first_evolution.html)' % rep)
         wbody_appnd("The leakage evolution during the TLP measurement is"
                     + " shown in the graph below.")
         wbody_appnd("")
         wbody_appnd("| Leakage evolution |" + str1)
         wbody_appnd("|:-----------------:|" + str2)
-        wbody_appnd('[<img src="./report_analysis/leak_error.png" width=352 ' +
-                    'align="center" alt="first_leakage">]' +
-                    '(./report_analysis/leak_error.html) |' + str3)
+        wbody_appnd('[<img src="./%s/leak_error.png" width=352 ' % rep
+                    + 'align="center" alt="first_leakage">]'
+                    + '(./%s/leak_error.html) |' % rep + str3)
         wbody_appnd("")
 
     def add_leakage_information_doc(self, statistic, err_stat,
                                     soft_bool=False):
+        rep = self.report_dir_name
         str1 = ""
         str2 = ""
         str3 = ""
@@ -225,18 +229,19 @@ class TLPReporting(object):
         if soft_bool:
             str1 = " First Leakage evolution |"
             str2 = ":-----------------------:|"
-            str3 = ('<img src="./report_analysis/first_evolution.png" ' +
+            str3 = ('<img src="./%/first_evolution.png" ' % rep +
                     'width=352 align="center" alt="leakage_error">')
         wbody_appnd("The leakage evolution during the TLP measurement is " +
                     "shown in the graph below.")
         wbody_appnd("")
         wbody_appnd("| Leakage evolution |" + str1)
         wbody_appnd("|:-----------------:|" + str2)
-        wbody_appnd('<img src="./report_analysis/leak_error.png" width=352 ' +
-                    'align="center" alt="first_leakage">|' + str3)
+        wbody_appnd('<img src="./%s/leak_error.png" width=352 ' % rep
+                    + 'align="center" alt="first_leakage">|' + str3)
         wbody_appnd("")
 
     def add_tlp_curves(self, zoom_bool=False):
+        rep = self.report_dir_name
         str1 = ""
         str2 = ""
         str3 = ""
@@ -247,21 +252,22 @@ class TLPReporting(object):
         if zoom_bool:
             str1 = " Detailled View on Triggering|"
             str2 = ":---------------------------:|"
-            str3 = (' [<img src="./report_analysis/TLP_B.png" width=352 ' +
-                    'align="center" alt="Zooming">]' +
-                    '(./report_analysis/TLP_B.html)|')
+            str3 = (' [<img src="./%s/TLP_B.png" width=352 ' % rep
+                    + 'align="center" alt="Zooming">]'
+                    + '(./%s/TLP_B.html)|' % rep)
 
         wbody_appnd("|Full TLP Curve |" + str1)
         wbody_appnd("|:-------------:|" + str2)
-        wbody_appnd('|[<img src=\"./report_analysis/TLP_A.png\" width=352 ' +
-                    'align=\"center\" alt=\"full TLP\">]' +
-                    '(./report_analysis/TLP_A.html) |' + str3)
+        wbody_appnd('|[<img src=\"./%s/TLP_A.png\" width=352 ' % rep
+                    + 'align=\"center\" alt=\"full TLP\">]'
+                    + '(./%s/TLP_A.html) |' % rep + str3)
         wbody_appnd("")
         wbody_appnd("Blue dots provide the leakage evolution taken at the " +
                     "spot value, while the red dots give the TLP curve.")
         wbody_appnd("")
 
     def add_tlp_curves_doc(self, zoom_bool=False):
+        rep = self.report_dir_name
         str1 = ""
         str2 = ""
         str3 = ""
@@ -272,41 +278,43 @@ class TLPReporting(object):
         if zoom_bool:
             str1 = " Detailled View on Triggering|"
             str2 = ":---------------------------:|"
-            str3 = (' <img src="./report_analysis/TLP_B.png" width=352 ' +
-                    'align="center" alt="Zooming">|')
+            str3 = (' <img src="./%s/TLP_B.png" width=352 ' % rep
+                    + 'align="center" alt="Zooming">|')
         wbody_appnd("|Full TLP Curve |" + str1)
         wbody_appnd("|:-------------:|" + str2)
-        wbody_appnd('|<img src="./report_analysis/TLP_A.png" width=352 ' +
-                    'align="center" alt="full TLP">|' + str3)
+        wbody_appnd('|<img src="./%s/TLP_A.png" width=352 ' % rep
+                    + 'align="center" alt="full TLP">|' + str3)
         wbody_appnd("")
         wbody_appnd("Blue dots provide the leakage evolution taken at the " +
                     "spot value, while the red dots give the TLP curve.")
         wbody_appnd("")
 
     def add_extraction_curves(self):
+        rep = self.report_dir_name
         wbody_appnd = self.wBody.append
         wbody_appnd("")
         wbody_appnd("### Data Extraction")
         wbody_appnd("")
         wbody_appnd("|Data Extraction Of The Cell |")
         wbody_appnd("|:-------------------------:|")
-        wbody_appnd('[<img src="./report_analysis/TLP_C.png" width=352 ' +
-                    'align="center" alt="Extraction"> ]' +
-                    '(./report_analysis/TLP_C.html)|')
+        wbody_appnd('[<img src="./%s/TLP_C.png" width=352 ' % rep
+                    + 'align="center" alt="Extraction"> ]'
+                    + '(./%s/TLP_C.html)|' % rep)
         wbody_appnd("")
         wbody_appnd("Blue line provide the data fitting while red dots " +
                     "give that data from the TLP curve for the holding region")
         wbody_appnd("")
 
     def add_extraction_curves_doc(self):
+        rep = self.report_dir_name
         wbody_appnd = self.wBody.append
         wbody_appnd("")
         wbody_appnd("### Data Extraction")
         wbody_appnd("")
         wbody_appnd("|Data Extraction Of The Cell |")
         wbody_appnd("|:-------------------------:|")
-        wbody_appnd('<img src="./report_analysis/TLP_C.png" width=352 ' +
-                    'align="center" alt="Extraction"> |')
+        wbody_appnd('<img src="./%s/TLP_C.png" width=352 ' % rep
+                    + 'align="center" alt="Extraction"> |')
         wbody_appnd("")
         wbody_appnd("Blue line provide the data fitting while red dots " +
                     "give that data from the TLP curve for the holding region")

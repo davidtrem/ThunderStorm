@@ -386,13 +386,10 @@ class LeakageAnalysis(object):
         rising, falling = self.get_failure_points(err_tab, self.fail)
         self.set_fail_str(tlp_table)
 
-        self.make_reference_plot(self.baseDir +
-                                 '/report_analysis/reference.png')
-        self.make_evolution_plot(self.baseDir +
-                                 '/report_analysis/evolution.png')
-        self.make_first_evolution_plot(self.baseDir +
-                                       '/report_analysis/first_evolution.png')
-        self.make_error_plot(self.baseDir + '/report_analysis/leak_error.png')
+        self.make_reference_plot(self.baseDir + '/reference.png')
+        self.make_evolution_plot(self.baseDir + '/evolution.png')
+        self.make_first_evolution_plot(self.baseDir + '/first_evolution.png')
+        self.make_error_plot(self.baseDir + '/leak_error.png')
 
     def update_evol_analysis(self, tlp_table):
 
@@ -410,5 +407,4 @@ class LeakageAnalysis(object):
             rising, falling = self.get_failure_points(err_tab, self.fail)
 
             self.set_fail_str(tlp_table)
-            self.make_error_plot(self.baseDir +
-                                 '/report_analysis/leak_error.png')
+            self.make_error_plot(self.baseDir + '/leak_error.png')
