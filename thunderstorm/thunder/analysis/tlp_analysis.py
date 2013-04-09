@@ -538,8 +538,8 @@ class TLPAnalysis(object):
 
         self.get_fitting_data()
 
-        self.make_derivative_plot(baseDir + '/report_analysis/derivative.png')
+        self.make_derivative_plot(baseDir + '/derivative.png')
 
-        self.make_tlp_plot(baseDir + '/report_analysis/TLP')
+        self.make_tlp_plot(baseDir + '/TLP')
 
-        self.make_extraction_plot(baseDir + '/report_analysis/TLP_C.png')
+        self.make_extraction_plot(baseDir + '/TLP_C.png')
