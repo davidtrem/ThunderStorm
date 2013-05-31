@@ -142,8 +142,8 @@ def extract_data_from_tcf(tcf_file_name):
 def get_number_of_files_in_dir(pathname):
     """ returns the number of files in a directory """
     file_count = 0
-    for files in walk(pathname):
-        file_count += len(files)
+    for elem in walk(pathname):
+        file_count += len(elem[2])
     return file_count
 
 
