@@ -21,7 +21,7 @@
 Utils to read data from Hanwa TLP setup file
 """
 
-from cStringIO import StringIO
+from io import StringIO
 import os.path as osp
 from os import walk, listdir
 import re
@@ -74,10 +74,10 @@ class ReadHanwa(object):
                                         pulse_id_filename)
             return data_from_transient_file(pulse_w_filename)[idx]
 
-        tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)),
-                               pulse_id_array))
-        tlp_i = np.asarray(map(lambda x: (read_pulse_file('I', x, 1)),
-                               pulse_id_array))
+        tlp_v = np.asarray([(read_pulse_file('V', x, 1))
+                            for x in pulse_id_array])
+        tlp_i = np.asarray([(read_pulse_file('I', x, 1))
+                            for x in pulse_id_array])
         time_array = read_pulse_file('I', 1, 0)
         delta_t = time_array[1] - time_array[0]
 

@@ -23,7 +23,7 @@ This file was greatly improved with the help of Justin Katz
 """
 
 from zipfile import ZipFile
-from cStringIO import StringIO
+from io import StringIO
 import re
 import logging
 import os

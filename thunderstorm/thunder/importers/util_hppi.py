@@ -22,7 +22,7 @@ Utils to read data from HPPI TLP setup file
 """
 
 from zipfile import ZipFile
-from cStringIO import StringIO
+from io import StringIO
 import re
 import os
 import logging

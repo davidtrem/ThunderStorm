@@ -25,7 +25,7 @@ class Load(object):
     Return an experiment.
     Load.plug_list return the available a list of tester import plugins
     """
-    plug_list = plug_dict.keys()
+    plug_list = list(plug_dict.keys())
 
 # instantiate import plugins
 for plug_name in Load.plug_list:

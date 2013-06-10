@@ -20,6 +20,8 @@
 """
 Utils to analyse the leakage of a TLP measurement
 """
+from __future__ import print_function
+
 from datetime import datetime
 
 import numpy as np
@@ -141,7 +143,7 @@ class LeakageAnalysis(object):
             rising.remove(item)
 
         if len(falling) != 0:
-            print "Strange leakage behaviour, leakage is cooling down..."
+            print("Strange leakage behaviour, leakage is cooling down...")
         if len(rising) > 0:
             self.fail_index = rising[-1]
             if len(rising) > 1:

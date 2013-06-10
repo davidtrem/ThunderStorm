@@ -22,7 +22,7 @@ Utils to read data from SERMA TLP setup file
 """
 
 import zipfile as z
-from cStringIO import StringIO
+from io import StringIO
 import tarfile as tf
 import re
 import os

@@ -21,4 +21,4 @@
 """thunderstorm python package.
 """
 
-__version__ = "0.8preview-3-g15b4"
+__version__ = "0.8preview-40-g79bc"
