@@ -21,6 +21,7 @@
 Utils to read data from SERMA TLP setup file
 """
 
+import sys
 import zipfile as z
 from io import StringIO
 import tarfile as tf
@@ -106,8 +107,12 @@ def extract_data_from_csv(tsr_file_name):
     test_result_re = re.compile(r'^Index,.*\]\n(.*)', re.S | re.M)
     data_str = test_result_re.findall(tsr_file_str)
     data_str_file = StringIO()
-    data_str_file.write(data_str[0])
-    data_str_file.reset()
+    if sys.version_info[0] < 3:  # Python 2
+        data_str_file.write(unicode(data_str[0]))
+    else:  # Python 3
+        data_str_file.write(data_str[0])
+    data_str_file.flush()
+    data_str_file.seek(0,0)
     data = np.loadtxt(data_str_file, delimiter=',', usecols=(1, 2, 3, 4))
     return data.T
 
@@ -136,10 +141,11 @@ class SERMATransientRead(object):
                 full_file = wfm_file.read()
             wfm_file.close()
 
-        data_string = '\n'.join(full_file.split('\r\n'))
+        data_string = u'\n'.join(full_file.split('\r\n'))
         data_string_file = StringIO()
         data_string_file.write(data_string)
-        data_string_file.reset()
+        data_string_file.flush()
+        data_string_file.seek(0, 0)
         return np.loadtxt(data_string_file, delimiter=',', skiprows=1).T
 
     @property
@@ -229,10 +235,11 @@ class SERMALeakageRead(object):
                 full_file = leak_file.read()
             leak_file.close()
 
-        data_string = '\n'.join(full_file.split('\r\n'))
+        data_string = u'\n'.join(full_file.split('\r\n'))
         data_string_file = StringIO()
         data_string_file.write(data_string)
-        data_string_file.reset()
+        data_string_file.flush()
+        data_string_file.seek(0, 0)
         return np.loadtxt(data_string_file, delimiter=',', skiprows=1).T
 
     @property
