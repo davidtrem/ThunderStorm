@@ -95,9 +95,9 @@ class UniversalCursors(object):
             self.all_axes[id(ax)] = ax
             ax_canvas = ax.get_figure().canvas
             if ax_canvas not in self.all_canvas.values():
-                if not ax_canvas.supports_blit:
-                    warnings.warn("Must use canvas that support blit")
-                    return
+                #if not ax_canvas.supports_blit:
+                #    warnings.warn("Must use canvas that support blit")
+                #    return
                 self.all_canvas[id(ax_canvas)] = ax_canvas
                 ax_canvas.mpl_connect('motion_notify_event', self._onmove)
                 ax_canvas.mpl_connect('draw_event', self._clear)
