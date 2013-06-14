@@ -102,19 +102,29 @@ class TLPOverlayWithLeakEvol(object):
         self.leak_evol_plot = leak_evol_plot
         self.figure = figure
         self.draw = figure.canvas.draw
+        self.no_leak_curve_yet = True
         self.clean()
+        tlp_plot.set_xlim((0, 10))
+        tlp_plot.set_ylim((0, 5))
+        leak_evol_plot.set_xscale('log')
+        leak_evol_plot.set_xlim((1e-12, 1e-5))
+        leak_evol_plot.xaxis.get_major_locator().numticks = 3
+        self.decorate()
         self.draw()
 
     def clean(self):
-        self.tlp_plot.cla()
-        self.leak_evol_plot.cla()
-        for label in self.leak_evol_plot.get_yticklabels():
+        tlp_plot = self.tlp_plot
+        leak_evol_plot = self.leak_evol_plot
+        tlp_plot.cla()
+        leak_evol_plot.cla()
+        for label in leak_evol_plot.get_yticklabels():
             label.set_visible(False)
-        self.leak_evol_plot.xaxis.tick_top()
-        self.leak_evol_plot.xaxis.set_label_position('top')
+        leak_evol_plot.xaxis.tick_top()
+        leak_evol_plot.xaxis.set_label_position('top')
         # Ensure that (0,0) point is always visible on graph
-        line, = self.tlp_plot.plot(0, 0)
+        line, = tlp_plot.plot(0, 0)
         line.set_visible(False)
+        self.no_leak_curve_yet = True
 
     def decorate(self):
         tlp_plot = self.tlp_plot
@@ -122,9 +132,7 @@ class TLPOverlayWithLeakEvol(object):
         tlp_plot.set_xlabel("Voltage (V)")
         tlp_plot.set_ylabel("Current (A)")
         tlp_plot.set_title(self.title)
-        leak_evol_plot = self.leak_evol_plot
-        leak_evol_plot.grid(True)
-        leak_evol_plot.locator_params(axis='x', nbins=4)
+        self.leak_evol_plot.grid(True)
 
     def add_curve(self, raw_tlp_data):
         line, = self.tlp_plot.plot(raw_tlp_data.tlp_curve[0],
@@ -134,7 +142,7 @@ class TLPOverlayWithLeakEvol(object):
                                          raw_tlp_data.tlp_curve[1],
                                          '%s-o' % line.get_color(),
                                          markersize=2)
-            self.leak_evol_plot.xaxis.get_major_locator().numticks = 3
+            self.no_leak_curve_yet = False
         else:
             log = logging.getLogger('thunderstorm.lightning')
             log.warn("Leakage evolution cannot be plotted, no data")
@@ -143,9 +151,16 @@ class TLPOverlayWithLeakEvol(object):
             self.tlp_plot.relim()
             lim_tlp = self.tlp_plot.dataLim
             lim_leak = self.leak_evol_plot.dataLim
-            lim_leak.update_from_data_xy(zip(lim_leak.intervalx,
+            if self.no_leak_curve_yet is True:
+                self.leak_evol_plot.set_xscale('log')
+                lim_leak_interval = np.array([1e-12, 1e-5])
+            else:
+                lim_leak_interval = lim_leak.intervalx
+            lim_leak.update_from_data_xy(zip(lim_leak_interval,
                                              lim_tlp.intervaly))
-            self.tlp_plot.autoscale_view()
+        self.tlp_plot.autoscale_view()
+        self.leak_evol_plot.autoscale_view()
+        self.leak_evol_plot.xaxis.get_major_locator().numticks = 3
         self.draw()
 
 
