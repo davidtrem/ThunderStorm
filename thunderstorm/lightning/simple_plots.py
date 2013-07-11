@@ -156,8 +156,8 @@ class TLPOverlayWithLeakEvol(object):
                 lim_leak_interval = np.array([1e-12, 1e-5])
             else:
                 lim_leak_interval = lim_leak.intervalx
-            lim_leak.update_from_data_xy(zip(lim_leak_interval,
-                                             lim_tlp.intervaly))
+            lim_leak.update_from_data_xy(list(zip(lim_leak_interval,
+                                                  lim_tlp.intervaly)))
         self.tlp_plot.autoscale_view()
         self.leak_evol_plot.autoscale_view()
         self.leak_evol_plot.xaxis.get_major_locator().numticks = 3

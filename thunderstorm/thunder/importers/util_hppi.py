@@ -22,12 +22,13 @@ Utils to read data from HPPI TLP setup file
 """
 
 from zipfile import ZipFile
-from cStringIO import StringIO
 import re
 import os
 import logging
 
 import numpy as np
+
+from ..utils import string2file
 
 
 class ReadHPPI(object):
@@ -92,10 +93,8 @@ def extract_data_from_csv(tsr_file_name):
         tsr_file_str = tsr_file.read()
     test_result_re = re.compile(r'^Index,.*\]\n(.*)', re.S | re.M)
     data_str = test_result_re.findall(tsr_file_str)
-    data_str_file = StringIO()
-    data_str_file.write(data_str[0])
-    data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter=',', usecols=(1, 2, 3, 8))
+    data = np.loadtxt(string2file(data_str[0]),
+                      delimiter=',', usecols=(1, 2, 3, 8))
     return data.T
 
 
@@ -117,10 +116,8 @@ class HPPITransientRead(object):
             full_file = zfile.read(filename)
             zfile.close()
         data_string = '\n'.join(full_file.split('\r\n'))
-        data_string_file = StringIO()
-        data_string_file.write(data_string)
-        data_string_file.reset()
-        return np.loadtxt(data_string_file, delimiter=',', skiprows=1).T
+        return np.loadtxt(string2file(data_string),
+                          delimiter=',', skiprows=1).T
 
     @property
     def filecontents(self):

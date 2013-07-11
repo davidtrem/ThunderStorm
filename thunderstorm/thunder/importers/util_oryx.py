@@ -23,13 +23,14 @@ This file was greatly improved with the help of Justin Katz
 """
 
 from zipfile import ZipFile
-from cStringIO import StringIO
 import re
 import logging
 import os
 import glob
 
 import numpy as np
+
+from ..utils import string2file
 
 
 class ReadOryx(object):
@@ -105,11 +106,8 @@ def extract_data_from_tsr(tsr_file_name):
     re_str = r'^"\[=====Test\ Result\ Table.*\]"\n(.*)\n"\[EOF\]"'
     test_result_re = re.compile(re_str, re.S | re.M)
     data_str = test_result_re.findall(tsr_file_str)
-
-    data_str_file = StringIO()
-    data_str_file.write(data_str[0])
-    data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 3, 4, 5))
+    data = np.loadtxt(string2file(data_str[0]),
+                      delimiter=',', usecols=(0, 3, 4, 5))
     return data.T
 
 
@@ -128,10 +126,8 @@ def read_leak_curves(filename):
 
         data_txt = ['\n'.join(block[1].split('\n')[3:-1]) for block in blocks]
         for data in data_txt:
-            string_file = StringIO()
-            string_file.write(data)
-            string_file.reset()
-            curves.append(np.loadtxt(string_file, delimiter=',').T[1:])
+            curves.append(np.loadtxt(string2file(data),
+                                     delimiter=',').T[1:])
     except IOError:
         log = logging.getLogger('thunderstorm.thunder.importers')
         log.warn("No leakage curves available")
@@ -175,12 +171,9 @@ class OryxTransientZip(object):
                 os.remove(self.zipcreated)
 
     def data_from_transient_file(self, filename):
-        full_file = self.zfile.read(filename)
+        full_file = self.zfile.read(filename).decode()
         data_string = '\n'.join(full_file.split('\r\n')[13:-2])
-        data_string_file = StringIO()
-        data_string_file.write(data_string)
-        data_string_file.reset()
-        return np.loadtxt(data_string_file, delimiter=',').T
+        return np.loadtxt(string2file(data_string), delimiter=',').T
 
     @property
     def list_transient_file(self):

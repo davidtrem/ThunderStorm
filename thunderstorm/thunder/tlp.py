@@ -185,20 +185,20 @@ class H5RawTLPdata(_RawTLPdata):
         _RawTLPdata.__init__(self)
         self.droplet = droplet
 
-        if 'IVTime' in droplet.keys():
+        if 'IVTime' in list(droplet.keys()):
             self._pulses_data = H5IVTime(droplet)
             self.has_transient_pulses = True
         else:
             self.has_transient_pulses = False
 
-        if 'leak_evol' in droplet.keys():
+        if 'leak_evol' in list(droplet.keys()):
             self.has_leakage_evolution = True
             self._leak_evol = droplet['leak_evol']
         else:
             self.has_leakage_evolution = False
             self._leak_evol = None
 
-        if 'iv_leak' in droplet.keys():
+        if 'iv_leak' in list(droplet.keys()):
             self.has_leakage_ivs = True
             self._iv_leak_data = droplet['iv_leak']
         else:

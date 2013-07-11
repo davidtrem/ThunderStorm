@@ -21,6 +21,7 @@
 Testing pulses_dev.py
 """
 #TODO Remove import * below !
+from __future__ import print_function
 from __future__ import division
 
 import numpy as np
@@ -30,44 +31,44 @@ from .pulses import *
 
 def test():
     test_pulse_set_time = TimePulseSet()
-    print test_pulse_set_time.pulses_nb
-    print test_pulse_set_time.pulses_length
-    print "PulseSetTime() Ok"
+    print(test_pulse_set_time.pulses_nb)
+    print(test_pulse_set_time.pulses_length)
+    print("PulseSetTime() Ok")
 
     test_pulse_set_freq = FreqPulseSet()
-    print test_pulse_set_freq.pulses_nb
-    print test_pulse_set_freq.pulses_length
-    print "PulseSetFreq() Ok"
+    print(test_pulse_set_freq.pulses_nb)
+    print(test_pulse_set_freq.pulses_length)
+    print("PulseSetFreq() Ok")
 
     test_pulse_set_time_iv = IVTime()
-    print test_pulse_set_time_iv.pulses_nb
-    print test_pulse_set_time_iv.pulses_length
-    print "IVTime() Ok"
+    print(test_pulse_set_time_iv.pulses_nb)
+    print(test_pulse_set_time_iv.pulses_length)
+    print("IVTime() Ok")
 
     test_pulse_set_freq_iv = IVFreq()
-    print test_pulse_set_freq_iv.pulses_nb
-    print test_pulse_set_freq_iv.pulses_length
-    print "IVFreq() Ok"
+    print(test_pulse_set_freq_iv.pulses_nb)
+    print(test_pulse_set_freq_iv.pulses_length)
+    print("IVFreq() Ok")
 
     test_pulse_set_time_vincref = VIncRefTime()
-    print test_pulse_set_time_vincref.pulses_nb
-    print test_pulse_set_time_vincref.pulses_length
-    print "VIncRefTime() Ok"
+    print(test_pulse_set_time_vincref.pulses_nb)
+    print(test_pulse_set_time_vincref.pulses_length)
+    print("VIncRefTime() Ok")
 
     test_pulse_set_freq_vincref = VIncRefFreq()
-    print test_pulse_set_freq_vincref.pulses_nb
-    print test_pulse_set_freq_vincref.pulses_length
-    print "VIncRefFreq() Ok"
+    print(test_pulse_set_freq_vincref.pulses_nb)
+    print(test_pulse_set_freq_vincref.pulses_length)
+    print("VIncRefFreq() Ok")
 
     test_pulse_set_time_ab = ABTime()
-    print test_pulse_set_time_ab.pulses_nb
-    print test_pulse_set_time_ab.pulses_length
-    print "ABTime() Ok"
+    print(test_pulse_set_time_ab.pulses_nb)
+    print(test_pulse_set_time_ab.pulses_length)
+    print("ABTime() Ok")
 
     test_pulse_set_freq_ab = ABFreq()
-    print test_pulse_set_freq_ab.pulses_nb
-    print test_pulse_set_freq_ab.pulses_length
-    print "ABFreq() Ok"
+    print(test_pulse_set_freq_ab.pulses_nb)
+    print(test_pulse_set_freq_ab.pulses_length)
+    print("ABFreq() Ok")
 
 
 def testpulse(pulse_time):
@@ -75,15 +76,15 @@ def testpulse(pulse_time):
     back_time = pulse_freq.to_time
     import matplotlib.pyplot  as plt
     time_error = pulse_time.delta_t - back_time.delta_t
-    print pulse_time.delta_t
-    print back_time.delta_t
-    print "time error = " + str(time_error)
+    print(pulse_time.delta_t)
+    print(back_time.delta_t)
+    print("time error = " + str(time_error))
     plt.figure()
     plt.plot
     plt.plot(pulse_time.current[0])
     plt.plot(back_time.current[0])
     plt.figure()
-    print "delta_f = " + str(pulse_freq.delta_f)
+    print("delta_f = " + str(pulse_freq.delta_f))
     plt.plot(np.absolute(pulse_freq.current[0]))
     plt.show()
 
@@ -117,13 +118,13 @@ def testab():
 
 
 def main():
-    print "Module test"
+    print("Module test")
     test()
     testIV()
     testVIncRef()
     testab()
 
-    raw_input("Press enter to end")
+    input("Press enter to end")
 
 if __name__ == "__main__":
     main()

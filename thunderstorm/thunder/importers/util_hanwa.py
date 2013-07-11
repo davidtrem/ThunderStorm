@@ -21,7 +21,7 @@
 Utils to read data from Hanwa TLP setup file
 """
 
-from cStringIO import StringIO
+import sys
 import os.path as osp
 from os import walk, listdir
 import re
@@ -29,6 +29,7 @@ import logging
 
 import numpy as np
 
+from ..utils import string2file
 
 class ReadHanwa(object):
     """
@@ -74,10 +75,10 @@ class ReadHanwa(object):
                                         pulse_id_filename)
             return data_from_transient_file(pulse_w_filename)[idx]
 
-        tlp_v = np.asarray(map(lambda x: (read_pulse_file('V', x, 1)),
-                               pulse_id_array))
-        tlp_i = np.asarray(map(lambda x: (read_pulse_file('I', x, 1)),
-                               pulse_id_array))
+        tlp_v = np.asarray([(read_pulse_file('V', x, 1))
+                            for x in pulse_id_array])
+        tlp_i = np.asarray([(read_pulse_file('I', x, 1))
+                            for x in pulse_id_array])
         time_array = read_pulse_file('I', 1, 0)
         delta_t = time_array[1] - time_array[0]
 
@@ -109,11 +110,8 @@ def extract_data_from_sbd(sbd_file_name):
     re_str = r'^Point,.*\current\n(.*)'
     test_result_re = re.compile(re_str, re.S | re.M)
     data_str = test_result_re.findall(sbd_file_str)
-
-    data_str_file = StringIO()
-    data_str_file.write(data_str[0])
-    data_str_file.reset()
-    data = np.loadtxt(data_str_file, delimiter=',', usecols=(0, 1, 2, 3, 4))
+    data = np.loadtxt(string2file(data_str[0]),
+                      delimiter=',', usecols=(0, 1, 2, 3, 4))
     return data.T
 
 
@@ -121,8 +119,12 @@ def extract_data_from_tcf(tcf_file_name):
     """ from the .tcf file, username, leak voltage evuation
         point needs to beextracted.
     """
-    with open(tcf_file_name, 'U') as tcf_file:
-        tcf_file_str = tcf_file.read()
+    if sys.version_info[0] >= 3:  # Python 3
+        with open(tcf_file_name, 'U', encoding='cp932') as tcf_file:
+            tcf_file_str = tcf_file.read()          
+    else:  # Python 2
+        with open(tcf_file_name, 'U') as tcf_file:
+            tcf_file_str = tcf_file.read()
     data = []
     re_str = re.compile('UserName=(.*?)\n')
     user_name = re_str.findall(tcf_file_str)[0]
@@ -159,10 +161,7 @@ def read_leak_curves(leak_path):
             leak_file_path = osp.join(leak_path, leak_index_filename)
             with open(leak_file_path, 'r') as leak_file:
                 file_str = leak_file.read()
-                data_str_file = StringIO()
-                data_str_file.write(file_str)
-                data_str_file.reset()
-                data = (np.loadtxt(data_str_file, delimiter=',',
+                data = (np.loadtxt(string2file(file_str), delimiter=',',
                                    usecols=(0, 1)))
             curves.append(data.T)
     return curves
